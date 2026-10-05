@@ -28,6 +28,7 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <path id="seed" d="M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z"/>
+    <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="1.4" height="4" fill="#0a0a0a"/></pattern>
     <symbol id="mark" viewBox="0 0 32 32">
       <use href="#seed" class="seed-a" transform="translate(3 6) rotate(-16 10 10)"/>
       <use href="#seed" class="seed-b" transform="translate(13 6) rotate(16 10 10)"/>
@@ -58,8 +59,13 @@
     <div>
       <span class="eyebrow">Use cases</span>
       <h1>From documents to <mark class="hl on"><span>decisions</span></mark>.</h1>
-      <p class="hero-sub">Simsim reads the documents, then its agents do the expert work that follows: spreading, checking, scoring and drafting. Your experts stay in charge and sign off.</p>
+      <p class="hero-sub">Simsim reads the documents, then its agents do the expert work that follows. Your experts stay in charge.</p>
       <a class="btn btn-primary" href="#waitlist">Join waitlist<i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
+      <nav class="uc-jump" aria-label="Jump to a use case">
+        <a href="#banking"><i class="ph ph-bank" aria-hidden="true"></i>Banking</a>
+        <a href="#insurance"><i class="ph ph-shield-check" aria-hidden="true"></i>Insurance</a>
+        <a href="#procurement"><i class="ph ph-package" aria-hidden="true"></i>Procurement</a>
+      </nav>
     </div>
     <figure class="ratio" id="ratio">
       <div class="ratio-row"><span class="ratio-k">Software</span><span class="ratio-track"><span class="ratio-bar" style="--w:6.25%"></span></span><span class="ratio-v">$1</span></div>
@@ -71,50 +77,63 @@
 
 <!-- ============================== BANKING ============================== -->
 <section class="section uc" id="banking">
-  <div class="wrap uc-grid">
-    <div class="uc-copy">
+  <div class="wrap">
+    <div class="uc-head">
       <span class="eyebrow">Banking</span>
       <h2>Loan origination, from statements to credit memo.</h2>
-      <p class="lede">Credit analysts spend days spreading financials and reading the notes before they can form a view. Simsim does the reading and the spreading, then its agents go looking for the skeletons.</p>
-      <dl class="uc-facts">
-        <div><dt>Reads</dt><dd>Audited financials and their notes, management accounts, bank statements, collateral and KYC documents</dd></div>
-        <div><dt>Does</dt><dd>Spreads the numbers into your template, strips out one-offs, tests covenants, reconciles cash against the bank statements and flags related-party items</dd></div>
-        <div><dt>Delivers</dt><dd>A credit memo with ratios, sourced risks and a recommendation, ready for committee</dd></div>
-      </dl>
+      <p class="lede">Simsim spreads the financials, reads the notes and hunts for the skeletons, so analysts start from a finished draft.</p>
     </div>
-    <div class="flow" data-flow>
-      <div class="flow-col">
+    <div class="board" data-board>
+      <div class="bcol">
         <span class="flow-h">Documents in</span>
-        <ul class="flow-docs">
-          <li><i class="ph ph-chart-line-up" aria-hidden="true"></i>Audited financials, 3 years</li>
-          <li><i class="ph ph-note" aria-hidden="true"></i>Notes to the accounts</li>
-          <li><i class="ph ph-bank" aria-hidden="true"></i>Bank statements, 12 months</li>
-          <li><i class="ph ph-notebook" aria-hidden="true"></i>Management accounts</li>
-          <li><i class="ph ph-house-line" aria-hidden="true"></i>Collateral valuation</li>
-        </ul>
+        <div class="minidocs">
+          <figure class="md" style="--i:0"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Financials, 3 yrs</figcaption></figure>
+          <figure class="md" style="--i:1"><span class="md-page md-lines"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Notes</figcaption></figure>
+          <figure class="md" style="--i:2"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Bank statements</figcaption></figure>
+          <figure class="md" style="--i:3"><span class="md-page md-chart"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Mgmt accounts</figcaption></figure>
+          <figure class="md" style="--i:4"><span class="md-page md-lines md-stamp"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Valuation</figcaption></figure>
+        </div>
       </div>
-      <div class="flow-col">
+      <div class="bcol">
+        <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
         <span class="flow-h">Agents at work</span>
+        <figure class="chart">
+          <figcaption>Interest cover, times</figcaption>
+          <svg viewBox="0 0 300 132" role="img" aria-label="Interest cover falls from 3.8x in 2022 to 1.9x underlying in 2024, below the 2.0x covenant">
+            <line class="ax" x1="6" y1="100.5" x2="296" y2="100.5"/>
+            <rect class="cbar" style="--d:0ms" x="16" y="16.4" width="40" height="83.6"/>
+            <rect class="cbar" style="--d:90ms" x="76" y="23" width="40" height="77"/>
+            <rect class="cbar" style="--d:180ms" x="136" y="47.2" width="40" height="52.8"/>
+            <rect class="cbar bad" style="--d:270ms" x="196" y="58.2" width="40" height="41.8"/>
+            <line class="thr" x1="6" y1="56" x2="296" y2="56"/>
+            <text class="thr-t" x="296" y="68" text-anchor="end">covenant 2.0x</text>
+            <text class="val" x="36" y="11">3.8</text><text class="val" x="96" y="18">3.5</text><text class="val" x="156" y="42">2.4</text><text class="val bad-t" x="216" y="52">1.9</text>
+            <text class="yr" x="36" y="116">2022</text><text class="yr" x="96" y="116">2023</text><text class="yr" x="156" y="116">2024</text><text class="yr" x="216" y="116">2024 adj.</text>
+            <circle class="ping" cx="216" cy="58" r="6"/>
+          </svg>
+        </figure>
         <ol class="flow-tasks">
-          <li data-st="ok"><span class="t">Spread 3 years into your credit template</span><span class="s"></span></li>
-          <li data-st="ok"><span class="t">Strip the £1.9m one-off gain in note 5</span><span class="s"></span></li>
-          <li data-st="flag"><span class="t">Interest cover 1.9x, covenant floor is 2.0x</span><span class="s"></span></li>
-          <li data-st="ok"><span class="t">Reconcile reported cash to bank statements</span><span class="s"></span></li>
-          <li data-st="flag"><span class="t">Related-party loan to a director in note 14</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Spread 3 years into your template</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Strip the one-off gain in note 5</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Interest cover below covenant</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Related-party loan in note 14</span><span class="s"></span></li>
         </ol>
       </div>
-      <div class="flow-col">
+      <div class="bcol">
+        <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
         <span class="flow-h">Finished work</span>
         <div class="memo">
-          <div class="memo-h"><span class="memo-t">Credit memo</span><span class="memo-co">Halden Freight Holdings plc</span></div>
+          <div class="memo-h"><i class="ph ph-file-text" aria-hidden="true"></i><span class="memo-t">Credit memo</span></div>
+          <div class="memo-co">Halden Freight Holdings plc</div>
+          <div class="memo-grade"><span class="memo-big">6<small>/10</small></span><span class="memo-cap">Risk grade</span></div>
           <dl class="memo-kv">
-            <div><dt>Request</dt><dd>£8.0m term loan, 5 years</dd></div>
-            <div><dt>Risk grade</dt><dd>6 of 10</dd></div>
-            <div><dt>Key risks</dt><dd>2 flagged, both sourced</dd></div>
-            <div><dt>Recommendation</dt><dd>Approve with conditions</dd></div>
+            <div><dt>Request</dt><dd>£8.0m term loan</dd></div>
+            <div><dt>Risks</dt><dd>2, both sourced</dd></div>
+            <div class="wide"><dt>Recommendation</dt><dd>Approve with conditions</dd></div>
           </dl>
-          <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for credit committee</div>
+          <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for committee</div>
         </div>
+        <button class="replay" type="button"><i class="ph-bold ph-arrow-counter-clockwise" aria-hidden="true"></i>Replay</button>
       </div>
     </div>
   </div>
@@ -122,50 +141,62 @@
 
 <!-- ============================== INSURANCE ============================== -->
 <section class="section uc" id="insurance">
-  <div class="wrap uc-grid">
-    <div class="uc-copy">
+  <div class="wrap">
+    <div class="uc-head">
       <span class="eyebrow">Insurance</span>
       <h2>Commercial underwriting, with an actuary in a box.</h2>
-      <p class="lede">Underwriters wade through broker submissions, financials and years of loss runs to price a single risk. Simsim reads the lot, and its agents assemble the file an underwriter can sign.</p>
-      <dl class="uc-facts">
-        <div><dt>Reads</dt><dd>Broker submissions, financial statements, loss runs, schedules of values and vehicle lists</dd></div>
-        <div><dt>Does</dt><dd>Normalises five years of claims, works out loss ratios and trends, checks the risk against your appetite and lists what the submission is missing</dd></div>
-        <div><dt>Delivers</dt><dd>An underwriting file with a risk score, a suggested premium range and referral notes</dd></div>
-      </dl>
+      <p class="lede">Simsim reads the submission and five years of loss runs, then builds the file an underwriter can sign.</p>
     </div>
-    <div class="flow" data-flow>
-      <div class="flow-col">
+    <div class="board" data-board>
+      <div class="bcol">
         <span class="flow-h">Documents in</span>
-        <ul class="flow-docs">
-          <li><i class="ph ph-envelope-simple" aria-hidden="true"></i>Broker submission</li>
-          <li><i class="ph ph-warning-diamond" aria-hidden="true"></i>Loss runs, 5 years</li>
-          <li><i class="ph ph-chart-line-up" aria-hidden="true"></i>Financial statements</li>
-          <li><i class="ph ph-truck" aria-hidden="true"></i>Schedule of vehicles</li>
-          <li><i class="ph ph-file-text" aria-hidden="true"></i>Prior policy wording</li>
-        </ul>
+        <div class="minidocs">
+          <figure class="md" style="--i:0"><span class="md-page md-lines"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Submission</figcaption></figure>
+          <figure class="md" style="--i:1"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Loss runs, 5 yrs</figcaption></figure>
+          <figure class="md" style="--i:2"><span class="md-page md-chart"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Financials</figcaption></figure>
+          <figure class="md" style="--i:3"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Vehicle list</figcaption></figure>
+          <figure class="md" style="--i:4"><span class="md-page md-lines md-stamp"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Prior policy</figcaption></figure>
+        </div>
       </div>
-      <div class="flow-col">
+      <div class="bcol">
+        <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
         <span class="flow-h">Agents at work</span>
+        <figure class="chart">
+          <figcaption>Loss ratio, %</figcaption>
+          <svg viewBox="0 0 300 132" role="img" aria-label="Loss ratio rises from 48% in 2020 to 64% in 2024, above the 60% appetite line">
+            <line class="ax" x1="10" y1="100.5" x2="290" y2="100.5"/>
+            <path class="area" d="M30,81.2 L90,70.4 L150,56 L210,41.6 L270,23.6 L270,100 L30,100 Z"/>
+            <path class="ln" pathLength="1" d="M30,81.2 L90,70.4 L150,56 L210,41.6 L270,23.6"/>
+            <line class="thr" x1="10" y1="38" x2="290" y2="38"/>
+            <text class="thr-t" x="12" y="33" text-anchor="start">appetite 60%</text>
+            <circle class="pt" style="--d:0ms" cx="30" cy="81.2" r="3.5"/><circle class="pt" style="--d:180ms" cx="90" cy="70.4" r="3.5"/><circle class="pt" style="--d:360ms" cx="150" cy="56" r="3.5"/><circle class="pt" style="--d:540ms" cx="210" cy="41.6" r="3.5"/><circle class="pt bad" style="--d:720ms" cx="270" cy="23.6" r="4.5"/>
+            <text class="val" x="30" y="94">48</text><text class="val" x="90" y="83">51</text><text class="val" x="150" y="69">55</text><text class="val" x="210" y="55">59</text><text class="val bad-t" x="252" y="20">64</text>
+            <text class="yr" x="30" y="116">2020</text><text class="yr" x="90" y="116">2021</text><text class="yr" x="150" y="116">2022</text><text class="yr" x="210" y="116">2023</text><text class="yr" x="270" y="116">2024</text>
+            <circle class="ping" cx="270" cy="23.6" r="7"/>
+          </svg>
+        </figure>
         <ol class="flow-tasks">
-          <li data-st="ok"><span class="t">Normalise 5 years of claims from 3 insurers</span><span class="s"></span></li>
-          <li data-st="flag"><span class="t">Loss ratio 64%, rising for 3 years</span><span class="s"></span></li>
-          <li data-st="ok"><span class="t">Inside appetite: UK haulage, 140 vehicles</span><span class="s"></span></li>
-          <li data-st="flag"><span class="t">Missing: telematics report for 2024</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Normalise 5 years of claims</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Loss ratio above appetite</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Missing 2024 telematics report</span><span class="s"></span></li>
           <li data-st="ok"><span class="t">Priced against your rating model</span><span class="s"></span></li>
         </ol>
       </div>
-      <div class="flow-col">
+      <div class="bcol">
+        <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
         <span class="flow-h">Finished work</span>
         <div class="memo">
-          <div class="memo-h"><span class="memo-t">Underwriting file</span><span class="memo-co">Halden Freight Holdings plc</span></div>
+          <div class="memo-h"><i class="ph ph-file-text" aria-hidden="true"></i><span class="memo-t">Underwriting file</span></div>
+          <div class="memo-co">Commercial motor fleet, 140 vehicles</div>
+          <div class="memo-grade"><span class="memo-big">58<small>/100</small></span><span class="memo-cap">Risk score</span></div>
           <dl class="memo-kv">
-            <div><dt>Line</dt><dd>Commercial motor fleet</dd></div>
-            <div><dt>Risk score</dt><dd>58 of 100</dd></div>
-            <div><dt>Premium range</dt><dd>£412k to £455k</dd></div>
-            <div><dt>Referral</dt><dd>Senior underwriter, loss trend</dd></div>
+            <div><dt>Premium</dt><dd>£412k to £455k</dd></div>
+            <div><dt>Gaps</dt><dd>1 document</dd></div>
+            <div class="wide"><dt>Referral</dt><dd>Senior underwriter, loss trend</dd></div>
           </dl>
           <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for sign-off</div>
         </div>
+        <button class="replay" type="button"><i class="ph-bold ph-arrow-counter-clockwise" aria-hidden="true"></i>Replay</button>
       </div>
     </div>
   </div>
@@ -173,67 +204,79 @@
 
 <!-- ============================== PROCUREMENT ============================== -->
 <section class="section uc" id="procurement">
-  <div class="wrap uc-grid">
-    <div class="uc-copy">
+  <div class="wrap">
+    <div class="uc-head">
       <span class="eyebrow">Procurement</span>
       <h2>Supplier due diligence, done before you sign.</h2>
-      <p class="lede">Procurement teams chase registrations, certificates and financials for every supplier, then match quotes, contracts and invoices by hand. Simsim's agents do the chasing and the matching.</p>
-      <dl class="uc-facts">
-        <div><dt>Reads</dt><dd>Commercial registrations, tax and insurance certificates, supplier financials, quotes, contracts and invoices, in English and Arabic</dd></div>
-        <div><dt>Does</dt><dd>Checks registrations and expiry dates, scores financial health, compares quotes line by line and checks invoices against the contract</dd></div>
-        <div><dt>Delivers</dt><dd>A supplier risk score and approval pack, plus every invoice that doesn't match what was agreed</dd></div>
-      </dl>
+      <p class="lede">Simsim's agents chase the paperwork, check every certificate and match quotes to contracts, in English and Arabic.</p>
     </div>
-    <div class="flow" data-flow>
-      <div class="flow-col">
+    <div class="board" data-board>
+      <div class="bcol">
         <span class="flow-h">Documents in</span>
-        <ul class="flow-docs">
-          <li><i class="ph ph-storefront" aria-hidden="true"></i>Commercial registration <span class="flow-ar" lang="ar">سجل تجاري</span></li>
-          <li><i class="ph ph-seal-check" aria-hidden="true"></i>Tax certificate</li>
-          <li><i class="ph ph-chart-line-up" aria-hidden="true"></i>Audited financials</li>
-          <li><i class="ph ph-files" aria-hidden="true"></i>3 competing quotes</li>
-          <li><i class="ph ph-handshake" aria-hidden="true"></i>Master services agreement</li>
-        </ul>
+        <div class="minidocs">
+          <figure class="md" style="--i:0"><span class="md-page md-lines md-rtl md-stamp"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Registration <span lang="ar">سجل</span></figcaption></figure>
+          <figure class="md" style="--i:1"><span class="md-page md-lines md-stamp"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Tax certificate</figcaption></figure>
+          <figure class="md" style="--i:2"><span class="md-page md-chart"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Financials</figcaption></figure>
+          <figure class="md" style="--i:3"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>3 quotes</figcaption></figure>
+          <figure class="md" style="--i:4"><span class="md-page md-lines"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Contract</figcaption></figure>
+        </div>
       </div>
-      <div class="flow-col">
+      <div class="bcol">
+        <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
         <span class="flow-h">Agents at work</span>
+        <figure class="chart">
+          <figcaption>Certificate validity</figcaption>
+          <svg viewBox="0 0 300 132" role="img" aria-label="Registration valid to August 2027, insurance to January 2027, tax certificate expired in June 2026">
+            <text class="lab" x="0" y="28">Registration</text><text class="lab" x="0" y="58">Insurance</text><text class="lab" x="0" y="88">Tax certificate</text>
+            <rect class="tl" style="--d:0ms" x="96" y="18" width="176" height="14"/>
+            <rect class="tl" style="--d:120ms" x="96" y="48" width="137" height="14"/>
+            <rect class="tl bad" style="--d:240ms" x="96" y="78" width="98" height="14"/>
+            <line class="ax" x1="96" y1="104.5" x2="296" y2="104.5"/>
+            <text class="yr" x="96" y="118">2025</text><text class="yr" x="163" y="118">2026</text><text class="yr" x="229" y="118">2027</text>
+            <line class="today" x1="216" y1="8" x2="216" y2="104"/>
+            <text class="today-t" x="219" y="12">today</text>
+            <circle class="ping" cx="194" cy="85" r="7"/>
+          </svg>
+        </figure>
         <ol class="flow-tasks">
-          <li data-st="ok"><span class="t">Registration valid until 14 Aug 2026</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Registration valid to Aug 2027</span><span class="s"></span></li>
           <li data-st="flag"><span class="t">Tax certificate expired in June</span><span class="s"></span></li>
-          <li data-st="ok"><span class="t">Current ratio 1.6, financially sound</span><span class="s"></span></li>
-          <li data-st="flag"><span class="t">Lowest quote leaves out 2 line items</span><span class="s"></span></li>
-          <li data-st="ok"><span class="t">Payment terms match the contract</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Financially sound, current ratio 1.6</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Lowest quote misses 2 line items</span><span class="s"></span></li>
         </ol>
       </div>
-      <div class="flow-col">
+      <div class="bcol">
+        <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
         <span class="flow-h">Finished work</span>
         <div class="memo">
-          <div class="memo-h"><span class="memo-t">Supplier approval pack</span><span class="memo-co">Al Noor Trading LLC</span></div>
+          <div class="memo-h"><i class="ph ph-file-text" aria-hidden="true"></i><span class="memo-t">Supplier approval pack</span></div>
+          <div class="memo-co">Al Noor Trading LLC</div>
+          <div class="memo-grade"><span class="memo-big">Medium</span><span class="memo-cap">Supplier risk</span></div>
           <dl class="memo-kv">
-            <div><dt>Supplier risk</dt><dd>Medium</dd></div>
-            <div><dt>Action needed</dt><dd>Renewed tax certificate</dd></div>
-            <div><dt>Best value</dt><dd>Quote A, 4.2% above lowest</dd></div>
-            <div><dt>Status</dt><dd>Approve once certificate arrives</dd></div>
+            <div><dt>Best value</dt><dd>Quote A</dd></div>
+            <div><dt>Action</dt><dd>New tax certificate</dd></div>
+            <div class="wide"><dt>Status</dt><dd>Approve once certificate arrives</dd></div>
           </dl>
           <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for approval</div>
         </div>
+        <button class="replay" type="button"><i class="ph-bold ph-arrow-counter-clockwise" aria-hidden="true"></i>Replay</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============================== HOW THE WORK GETS DONE ============================== -->
+<!-- ============================== ONE SYSTEM ============================== -->
 <section class="section" id="system">
   <div class="wrap">
     <div class="sec-h">
       <h2>One system, from page to finished file.</h2>
-      <p class="lede">Reading is the beachhead. The value is in what happens next, and in your experts staying in control of it.</p>
     </div>
-    <div class="steps4">
-      <div><i class="ph ph-scan" aria-hidden="true"></i><h3>Read like an expert</h3><p>Scans, tables, charts, stamps and handwriting, in English, Arabic and mixed-language files.</p></div>
-      <div><i class="ph ph-link-simple" aria-hidden="true"></i><h3>Understand in context</h3><p>Numbers are tied to their notes, labels and periods, so a figure carries its meaning with it.</p></div>
-      <div><i class="ph ph-robot" aria-hidden="true"></i><h3>Agents do the work</h3><p>Spreading, checks, scores and first drafts, run the way your team runs them today.</p></div>
-      <div><i class="ph ph-user-check" aria-hidden="true"></i><h3>Experts sign off</h3><p>Every finding links back to its source on the page, so review takes minutes, not days.</p></div>
+    <div class="track" data-track>
+      <span class="track-line" aria-hidden="true"><i></i></span>
+      <div class="tnode"><span class="tbox"><i class="ph ph-scan" aria-hidden="true"></i></span><h3>Read</h3><p>Tables, charts, stamps and handwriting, in any script.</p></div>
+      <div class="tnode"><span class="tbox"><i class="ph ph-link-simple" aria-hidden="true"></i></span><h3>Understand</h3><p>Every number tied to its note and period.</p></div>
+      <div class="tnode"><span class="tbox"><i class="ph ph-robot" aria-hidden="true"></i></span><h3>Act</h3><p>Agents spread, check, score and draft.</p></div>
+      <div class="tnode"><span class="tbox"><i class="ph ph-user-check" aria-hidden="true"></i></span><h3>Sign off</h3><p>Experts review findings linked to the source.</p></div>
     </div>
   </div>
 </section>
@@ -243,15 +286,14 @@
   <div class="wrap">
     <div class="sec-h">
       <h2>More of the work we're building for.</h2>
-      <p class="lede">The same system, pointed at other expert-heavy document work in finance and the public sector.</p>
     </div>
     <div class="more">
-      <div><i class="ph ph-boat" aria-hidden="true"></i><h3>Trade finance</h3><p>Letters of credit, bills of lading and invoices checked against each other before funds move.</p></div>
-      <div><i class="ph ph-gauge" aria-hidden="true"></i><h3>Credit monitoring</h3><p>Covenants retested on every new set of accounts, not once a year by hand.</p></div>
-      <div><i class="ph ph-first-aid-kit" aria-hidden="true"></i><h3>Medical claims</h3><p>Claims read, coded and checked against policy terms and provider tariffs.</p></div>
-      <div><i class="ph ph-chart-pie-slice" aria-hidden="true"></i><h3>Spend analysis</h3><p>Every invoice classified, so category spend and off-contract buying show up without a consultant.</p></div>
-      <div><i class="ph ph-buildings" aria-hidden="true"></i><h3>Public sector statistics</h3><p>Thousands of filed financial statements turned into sector-level insight for ministries and regulators.</p></div>
-      <div><i class="ph ph-magnifying-glass" aria-hidden="true"></i><h3>Investment due diligence</h3><p>Data rooms read end to end, with the findings that matter pulled into a first-draft report.</p></div>
+      <div><span class="mbox"><i class="ph ph-boat" aria-hidden="true"></i></span><h3>Trade finance</h3><p>Letters of credit, bills of lading and invoices, cross-checked.</p></div>
+      <div><span class="mbox"><i class="ph ph-gauge" aria-hidden="true"></i></span><h3>Credit monitoring</h3><p>Covenants retested on every new set of accounts.</p></div>
+      <div><span class="mbox"><i class="ph ph-first-aid-kit" aria-hidden="true"></i></span><h3>Medical claims</h3><p>Claims coded and checked against the policy.</p></div>
+      <div><span class="mbox"><i class="ph ph-chart-pie-slice" aria-hidden="true"></i></span><h3>Spend analysis</h3><p>Every invoice classified, off-contract spend surfaced.</p></div>
+      <div><span class="mbox"><i class="ph ph-buildings" aria-hidden="true"></i></span><h3>Public sector statistics</h3><p>Filed accounts turned into sector statistics.</p></div>
+      <div><span class="mbox"><i class="ph ph-magnifying-glass" aria-hidden="true"></i></span><h3>Investment due diligence</h3><p>Data rooms read, first-draft findings out.</p></div>
     </div>
   </div>
 </section>
@@ -344,30 +386,58 @@ if (MOTION) {
   onVisible(ratio, function (vis, io) { if (vis) { ratio.classList.add('in'); io.disconnect(); } }, 0.4);
 }
 
-/* Use-case flows: documents arrive, agents tick through their tasks, the finished file appears */
-$$('[data-flow]').forEach(function (flow) {
-  $$('.flow-tasks li', flow).forEach(function (li) {
+/* Use-case boards. Stages: s1 documents arrive, s2 each one is read, s3 the chart builds,
+   then the agents tick through their tasks, s4 the hand-off lights up, s5 the finished file. */
+$$('[data-board]').forEach(function (board) {
+  var tasks = $$('.flow-tasks li', board), docs = $$('.md', board), timers = [];
+  tasks.forEach(function (li) {
     var flag = li.getAttribute('data-st') === 'flag';
     $('.s', li).innerHTML = '<span class="sp" aria-hidden="true"><i></i><i></i><i></i></span>' +
       '<span class="fin"><i class="ph-bold ' + (flag ? 'ph-flag' : 'ph-check') + '" aria-hidden="true"></i>' + (flag ? 'Flag' : 'Done') + '</span>';
   });
   if (!MOTION) return;
-  flow.classList.add('anim');
-  var docs = $$('.flow-docs li', flow), tasks = $$('.flow-tasks li', flow), memo = $('.memo', flow);
-  onVisible(flow, function (vis, io) {
+  board.classList.add('anim');
+
+  function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+  function reset() {
+    timers.forEach(clearTimeout); timers = [];
+    board.classList.remove('s1', 's2', 's3', 's4', 's5');
+    tasks.forEach(function (li) { li.classList.remove('run', 'done'); });
+    void board.offsetWidth; // restart CSS animations on replay
+  }
+  function play() {
+    reset();
+    var t = 60;
+    at(t, function () { board.classList.add('s1'); });
+    t += docs.length * 90 + 300;
+    at(t, function () { board.classList.add('s2'); });
+    t += docs.length * 180 + 750;
+    at(t, function () { board.classList.add('s3'); });
+    t += 1100;
+    tasks.forEach(function (li) {
+      at(t, function () { li.classList.add('run'); });
+      t += 460;
+      at(t, function () { li.classList.remove('run'); li.classList.add('done'); });
+    });
+    at(t + 150, function () { board.classList.add('s4'); });
+    at(t + 380, function () { board.classList.add('s5'); });
+  }
+  onVisible(board, function (vis, io) { if (vis) { io.disconnect(); play(); } }, 0.3);
+  var rb = $('.replay', board);
+  if (rb) rb.addEventListener('click', play);
+});
+
+/* One system: the line draws and each step lights up in turn */
+var track = $('[data-track]');
+if (track && MOTION) {
+  track.classList.add('anim');
+  onVisible(track, function (vis, io) {
     if (!vis) return;
     io.disconnect();
-    var t = 0;
-    docs.forEach(function (d) { setTimeout(function () { d.classList.add('in'); }, t); t += 90; });
-    t += 200;
-    tasks.forEach(function (li) {
-      setTimeout(function () { li.classList.add('run'); }, t);
-      t += 520;
-      setTimeout(function () { li.classList.remove('run'); li.classList.add('done'); }, t);
-    });
-    setTimeout(function () { memo.classList.add('in'); }, t + 180);
-  }, 0.35);
-});
+    track.classList.add('go');
+    $$('.tnode', track).forEach(function (n, i) { setTimeout(function () { n.classList.add('lit'); }, 250 + i * 420); });
+  }, 0.4);
+}
 
 /* Waitlist form */
 var opts = $('#opts');
