@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Use cases · Simsim</title>
+<meta name="description" content="Simsim reads the documents, then its agents do the expert work: credit memos for lenders, underwriting files for insurers, supplier checks for procurement.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Simsim use cases · From documents to decisions">
+<meta property="og:description" content="Loan origination, commercial underwriting and supplier due diligence, done end to end. Not just extraction.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath transform='translate(3 6) rotate(-16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%230a0a0a'/%3E%3Cpath transform='translate(13 6) rotate(16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%23737373'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<script>
+  if (/[?&#]draft\b/.test(location.search + location.hash)) document.documentElement.classList.add('draft');
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
+</script>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="page">
+<div class="grid-overlay" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="seed" d="M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z"/>
+    <symbol id="mark" viewBox="0 0 32 32">
+      <use href="#seed" class="seed-a" transform="translate(3 6) rotate(-16 10 10)"/>
+      <use href="#seed" class="seed-b" transform="translate(13 6) rotate(16 10 10)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============================== NAV ============================== -->
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="logo" href="index.html" aria-label="Simsim home">
+      <svg aria-hidden="true"><use href="#mark"/></svg>
+      <span>simsim</span><span class="ar" lang="ar">سمسم</span>
+    </a>
+    <nav class="nav-links" aria-label="Site">
+      <a class="keep" href="use-cases.html" aria-current="page">Use cases</a>
+      <a href="index.html#why">Hard cases</a>
+      <a href="index.html#benchmarks">Benchmarks</a>
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#security">Security</a>
+    </nav>
+    <a class="nav-cta" href="#waitlist">Join waitlist<i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
+  </div>
+</header>
+<div id="nav-sentinel" aria-hidden="true" style="position:absolute;top:8px;height:1px;width:1px"></div>
+
+<main>
+<!-- ============================== HERO ============================== -->
+<section class="section section--band uc-hero">
+  <div class="wrap uc-hero-grid">
+    <div>
+      <span class="eyebrow">Use cases</span>
+      <h1>From documents to <mark class="hl on"><span>decisions</span></mark>.</h1>
+      <p class="hero-sub">Simsim reads the documents, then its agents do the expert work that follows: spreading, checking, scoring and drafting. Your experts stay in charge and sign off.</p>
+      <a class="btn btn-primary" href="#waitlist">Join waitlist<i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
+    </div>
+    <figure class="ratio" id="ratio">
+      <div class="ratio-row"><span class="ratio-k">Software</span><span class="ratio-track"><span class="ratio-bar" style="--w:6.25%"></span></span><span class="ratio-v">$1</span></div>
+      <div class="ratio-row"><span class="ratio-k">Expert labour</span><span class="ratio-track"><span class="ratio-bar big" style="--w:100%"></span></span><span class="ratio-v">$16</span></div>
+      <figcaption><span class="ph-draft" data-draft="Confirm the source of the 1 to 16 software-to-labour figure before launch">For every $1 spent on software for document-heavy work, about $16 goes to the people doing it.</span> Simsim is built for the $16.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============================== BANKING ============================== -->
+<section class="section uc" id="banking">
+  <div class="wrap uc-grid">
+    <div class="uc-copy">
+      <span class="eyebrow">Banking</span>
+      <h2>Loan origination, from statements to credit memo.</h2>
+      <p class="lede">Credit analysts spend days spreading financials and reading the notes before they can form a view. Simsim does the reading and the spreading, then its agents go looking for the skeletons.</p>
+      <dl class="uc-facts">
+        <div><dt>Reads</dt><dd>Audited financials and their notes, management accounts, bank statements, collateral and KYC documents</dd></div>
+        <div><dt>Does</dt><dd>Spreads the numbers into your template, strips out one-offs, tests covenants, reconciles cash against the bank statements and flags related-party items</dd></div>
+        <div><dt>Delivers</dt><dd>A credit memo with ratios, sourced risks and a recommendation, ready for committee</dd></div>
+      </dl>
+    </div>
+    <div class="flow" data-flow>
+      <div class="flow-col">
+        <span class="flow-h">Documents in</span>
+        <ul class="flow-docs">
+          <li><i class="ph ph-chart-line-up" aria-hidden="true"></i>Audited financials, 3 years</li>
+          <li><i class="ph ph-note" aria-hidden="true"></i>Notes to the accounts</li>
+          <li><i class="ph ph-bank" aria-hidden="true"></i>Bank statements, 12 months</li>
+          <li><i class="ph ph-notebook" aria-hidden="true"></i>Management accounts</li>
+          <li><i class="ph ph-house-line" aria-hidden="true"></i>Collateral valuation</li>
+        </ul>
+      </div>
+      <div class="flow-col">
+        <span class="flow-h">Agents at work</span>
+        <ol class="flow-tasks">
+          <li data-st="ok"><span class="t">Spread 3 years into your credit template</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Strip the £1.9m one-off gain in note 5</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Interest cover 1.9x, covenant floor is 2.0x</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Reconcile reported cash to bank statements</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Related-party loan to a director in note 14</span><span class="s"></span></li>
+        </ol>
+      </div>
+      <div class="flow-col">
+        <span class="flow-h">Finished work</span>
+        <div class="memo">
+          <div class="memo-h"><span class="memo-t">Credit memo</span><span class="memo-co">Halden Freight Holdings plc</span></div>
+          <dl class="memo-kv">
+            <div><dt>Request</dt><dd>£8.0m term loan, 5 years</dd></div>
+            <div><dt>Risk grade</dt><dd>6 of 10</dd></div>
+            <div><dt>Key risks</dt><dd>2 flagged, both sourced</dd></div>
+            <div><dt>Recommendation</dt><dd>Approve with conditions</dd></div>
+          </dl>
+          <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for credit committee</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== INSURANCE ============================== -->
+<section class="section uc" id="insurance">
+  <div class="wrap uc-grid">
+    <div class="uc-copy">
+      <span class="eyebrow">Insurance</span>
+      <h2>Commercial underwriting, with an actuary in a box.</h2>
+      <p class="lede">Underwriters wade through broker submissions, financials and years of loss runs to price a single risk. Simsim reads the lot, and its agents assemble the file an underwriter can sign.</p>
+      <dl class="uc-facts">
+        <div><dt>Reads</dt><dd>Broker submissions, financial statements, loss runs, schedules of values and vehicle lists</dd></div>
+        <div><dt>Does</dt><dd>Normalises five years of claims, works out loss ratios and trends, checks the risk against your appetite and lists what the submission is missing</dd></div>
+        <div><dt>Delivers</dt><dd>An underwriting file with a risk score, a suggested premium range and referral notes</dd></div>
+      </dl>
+    </div>
+    <div class="flow" data-flow>
+      <div class="flow-col">
+        <span class="flow-h">Documents in</span>
+        <ul class="flow-docs">
+          <li><i class="ph ph-envelope-simple" aria-hidden="true"></i>Broker submission</li>
+          <li><i class="ph ph-warning-diamond" aria-hidden="true"></i>Loss runs, 5 years</li>
+          <li><i class="ph ph-chart-line-up" aria-hidden="true"></i>Financial statements</li>
+          <li><i class="ph ph-truck" aria-hidden="true"></i>Schedule of vehicles</li>
+          <li><i class="ph ph-file-text" aria-hidden="true"></i>Prior policy wording</li>
+        </ul>
+      </div>
+      <div class="flow-col">
+        <span class="flow-h">Agents at work</span>
+        <ol class="flow-tasks">
+          <li data-st="ok"><span class="t">Normalise 5 years of claims from 3 insurers</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Loss ratio 64%, rising for 3 years</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Inside appetite: UK haulage, 140 vehicles</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Missing: telematics report for 2024</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Priced against your rating model</span><span class="s"></span></li>
+        </ol>
+      </div>
+      <div class="flow-col">
+        <span class="flow-h">Finished work</span>
+        <div class="memo">
+          <div class="memo-h"><span class="memo-t">Underwriting file</span><span class="memo-co">Halden Freight Holdings plc</span></div>
+          <dl class="memo-kv">
+            <div><dt>Line</dt><dd>Commercial motor fleet</dd></div>
+            <div><dt>Risk score</dt><dd>58 of 100</dd></div>
+            <div><dt>Premium range</dt><dd>£412k to £455k</dd></div>
+            <div><dt>Referral</dt><dd>Senior underwriter, loss trend</dd></div>
+          </dl>
+          <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for sign-off</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== PROCUREMENT ============================== -->
+<section class="section uc" id="procurement">
+  <div class="wrap uc-grid">
+    <div class="uc-copy">
+      <span class="eyebrow">Procurement</span>
+      <h2>Supplier due diligence, done before you sign.</h2>
+      <p class="lede">Procurement teams chase registrations, certificates and financials for every supplier, then match quotes, contracts and invoices by hand. Simsim's agents do the chasing and the matching.</p>
+      <dl class="uc-facts">
+        <div><dt>Reads</dt><dd>Commercial registrations, tax and insurance certificates, supplier financials, quotes, contracts and invoices, in English and Arabic</dd></div>
+        <div><dt>Does</dt><dd>Checks registrations and expiry dates, scores financial health, compares quotes line by line and checks invoices against the contract</dd></div>
+        <div><dt>Delivers</dt><dd>A supplier risk score and approval pack, plus every invoice that doesn't match what was agreed</dd></div>
+      </dl>
+    </div>
+    <div class="flow" data-flow>
+      <div class="flow-col">
+        <span class="flow-h">Documents in</span>
+        <ul class="flow-docs">
+          <li><i class="ph ph-storefront" aria-hidden="true"></i>Commercial registration <span class="flow-ar" lang="ar">سجل تجاري</span></li>
+          <li><i class="ph ph-seal-check" aria-hidden="true"></i>Tax certificate</li>
+          <li><i class="ph ph-chart-line-up" aria-hidden="true"></i>Audited financials</li>
+          <li><i class="ph ph-files" aria-hidden="true"></i>3 competing quotes</li>
+          <li><i class="ph ph-handshake" aria-hidden="true"></i>Master services agreement</li>
+        </ul>
+      </div>
+      <div class="flow-col">
+        <span class="flow-h">Agents at work</span>
+        <ol class="flow-tasks">
+          <li data-st="ok"><span class="t">Registration valid until 14 Aug 2026</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Tax certificate expired in June</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Current ratio 1.6, financially sound</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Lowest quote leaves out 2 line items</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Payment terms match the contract</span><span class="s"></span></li>
+        </ol>
+      </div>
+      <div class="flow-col">
+        <span class="flow-h">Finished work</span>
+        <div class="memo">
+          <div class="memo-h"><span class="memo-t">Supplier approval pack</span><span class="memo-co">Al Noor Trading LLC</span></div>
+          <dl class="memo-kv">
+            <div><dt>Supplier risk</dt><dd>Medium</dd></div>
+            <div><dt>Action needed</dt><dd>Renewed tax certificate</dd></div>
+            <div><dt>Best value</dt><dd>Quote A, 4.2% above lowest</dd></div>
+            <div><dt>Status</dt><dd>Approve once certificate arrives</dd></div>
+          </dl>
+          <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for approval</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== HOW THE WORK GETS DONE ============================== -->
+<section class="section" id="system">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>One system, from page to finished file.</h2>
+      <p class="lede">Reading is the beachhead. The value is in what happens next, and in your experts staying in control of it.</p>
+    </div>
+    <div class="steps4">
+      <div><i class="ph ph-scan" aria-hidden="true"></i><h3>Read like an expert</h3><p>Scans, tables, charts, stamps and handwriting, in English, Arabic and mixed-language files.</p></div>
+      <div><i class="ph ph-link-simple" aria-hidden="true"></i><h3>Understand in context</h3><p>Numbers are tied to their notes, labels and periods, so a figure carries its meaning with it.</p></div>
+      <div><i class="ph ph-robot" aria-hidden="true"></i><h3>Agents do the work</h3><p>Spreading, checks, scores and first drafts, run the way your team runs them today.</p></div>
+      <div><i class="ph ph-user-check" aria-hidden="true"></i><h3>Experts sign off</h3><p>Every finding links back to its source on the page, so review takes minutes, not days.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== MORE ============================== -->
+<section class="section" id="more">
+  <div class="wrap">
+    <div class="sec-h">
+      <h2>More of the work we're building for.</h2>
+      <p class="lede">The same system, pointed at other expert-heavy document work in finance and the public sector.</p>
+    </div>
+    <div class="more">
+      <div><i class="ph ph-boat" aria-hidden="true"></i><h3>Trade finance</h3><p>Letters of credit, bills of lading and invoices checked against each other before funds move.</p></div>
+      <div><i class="ph ph-gauge" aria-hidden="true"></i><h3>Credit monitoring</h3><p>Covenants retested on every new set of accounts, not once a year by hand.</p></div>
+      <div><i class="ph ph-first-aid-kit" aria-hidden="true"></i><h3>Medical claims</h3><p>Claims read, coded and checked against policy terms and provider tariffs.</p></div>
+      <div><i class="ph ph-chart-pie-slice" aria-hidden="true"></i><h3>Spend analysis</h3><p>Every invoice classified, so category spend and off-contract buying show up without a consultant.</p></div>
+      <div><i class="ph ph-buildings" aria-hidden="true"></i><h3>Public sector statistics</h3><p>Thousands of filed financial statements turned into sector-level insight for ministries and regulators.</p></div>
+      <div><i class="ph ph-magnifying-glass" aria-hidden="true"></i><h3>Investment due diligence</h3><p>Data rooms read end to end, with the findings that matter pulled into a first-draft report.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== WAITLIST ============================== -->
+<section class="section cta" id="waitlist">
+  <div class="wrap">
+    <div class="cta-grid">
+      <div>
+        <h2>Bring us your hardest workflow.</h2>
+        <p class="lede">We're onboarding a small group of banks, insurers and procurement teams first. Tell us the work you want off your team's plate.</p>
+      </div>
+      <div class="form-card" id="form-card">
+        <form id="wl-main" novalidate>
+          <div class="form-grid">
+            <div class="fld">
+              <label for="m-email">Work email <span class="req" aria-hidden="true">*</span></label>
+              <input class="inp" id="m-email" name="email" type="email" autocomplete="email" placeholder="name@company.com" required>
+            </div>
+            <div class="fld">
+              <label for="m-company">Company</label>
+              <input class="inp" id="m-company" name="company" type="text" autocomplete="organization" placeholder="Company name">
+            </div>
+            <fieldset class="fld full">
+              <legend>What work do you want done?</legend>
+              <div class="opts" id="opts"></div>
+            </fieldset>
+          </div>
+          <div class="form-foot">
+            <p class="form-msg" role="status" aria-live="polite"></p>
+            <button class="btn btn-primary" type="submit">
+              <span class="btn-l">Join waitlist</span><i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+              <span class="spin" aria-hidden="true"><i></i><i></i><i></i></span>
+            </button>
+          </div>
+        </form>
+        <div class="done-panel" role="status" aria-live="polite">
+          <i class="ph-bold ph-check-circle" aria-hidden="true"></i>
+          <h3>You're on the list.</h3>
+          <p>Thanks. We'll be in touch soon about early access.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-l">
+      <a class="logo" href="index.html" aria-label="Simsim home"><svg aria-hidden="true"><use href="#mark"/></svg><span>simsim</span></a>
+      <span>Document AI that gets the work done</span>
+    </div>
+    <div class="foot-l">
+      <nav class="foot-links" aria-label="Footer">
+        <a class="ph-draft" data-draft="Link to privacy policy" href="#">Privacy</a>
+        <a class="ph-draft" data-draft="Replace with real contact address" href="mailto:hello@simsim.ai">Contact</a>
+      </nav>
+      <span>© 2026 Simsim</span>
+    </div>
+  </div>
+</footer>
+</div><!-- /.page -->
+
+<div class="draft-chip" aria-hidden="true">Draft view: <b id="draft-count">0</b> items to confirm</div>
+
+<script src="config.js"></script>
+<script>
+(function () {
+'use strict';
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var MOTION = document.documentElement.classList.contains('motion');
+var CONFIG = window.SIMSIM_CONFIG || { waitlistEndpoint: '' };
+var WORK_OPTIONS = ['Loan origination', 'Trade finance', 'Underwriting', 'Claims', 'Supplier onboarding', 'Spend analysis', 'Something else'];
+
+function onVisible(el, cb, threshold) {
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { cb(e.isIntersecting, io); }); }, { threshold: threshold || 0.3 });
+  io.observe(el);
+}
+
+/* Nav border once the page scrolls */
+var navEl = $('.nav');
+onVisible($('#nav-sentinel'), function (vis) { navEl.classList.toggle('scrolled', !vis); }, 0);
+
+/* $1 vs $16 bars */
+var ratio = $('#ratio');
+if (MOTION) {
+  ratio.classList.add('anim');
+  onVisible(ratio, function (vis, io) { if (vis) { ratio.classList.add('in'); io.disconnect(); } }, 0.4);
+}
+
+/* Use-case flows: documents arrive, agents tick through their tasks, the finished file appears */
+$$('[data-flow]').forEach(function (flow) {
+  $$('.flow-tasks li', flow).forEach(function (li) {
+    var flag = li.getAttribute('data-st') === 'flag';
+    $('.s', li).innerHTML = '<span class="sp" aria-hidden="true"><i></i><i></i><i></i></span>' +
+      '<span class="fin"><i class="ph-bold ' + (flag ? 'ph-flag' : 'ph-check') + '" aria-hidden="true"></i>' + (flag ? 'Flag' : 'Done') + '</span>';
+  });
+  if (!MOTION) return;
+  flow.classList.add('anim');
+  var docs = $$('.flow-docs li', flow), tasks = $$('.flow-tasks li', flow), memo = $('.memo', flow);
+  onVisible(flow, function (vis, io) {
+    if (!vis) return;
+    io.disconnect();
+    var t = 0;
+    docs.forEach(function (d) { setTimeout(function () { d.classList.add('in'); }, t); t += 90; });
+    t += 200;
+    tasks.forEach(function (li) {
+      setTimeout(function () { li.classList.add('run'); }, t);
+      t += 520;
+      setTimeout(function () { li.classList.remove('run'); li.classList.add('done'); }, t);
+    });
+    setTimeout(function () { memo.classList.add('in'); }, t + 180);
+  }, 0.35);
+});
+
+/* Waitlist form */
+var opts = $('#opts');
+opts.innerHTML = WORK_OPTIONS.map(function (o) {
+  return '<label class="opt"><input type="checkbox" name="documents" value="' + o + '"><span><i class="ph-bold ph-check" aria-hidden="true"></i>' + o + '</span></label>';
+}).join('');
+var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+var form = $('#wl-main'), msg = $('.form-msg', form), btn = $('button[type="submit"]', form), email = form.elements.email;
+email.addEventListener('input', function () { if (email.getAttribute('aria-invalid')) { email.removeAttribute('aria-invalid'); msg.textContent = ''; } });
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  var v = email.value.trim();
+  if (!EMAIL.test(v)) {
+    msg.innerHTML = '<i class="ph-bold ph-warning-circle" aria-hidden="true"></i>Enter a work email, like name@company.com';
+    email.setAttribute('aria-invalid', 'true'); email.focus();
+    return;
+  }
+  var payload = { email: v, company: form.elements.company.value.trim(), documents: $$('input[name="documents"]:checked', form).map(function (c) { return c.value; }), source: 'use-cases' };
+  btn.disabled = true; btn.classList.add('loading'); msg.textContent = '';
+  var send = CONFIG.waitlistEndpoint
+    ? fetch(CONFIG.waitlistEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).then(function (r) { if (!r.ok) throw new Error('bad status'); })
+    : new Promise(function (res) { setTimeout(res, 900); });
+  send.then(function () { $('#form-card').classList.add('is-done'); })
+    .catch(function () { msg.innerHTML = '<i class="ph-bold ph-warning-circle" aria-hidden="true"></i>That didn’t go through. Please try again.'; })
+    .then(function () { btn.disabled = false; btn.classList.remove('loading'); });
+});
+
+/* Draft view counter */
+var dc = $('#draft-count'); if (dc) dc.textContent = $$('.ph-draft').length;
+})();
+</script>
+</body>
+</html>

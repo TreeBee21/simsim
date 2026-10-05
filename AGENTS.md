@@ -1,6 +1,10 @@
 # AGENTS.md
 
-This folder is the Simsim launch page: a standalone, single-file marketing page (`index.html`).
+This folder is the Simsim marketing site: plain static pages, no build step.
+- `index.html` home page (hero demo, hard cases, benchmarks, pinned pipeline, security, waitlist)
+- `use-cases.html` banking, insurance and procurement workflows
+- `site.css` shared styles for every page, `config.js` shared settings (waitlist endpoint)
+- `vercel.json` turns on clean URLs (`/use-cases`)
 
 The parent folder's Astryx rules (no `<div>`, AppShell, token-only styling) do NOT apply here.
 Plain HTML/CSS/JS, GSAP + ScrollTrigger from jsDelivr, Phosphor icons, Google Fonts.
@@ -16,12 +20,15 @@ Plain HTML/CSS/JS, GSAP + ScrollTrigger from jsDelivr, Phosphor icons, Google Fo
 - Right and wrong are shown in monochrome: strikethrough with ✕ for wrong, ✓ for right. No red or green.
 
 ## Positioning
-- Simsim is document AI for hard documents in any language. Arabic is the proof point, not the headline:
-  "We built Simsim on Arabic, one of the hardest scripts to read, so it holds up where others fail."
-- Lead with universal problems (handwriting, stamps, tables, scans), then show the Arabic depth (RTL, Arabic digits, Hijri dates).
-- The hero demo cycles an English invoice, then an Arabic one (`CONTENT.demo`, one entry per `data-doc`).
+- "Any document, read like an expert." Simsim sells the work getting done, not OCR: extraction is the beachhead,
+  agents then do expert work downstream (credit memos, underwriting files, supplier checks).
+- Niche: high-stakes financial services and related work: banking (loan origination, trade finance),
+  insurance (underwriting, claims) and procurement (supplier due diligence, spend).
+- Arabic is the proof point, not the headline: "We built Simsim on Arabic, one of the hardest scripts to read."
+- No invoices in the hero (seen as a solved trope). The demo cycles an income statement with notes and a chart,
+  then an Arabic bank statement; agent findings are rows with `flag: true` in `CONTENT.demo`.
 
 ## Content
 - All copy, demo fields, comparison cases and benchmark numbers live in the `CONTENT` section of the script.
 - Anything not yet confirmed carries `class="ph-draft"` + `data-draft="..."`. Open the page with `?draft` to outline them.
-- Waitlist forms post JSON to `CONFIG.waitlistEndpoint`; while it is empty, submissions are simulated.
+- Waitlist forms on every page post JSON to `waitlistEndpoint` in `config.js`; while it is empty, submissions are simulated.

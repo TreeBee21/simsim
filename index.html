@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Simsim · Any document, read like a native</title>
-<meta name="description" content="Simsim pulls clean, verified data from scans, stamps and handwriting, in English, Arabic and beyond. Join the early access waitlist.">
+<title>Simsim · Any document, read like an expert</title>
+<meta name="description" content="Simsim reads complex financial documents, understands what the numbers mean, and gets the expert work done. For banks, insurers and procurement teams.">
 <meta name="theme-color" content="#ffffff">
-<meta property="og:title" content="Simsim · Any document, read like a native">
-<meta property="og:description" content="Document AI for the hard documents: scans, stamps, handwriting, right-to-left scripts and local calendars, turned into clean data.">
+<meta property="og:title" content="Simsim · Any document, read like an expert">
+<meta property="og:description" content="Not just extraction. Simsim reads financial documents like an analyst, then its agents do the work: credit memos, underwriting files, supplier checks.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath transform='translate(3 6) rotate(-16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%230a0a0a'/%3E%3Cpath transform='translate(13 6) rotate(16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%23737373'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,580 +21,7 @@
   setTimeout(function () { document.documentElement.classList.remove('pre'); }, 3000);
   if (/[?&#]draft\b/.test(location.search + location.hash)) document.documentElement.classList.add('draft');
 </script>
-<style>
-/* ============================================================
-   TOKENS: "Full-bleed Grid with Dividers" (PATTERN-full-bleed-grid.md)
-   Every colour, font and radius comes from that file. The rgba values are the
-   pattern's own foreground alphas (0.04 band, 0.06 grid, 0.08 divider, 0.10 marks).
-   Additions: IBM Plex Sans Arabic (Geist has no Arabic glyphs), plus Aref Ruqaa and Caveat
-   for handwriting inside the demo documents only.
-   ============================================================ */
-:root {
-  --ink: #0a0a0a;
-  --surface: #ffffff;
-  --accent: #0a0a0a;
-  --muted: #737373;
-  --hairline: #e5e5e5;
-  --grid-line: rgba(15, 15, 15, 0.06);
-  --divider: rgba(15, 15, 15, 0.08);
-  --mark: rgba(15, 15, 15, 0.10);
-  --tint: rgba(15, 15, 15, 0.04);
-  --band: repeating-linear-gradient(135deg, rgba(15, 15, 15, 0.04) 0 1px, transparent 1px 8px);
-  --content-max: 1200px;
-  --section-y: 96px;
-  --radius: 0px;
-  --t: 180ms;
-  --ease: cubic-bezier(.2, .7, .2, 1);
-
-  --font-sans: "Geist", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
-  --font-ar: "IBM Plex Sans Arabic", "Geist", sans-serif;
-  --font-ruqaa: "Aref Ruqaa", "IBM Plex Sans Arabic", serif;
-  --font-hand: "Caveat", cursive;
-
-  --noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-}
-
-/* ============================================================
-   BASE
-   ============================================================ */
-*, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 64px; }
-body {
-  margin: 0; background: var(--surface); color: var(--ink);
-  font-family: var(--font-sans); font-size: 0.9375rem; line-height: 1.55;
-  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: clip;
-}
-h1, h2 { margin: 0; font-size: clamp(2.25rem, 4vw, 3.25rem); line-height: 1; font-weight: 600; letter-spacing: -0.04em; text-wrap: balance; }
-h3 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
-p { margin: 0; text-wrap: pretty; }
-a { color: inherit; }
-button, input { font: inherit; color: inherit; }
-img, svg, canvas { display: block; }
-:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.mono { font-family: var(--font-mono); }
-[dir="rtl"] { text-align: right; }
-
-/* ============================================================
-   LAYOUT CONTRACT: full-bleed 6-column grid, 1200px content, 96px sections
-   ============================================================ */
-.page { position: relative; min-height: 100vh; }
-.grid-overlay { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, 1fr); pointer-events: none; z-index: 0; }
-.grid-overlay span { border-right: 1px solid var(--grid-line); }
-.grid-overlay span:first-child { border-left: 1px solid var(--grid-line); }
-.section { position: relative; z-index: 1; padding: var(--section-y) 0; border-bottom: 1px solid var(--divider); }
-.section--band { background-image: var(--band); }
-.wrap { max-width: var(--content-max); margin: 0 auto; padding: 0 24px; }
-.sec-h { max-width: 760px; }
-.eyebrow { display: block; font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); margin-bottom: 20px; }
-.lede { color: var(--muted); max-width: 62ch; margin-top: 18px; }
-
-/* ============================================================
-   PRIMARY CTA (one per section)
-   ============================================================ */
-.btn {
-  appearance: none; border: 0; border-radius: var(--radius); cursor: pointer; position: relative;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 11px 22px; font: 500 0.9375rem/1.2 var(--font-sans); white-space: nowrap; text-decoration: none;
-  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
-}
-.btn-primary { background: var(--accent); color: var(--surface); }
-.btn-primary:hover { opacity: .86; }
-.btn:active { transform: translateY(1px); }
-.btn .ph-bold { font-size: 15px; transition: transform var(--t) var(--ease); }
-.btn:hover .ph-arrow-right { transform: translateX(2px); }
-.btn[disabled] { cursor: progress; }
-.btn .spin { display: none; gap: 3px; }
-.btn.loading .btn-l, .btn.loading .ph-arrow-right { opacity: 0; }
-.btn.loading .spin { display: inline-flex; position: absolute; inset: 0; align-items: center; justify-content: center; }
-
-/* Seed loader (buttons, status chips) */
-.spin i, .sp i {
-  width: 6px; height: 3.4px; border-radius: 50%; background: currentColor; display: inline-block;
-  transform: rotate(-30deg); animation: seedpulse 1s linear infinite;
-}
-.spin i:nth-child(2), .sp i:nth-child(2) { animation-delay: .12s; }
-.spin i:nth-child(3), .sp i:nth-child(3) { animation-delay: .24s; }
-@keyframes seedpulse { 0%, 100% { opacity: .25; } 40% { opacity: 1; } }
-
-html.pre .hero-copy > *, html.pre .demo { opacity: 0; }
-
-/* ============================================================
-   NAV
-   ============================================================ */
-.nav {
-  position: sticky; top: 0; z-index: 50; height: 64px; display: flex; align-items: center;
-  background: rgba(255, 255, 255, .9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--divider);
-}
-.nav .wrap { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 24px; }
-.logo { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font-weight: 600; font-size: 1.125rem; letter-spacing: -0.04em; }
-.logo svg { width: 26px; height: 26px; }
-.logo .ar { font-family: var(--font-ar); font-weight: 500; font-size: 0.9375rem; color: var(--muted); letter-spacing: 0; padding-top: 2px; }
-.seed-a { fill: var(--ink); }
-.seed-b { fill: var(--muted); }
-.nav-links { display: flex; gap: 28px; }
-.nav-links a { text-decoration: none; font-size: 0.875rem; color: var(--muted); transition: color var(--t) var(--ease); }
-.nav-links a:hover { color: var(--ink); }
-.nav-cta { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 500; color: var(--ink); }
-.nav-cta .ph-bold { font-size: 13px; transition: transform var(--t) var(--ease); }
-.nav-cta:hover .ph-bold { transform: translateX(2px); }
-
-/* ============================================================
-   HERO (the page's one diagonal-stripe band)
-   ============================================================ */
-.hero-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 48px; align-items: center; }
-.hero h1 { position: relative; isolation: isolate; }
-.hero h1 .w > span { display: inline-block; }
-.hero h1 .w { display: inline-block; }
-mark.hl { background: none; color: inherit; position: relative; white-space: nowrap; --hl: 1; transition: color var(--t) var(--ease); }
-mark.hl.on { color: var(--surface); }
-mark.hl::before {
-  content: ""; position: absolute; z-index: -1; left: -.08em; right: -.08em; top: .02em; bottom: -.06em;
-  background: var(--accent); transform-origin: right center; transform: scaleX(var(--hl));
-}
-.hero-sub { font-size: 1.0625rem; color: var(--muted); max-width: 30em; margin-top: 24px; }
-.wl { margin-top: 36px; max-width: 460px; }
-.field-label { display: block; font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
-.wl-row { display: flex; background: var(--surface); border: 1px solid var(--hairline); transition: border-color var(--t) var(--ease); }
-.wl-row:focus-within { border-color: var(--ink); }
-.wl-row input { flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; font-size: 0.9375rem; padding: 0 14px; outline: none; }
-.wl-row input::placeholder { color: var(--muted); }
-.wl-row .btn { margin: -1px -1px -1px 0; }
-.wl-row[aria-invalid="true"] { border-color: var(--ink); border-style: dashed; }
-.form-msg { font-size: 0.875rem; margin-top: 10px; min-height: 21px; display: flex; align-items: center; gap: 6px; color: var(--ink); }
-.wl-done { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--ink); background: var(--surface); }
-.wl-done .ph-bold { font-size: 18px; }
-.wl-done a { font-weight: 500; }
-
-/* Doc-type strip (inside the hero) */
-.strip { margin-top: 80px; display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 24px; align-items: center; }
-.strip-label { font: 500 0.6875rem/1.6 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); }
-.marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
-.marquee-track { display: flex; width: max-content; animation: mq 80s linear infinite; }
-.marquee:hover .marquee-track { animation-play-state: paused; }
-@keyframes mq { to { transform: translateX(-50%); } }
-.dchip { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; margin-right: -1px; border: 1px solid var(--hairline); background: var(--surface); white-space: nowrap; }
-.dchip .ph { font-size: 16px; color: var(--ink); }
-.dchip .n { font-size: 0.875rem; font-weight: 500; }
-
-/* ---------- Demo stage ---------- */
-.demo { position: relative; width: 100%; }
-.demo-box { position: relative; }
-.demo-switch { display: flex; align-items: center; gap: 14px; margin-top: 20px; flex-wrap: wrap; }
-.demo-switch-l { font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); }
-.demo-switch-b { display: inline-flex; }
-.doc-invoice { transition: opacity var(--t) var(--ease), visibility var(--t) var(--ease); }
-.doc-invoice:not(.on) { opacity: 0; visibility: hidden; }
-.rows[hidden] { display: none; }
-/* English invoice: same sheet, mirrored for left-to-right */
-.doc-invoice[dir="ltr"] { font-family: var(--font-sans); transform: rotate(-1deg); }
-.doc-invoice[dir="ltr"] .inv-title { text-align: right; }
-.doc-invoice[dir="ltr"] .inv-title .t-main { font-size: 18px; letter-spacing: -0.03em; }
-.doc-invoice[dir="ltr"] .inv-table th { text-align: left; }
-.doc-invoice[dir="ltr"] .inv-table th:nth-child(n+2), .doc-invoice[dir="ltr"] .inv-table td:nth-child(n+2) { text-align: right; }
-.doc-invoice[dir="ltr"] .inv-totals { margin-right: 0; margin-left: auto; }
-.doc-invoice[dir="ltr"] .inv-hand { right: auto; left: 2px; top: 6px; font: 600 19px/1.1 var(--font-hand); transform: rotate(-2deg); }
-.doc-invoice[dir="ltr"] .inv-hand .sig { margin: 4px 0 0 20px; }
-.doc-invoice[dir="ltr"] .inv-stamp { left: auto; right: 34px; top: 16px; }
-.inv-logo-en { font: 700 10px/1 var(--font-sans); letter-spacing: -0.02em; }
-.stamp.stamp-rect { border-radius: 0; -webkit-mask-image: none; mask-image: none; width: 98px; height: 50px; padding: 6px; font: 500 7.5px/1.3 var(--font-mono); letter-spacing: .12em; transform: rotate(-8deg); }
-.stamp.stamp-rect::before { border-radius: 0; inset: 3px; }
-.stamp.stamp-rect b { font: 700 15px/1.1 var(--font-sans); letter-spacing: .14em; }
-.demo-stage { position: absolute; top: 0; left: 0; width: 680px; height: 600px; transform-origin: 0 0; }
-.demo-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 4; }
-.demo-lines path { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
-.demo-lines circle { fill: var(--ink); stroke: var(--surface); stroke-width: 2; opacity: 0; }
-
-/* ---------- Output card ---------- */
-.out-card { position: absolute; left: 0; top: 84px; width: 270px; z-index: 3; background: var(--surface); border: 1px solid var(--ink); }
-.out-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--hairline); }
-.out-title { display: flex; align-items: center; gap: 8px; font: 500 10px/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
-.out-title b { font-weight: 500; color: var(--ink); text-transform: none; letter-spacing: 0; font-size: 11px; }
-.status { display: inline-flex; align-items: center; gap: 7px; font: 500 11px/1 var(--font-mono); color: var(--ink); white-space: nowrap; }
-.status .ph-bold { font-size: 12px; }
-.status .sp { display: inline-flex; gap: 2px; }
-.rows { padding: 4px 0; }
-.row { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 6px 14px; transition: background-color var(--t) var(--ease); cursor: default; }
-.row .k { font: 500 10.5px/1.75 var(--font-mono); color: var(--muted); }
-.row .v-main { display: block; font-size: 12.8px; font-weight: 500; line-height: 1.35; min-height: 1.35em; letter-spacing: -0.01em; }
-.row .v-raw { display: block; font: 400 10.5px/1.6 var(--font-sans); color: var(--muted); text-align: left; }
-.row .v-raw.ar { font-family: var(--font-ar); }
-.row .conf { font: 500 10px/1.85 var(--font-mono); color: var(--muted); }
-.row .conf.mid { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
-.row.hot { background: var(--tint); }
-.out-foot { display: flex; align-items: center; gap: 7px; padding: 10px 14px; border-top: 1px solid var(--hairline); font: 500 10.5px/1.3 var(--font-mono); color: var(--ink); }
-.out-foot .ph-bold { font-size: 13px; }
-
-/* ---------- Paper documents (imagery, monochrome) ---------- */
-.doc { position: absolute; background: var(--surface); color: var(--ink); border: 1px solid var(--hairline); font-family: var(--font-ar); overflow: hidden; isolation: isolate; }
-.doc::before { content: ""; position: absolute; inset: 0; background-image: var(--noise); opacity: .08; mix-blend-mode: multiply; pointer-events: none; z-index: 5; }
-.f, .hw { position: relative; }
-.f { display: inline-block; }
-.box { position: absolute; inset: -3px -5px; pointer-events: none; opacity: 0; z-index: 2; }
-.box .fill { position: absolute; inset: 0; background: var(--mark); transform-origin: right center; }
-.box .c { position: absolute; width: 6px; height: 6px; border: 1.5px solid var(--ink); }
-.c.tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
-.c.tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
-.c.bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
-.c.br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
-.box.hot { outline: 1px solid var(--ink); }
-.scan { position: absolute; left: 0; right: 0; top: -60px; height: 60px; pointer-events: none; opacity: 0; z-index: 4; background: linear-gradient(to bottom, transparent, var(--tint) 60%, var(--mark)); border-bottom: 1px solid var(--ink); }
-.stamp {
-  position: absolute; width: 84px; height: 84px; border-radius: 50%; border: 2px solid var(--ink); color: var(--ink);
-  display: grid; place-items: center; text-align: center; transform: rotate(-14deg); opacity: .55;
-  font: 600 7px/1.35 var(--font-ar); padding: 10px;
-  -webkit-mask-image: radial-gradient(circle at 30% 35%, #000 55%, rgba(0, 0, 0, .55) 75%, #000 92%);
-  mask-image: radial-gradient(circle at 30% 35%, #000 55%, rgba(0, 0, 0, .55) 75%, #000 92%);
-}
-.stamp::before { content: ""; position: absolute; inset: 4px; border-radius: 50%; border: 1px solid currentColor; }
-.stamp b { display: block; font-size: 8.5px; font-weight: 700; }
-.stamp .star { font-size: 9px; letter-spacing: 2px; }
-.sig { stroke: var(--ink); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-
-/* ---------- Invoice ---------- */
-.doc-invoice { right: 0; top: 18px; width: 386px; height: 548px; padding: 22px 22px 16px; font-size: 9.6px; line-height: 1.5; transform: rotate(1.1deg); z-index: 1; }
-.inv-head { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 1.5px solid var(--ink); }
-.inv-brand { display: flex; gap: 10px; align-items: flex-start; }
-.inv-logo { width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--surface); display: grid; place-items: center; font: 700 16px/1 var(--font-ar); flex: none; }
-.inv-name { font-size: 12.4px; font-weight: 700; line-height: 1.35; }
-.inv-en { font: 500 8.6px/1.4 var(--font-sans); color: var(--muted); direction: ltr; text-align: right; }
-.inv-addr { font-size: 8.3px; color: var(--muted); }
-.inv-title { text-align: left; }
-.inv-title .t-main { font-size: 15px; font-weight: 700; line-height: 1.2; }
-.inv-title .t-sub { font: 500 7.6px/1.6 var(--font-mono); letter-spacing: .16em; color: var(--muted); }
-.inv-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 18px; padding: 12px 0; border-bottom: 1px solid var(--hairline); }
-.lbl { display: block; font-size: 8.2px; color: var(--muted); }
-.val { font-size: 10.2px; font-weight: 600; }
-.inv-buyer { padding: 10px 0 12px; display: flex; justify-content: space-between; align-items: flex-end; }
-.inv-buyer .val { font-size: 11px; }
-.inv-tablewrap { display: block; width: 100%; }
-.inv-table { width: 100%; border-collapse: collapse; font-size: 9px; }
-.inv-table th { background: var(--tint); font-weight: 600; text-align: right; padding: 5px 6px; border-bottom: 1px solid var(--hairline); }
-.inv-table td { padding: 6px; border-bottom: 1px solid var(--hairline); }
-.inv-table th:nth-child(n+2), .inv-table td:nth-child(n+2) { text-align: left; white-space: nowrap; }
-.inv-totals { width: 58%; margin-right: auto; margin-top: 10px; display: grid; gap: 3px; }
-.inv-totals > div { display: flex; justify-content: space-between; gap: 8px; }
-.inv-totals .grand { border-top: 1.5px solid var(--ink); padding-top: 5px; margin-top: 3px; font-size: 11.5px; font-weight: 700; }
-.inv-foot { position: relative; height: 104px; margin-top: 6px; }
-.inv-hand { position: absolute; right: 2px; top: 10px; font: 400 16px/1.2 var(--font-ruqaa); color: var(--ink); transform: rotate(-3deg); }
-.inv-hand .sig { width: 92px; height: 30px; margin-top: 2px; margin-right: 24px; }
-.inv-stamp { left: 34px; top: 4px; }
-.inv-bottom { position: absolute; left: 22px; right: 22px; bottom: 12px; display: flex; justify-content: space-between; font-size: 7.6px; color: var(--muted); border-top: 1px solid var(--hairline); padding-top: 6px; }
-
-/* ============================================================
-   HARD CASES: comparison tabs
-   ============================================================ */
-.tabs { display: flex; margin-top: 40px; overflow-x: auto; scrollbar-width: none; }
-.tabs::-webkit-scrollbar { display: none; }
-.tab, .chip {
-  position: relative; appearance: none; cursor: pointer; flex: none; padding: 10px 16px; margin-right: -1px;
-  border: 1px solid var(--hairline); border-radius: var(--radius); background: var(--surface); color: var(--muted);
-  font-size: 0.875rem; font-weight: 500; overflow: hidden;
-  transition: color var(--t) var(--ease), background-color var(--t) var(--ease), border-color var(--t) var(--ease);
-}
-.tab:hover, .chip:hover { color: var(--ink); }
-.tab[aria-selected="true"], .chip[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); z-index: 1; }
-.tab .prog { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--surface); opacity: .55; transform-origin: left; transform: scaleX(0); }
-.case-note { margin-top: 20px; color: var(--muted); max-width: 64ch; min-height: 3.1em; }
-.case { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: 8px; border: 1px solid var(--hairline); background: var(--surface); }
-.crop { background: var(--tint); padding: 24px; display: flex; flex-direction: column; gap: 14px; min-height: 380px; border-right: 1px solid var(--hairline); }
-.crop-label { font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); }
-.crop-paper { position: relative; flex: 1; display: grid; place-items: center; overflow: hidden; isolation: isolate; background: var(--surface); color: var(--ink); border: 1px solid var(--hairline); padding: 30px 26px; }
-.crop-paper::before { content: ""; position: absolute; inset: 0; background-image: var(--noise); opacity: .08; mix-blend-mode: multiply; pointer-events: none; }
-.outs { display: grid; grid-template-rows: auto 1fr; }
-.out { padding: 20px 24px 12px; }
-.out + .out { border-top: 1px solid var(--hairline); }
-.out-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-.out-name { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9375rem; letter-spacing: -0.02em; }
-.out-name svg { width: 18px; height: 18px; }
-.out-name .ph { font-size: 17px; color: var(--muted); }
-.verdict { display: inline-flex; align-items: center; gap: 6px; font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 8px; white-space: nowrap; }
-.verdict.bad { color: var(--ink); border: 1px solid var(--hairline); }
-.verdict.ok { color: var(--surface); background: var(--ink); }
-.kv { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 4px 16px; align-items: baseline; padding: 11px 0; border-top: 1px solid var(--hairline); }
-.kv:first-of-type { border-top: 0; }
-.kv .k { font: 500 0.75rem/1.6 var(--font-mono); color: var(--muted); }
-.kv .vw { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
-.kv .v { font-size: 1.0625rem; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; }
-.kv .v.arv { font-family: var(--font-ar); text-align: left; }
-.kv .v.iso { font-family: var(--font-ar); direction: ltr; unicode-bidi: bidi-override; }
-.kv .v.wrong { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--ink); text-decoration-thickness: 1px; }
-.kv .tick { color: var(--ink); font-size: 14px; flex: none; }
-.kv .why { grid-column: 2; display: flex; align-items: center; gap: 6px; font-size: 0.8125rem; color: var(--ink); }
-.kv .why .ph { font-size: 15px; }
-
-/* Crop contents */
-.cp { position: relative; width: 100%; }
-.cp-rtl { display: flex; align-items: center; gap: 14px; justify-content: flex-start; }
-.cp-rtl .inv-logo { width: 46px; height: 46px; font-size: 21px; }
-.cp-name { font-size: 22px; font-weight: 700; line-height: 1.4; }
-.cp-addr { font-size: 14px; color: var(--muted); }
-.cp-line { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--hairline); padding: 14px 4px; }
-.cp-line .lbl { font-size: 15px; display: inline; }
-.cp-line .num { font-size: 26px; font-weight: 700; white-space: nowrap; }
-.cp-hand { font: 400 30px/1.5 var(--font-ruqaa); color: var(--ink); transform: rotate(-2.5deg); }
-.cp-hand .sig { width: 150px; height: 48px; margin: 4px 30% 0 0; }
-.cp-hand-en { font: 600 34px/1.25 var(--font-hand); transform: rotate(-2deg); }
-.cp-hand-en .sig { margin: 6px 0 0 34%; }
-.cp-date { display: grid; gap: 6px; }
-.cp-date .lbl { font-size: 15px; }
-.cp-date .val { font-size: 30px; font-weight: 700; }
-.cp-stampwrap { position: relative; }
-.cp-stampwrap .stamp { width: 132px; height: 132px; font-size: 10px; left: 22px; top: -38px; padding: 16px; transform: rotate(-12deg); }
-.cp-stampwrap .stamp b { font-size: 13px; }
-.cp-stampwrap .stamp.stamp-rect { width: 150px; height: 70px; left: auto; right: 6px; top: -16px; padding: 8px; font-size: 10px; transform: rotate(-9deg); }
-.cp-stampwrap .stamp.stamp-rect b { font-size: 22px; }
-.cp-table { width: 100%; border-collapse: collapse; font-size: 15px; }
-.cp-table th { background: var(--tint); font-weight: 600; padding: 9px 10px; border-bottom: 1.5px solid var(--ink); }
-.cp-table td { padding: 10px; border-bottom: 1px solid var(--hairline); }
-.cp-table td:nth-child(n+2), .cp-table th:nth-child(n+2) { text-align: left; white-space: nowrap; }
-
-/* ============================================================
-   BENCHMARKS
-   ============================================================ */
-.bench { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 56px; margin-top: 56px; align-items: start; }
-.callout .big { font-size: clamp(4.5rem, 8vw, 7rem); font-weight: 600; letter-spacing: -0.04em; line-height: .9; font-variant-numeric: tabular-nums; display: flex; align-items: flex-start; gap: 10px; }
-.callout .big small { font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; margin-top: .9em; }
-.callout p { margin-top: 18px; color: var(--muted); max-width: 20em; }
-.chips { display: flex; flex-wrap: wrap; margin-bottom: 28px; }
-.bars { display: grid; gap: 14px; }
-.bar-row { display: grid; grid-template-columns: 200px minmax(0, 1fr) 64px; align-items: center; gap: 16px; }
-.bar-name { display: flex; align-items: center; gap: 8px; color: var(--muted); }
-.bar-name svg { width: 18px; height: 18px; }
-.bar { height: 28px; background: var(--hairline); width: 0; }
-.bar-row.me .bar-name { color: var(--ink); font-weight: 600; }
-.bar-row.me .bar { background: var(--ink); }
-.bar-val { font: 500 0.875rem/1 var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
-.bar-row.me .bar-val { color: var(--ink); }
-.bench-note { margin-top: 28px; font-size: 0.8125rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
-.bench-note .ph { font-size: 15px; margin-top: 2px; }
-
-/* ============================================================
-   HOW IT READS (pinned pipeline)
-   ============================================================ */
-/* The pinned frame is exactly as tall as its content (heading, steps, stage) and pins centred
-   below the nav, so no screen height leaves an empty band above or below it. */
-.pipe { position: relative; z-index: 1; overflow-x: clip; }
-.pipe .wrap { width: 100%; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: start; }
-.pipe-l { display: grid; gap: 32px; }
-.steps { display: grid; }
-.step { appearance: none; display: block; width: 100%; text-align: left; background: none; border: 0; border-left: 1px solid var(--hairline); cursor: pointer; padding: 10px 0 10px 20px; color: var(--muted); transition: color var(--t) var(--ease), border-color var(--t) var(--ease); }
-.step:hover { color: var(--ink); }
-.step.on { color: var(--ink); border-left: 2px solid var(--ink); padding-left: 19px; }
-.st-t { display: block; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
-.st-b { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--t) var(--ease); }
-.st-b > span { overflow: hidden; font-size: 0.9375rem; color: var(--muted); max-width: 26em; }
-.step.on .st-b { grid-template-rows: 1fr; }
-.step.on .st-b > span { padding-top: 6px; }
-.p-wrap { position: relative; height: 620px; }
-.p-stage { position: absolute; top: 0; left: 0; width: 600px; height: 620px; transform-origin: 0 0; }
-
-.p-doc { right: 0; top: 64px; width: 360px; height: 486px; padding: 24px 24px 18px; font-family: var(--font-ar); font-size: 10.5px; line-height: 1.6; z-index: 1; }
-.p-dirt { position: absolute; inset: 0; background: var(--ink); opacity: 0; z-index: 6; pointer-events: none; }
-.p-shade { position: absolute; inset: 0; background: linear-gradient(118deg, var(--ink), transparent 55%, transparent 75%, var(--ink)); opacity: 0; z-index: 6; pointer-events: none; }
-.p-noise { position: absolute; inset: 0; background-image: var(--noise); background-size: 140px; z-index: 6; opacity: 0; mix-blend-mode: multiply; pointer-events: none; }
-.ld-head { text-align: center; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 3px double var(--ink); display: block; }
-.ld-title { font-size: 17px; font-weight: 700; line-height: 1.3; }
-.ld-sub { font: 500 8.5px/1.4 var(--font-mono); letter-spacing: .16em; color: var(--muted); text-transform: uppercase; }
-.ld-rows { display: grid; gap: 9px; }
-.ld-row { display: flex; align-items: baseline; gap: 6px; border-bottom: 1px dotted var(--muted); padding-bottom: 3px; white-space: nowrap; }
-.ld-l { font-size: 10px; color: var(--muted); font-weight: 600; }
-.hw { display: inline-block; font: 400 15px/1.15 var(--font-ruqaa); color: var(--ink); }
-.ld-clause { margin-top: 14px; font-size: 9.3px; line-height: 1.75; color: var(--muted); display: block; }
-.ld-sigs { display: flex; justify-content: space-between; margin-top: 16px; }
-.ld-sigs > div { width: 44%; text-align: center; }
-.ld-sigs .sigwrap { display: inline-block; position: relative; }
-.ld-sigs .sig { width: 96px; height: 34px; margin: 4px auto 0; }
-.ld-stamp { left: 96px; bottom: 22px; width: 78px; height: 78px; transform: rotate(10deg); }
-.reg { position: absolute; inset: -4px -6px; border: 1px solid var(--ink); background: var(--tint); pointer-events: none; z-index: 3; opacity: 0; }
-.reg-tag { position: absolute; top: -9px; left: -1px; font: 500 7.5px/1 var(--font-mono); letter-spacing: .1em; color: var(--surface); background: var(--ink); padding: 2px 4px; white-space: nowrap; direction: ltr; }
-.reg.r-hand { border-style: dashed; }
-.reg.r-sig { border-style: dotted; }
-.reg.r-text { border-color: var(--muted); }
-.p-scan { position: absolute; left: 0; right: 0; top: -14%; height: 14%; z-index: 4; opacity: 0; pointer-events: none; background: linear-gradient(to bottom, transparent, var(--mark)); border-bottom: 1px solid var(--ink); }
-
-.p-chips { position: absolute; left: 14px; top: 92px; display: grid; gap: 8px; z-index: 5; }
-.pchip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--surface); border: 1px solid var(--ink); font: 500 11px/1 var(--font-mono); white-space: nowrap; justify-self: start; }
-.p-rows { position: absolute; left: 0; top: 70px; width: 236px; display: grid; gap: 8px; z-index: 5; }
-.prow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 12px; background: var(--surface); border: 1px solid var(--hairline); }
-.prow .k { display: block; font: 500 10.5px/1.3 var(--font-mono); color: var(--muted); }
-.prow .v { display: block; font-size: 13px; font-weight: 500; line-height: 1.3; min-height: 1.3em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.prow .st { position: relative; width: 78px; height: 22px; }
-.prow .st > span { position: absolute; right: 0; top: 0; height: 22px; display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; font: 500 10.5px/1 var(--font-mono); white-space: nowrap; }
-.st .s-wait { color: var(--muted); background: var(--tint); }
-.st .s-ok { color: var(--ink); background: var(--tint); opacity: 0; }
-.st .s-rev { color: var(--ink); background: var(--surface); border: 1px dashed var(--ink); opacity: 0; }
-.p-math { position: absolute; left: 0; top: 494px; width: 236px; z-index: 5; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--ink); background: var(--surface); font: 500 11px/1.35 var(--font-mono); }
-.p-math .ph-bold { font-size: 15px; flex: none; }
-.p-json { position: absolute; left: 50px; top: 118px; width: 500px; z-index: 6; background: var(--ink); color: var(--surface); padding: 18px 22px 20px; font: 400 12.5px/1.75 var(--font-mono); }
-.p-json .jh { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 11px; letter-spacing: .08em; padding-bottom: 10px; margin-bottom: 8px; border-bottom: 1px solid var(--muted); }
-.p-json .jh b { color: var(--surface); font-weight: 500; }
-.p-json .jl { white-space: pre; }
-.p-json .jk { color: var(--muted); }
-.p-json .js { color: var(--surface); }
-.p-json .jn { color: var(--hairline); }
-.p-dest { position: absolute; left: 50px; top: 418px; width: 500px; display: grid; grid-template-columns: repeat(4, 1fr); z-index: 6; }
-.dest { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 8px; margin-right: -1px; border: 1px solid var(--hairline); background: var(--surface); font-size: 0.8125rem; font-weight: 500; }
-.dest .ph { font-size: 20px; color: var(--ink); }
-
-/* ============================================================
-   SECURITY (cells share hairlines, like the page grid)
-   ============================================================ */
-.bento { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: 56px; border-top: 1px solid var(--hairline); border-left: 1px solid var(--hairline); }
-.cell { position: relative; overflow: hidden; border-right: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); background: var(--surface); padding: 28px; min-height: 320px; display: flex; flex-direction: column; isolation: isolate; }
-.cell h3 { font-size: 1.25rem; }
-.cell p { color: var(--muted); margin-top: 8px; max-width: 34em; }
-.c1 { grid-column: span 4; background: var(--ink); color: var(--surface); border-color: var(--ink); }
-.c1 p { color: var(--hairline); }
-.c1 h3, .c1 p { width: fit-content; max-width: 100%; }
-.c2 { grid-column: span 2; }
-.c3, .c4 { grid-column: span 3; }
-.c1-stip { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
-.deploy { position: relative; margin-top: auto; padding-top: 28px; display: grid; max-width: 440px; }
-.dep { position: relative; z-index: 1; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px 14px; }
-.dep .ph { font-size: 20px; color: var(--muted); transition: color var(--t) var(--ease); }
-.dep b { display: block; font-weight: 500; font-size: 0.9375rem; }
-.dep span { display: block; font-size: 0.8125rem; color: var(--muted); }
-.dep.on .ph { color: var(--surface); }
-.dep-ind { position: absolute; left: 0; right: 0; top: 28px; height: 64px; border: 1px solid var(--muted); z-index: 0; }
-.zero { margin-top: auto; padding-top: 24px; font-size: 8rem; font-weight: 600; line-height: .8; letter-spacing: -0.04em; }
-.zero-cap { font-size: 0.8125rem; color: var(--muted); margin-top: 12px; max-width: 16em; }
-.trail { margin-top: auto; padding-top: 26px; display: grid; }
-.trail-top { font: 500 0.75rem/1 var(--font-mono); padding: 8px 10px; background: var(--tint); border: 1px solid var(--hairline); justify-self: start; margin-bottom: 14px; }
-.tr { position: relative; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 7px 0; font-size: 0.875rem; }
-.tr::before { content: ""; position: absolute; left: 10.5px; top: 26px; bottom: -8px; width: 1px; background: var(--hairline); }
-.tr:last-child::before { display: none; }
-.tr .ph { font-size: 18px; color: var(--muted); background: var(--surface); position: relative; }
-.tr .ph.ok { color: var(--ink); }
-.tr .mono { font-size: 0.75rem; color: var(--muted); margin-left: 6px; }
-.feats { margin-top: auto; padding-top: 24px; display: flex; flex-wrap: wrap; gap: 8px; }
-.feat { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--hairline); background: var(--surface); font-size: 0.8125rem; }
-.feat .ph { font-size: 15px; color: var(--ink); }
-
-/* ============================================================
-   WAITLIST
-   ============================================================ */
-.seeds { position: relative; height: clamp(140px, 28vw, 360px); margin: 0 auto 48px; touch-action: pan-y; }
-.seeds canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.cta-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 56px; align-items: start; }
-.form-card { background: var(--surface); border: 1px solid var(--hairline); padding: 28px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.fld { display: grid; gap: 10px; }
-.fld.full { grid-column: 1 / -1; }
-.fld > label, .fld > legend { font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); padding: 0; }
-.fld legend { margin-bottom: 10px; }
-.fld .req { color: var(--muted); }
-.inp { height: 44px; width: 100%; border: 1px solid var(--hairline); border-radius: var(--radius); background: var(--surface); padding: 0 12px; font-size: 0.9375rem; outline: none; transition: border-color var(--t) var(--ease); }
-.inp::placeholder { color: var(--muted); }
-.inp:focus { border-color: var(--ink); }
-.inp[aria-invalid="true"] { border-color: var(--ink); border-style: dashed; }
-fieldset.fld { border: 0; margin: 0; padding: 0; min-width: 0; display: block; }
-.opts { display: flex; flex-wrap: wrap; gap: 8px; }
-.opt { position: relative; }
-.opt input { position: absolute; opacity: 0; pointer-events: none; }
-.opt span { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid var(--hairline); font-size: 0.8125rem; cursor: pointer; user-select: none; transition: background-color var(--t) var(--ease), color var(--t) var(--ease), border-color var(--t) var(--ease); }
-.opt span:hover { border-color: var(--ink); }
-.opt span .ph-bold { display: none; font-size: 12px; }
-.opt input:checked + span { background: var(--ink); color: var(--surface); border-color: var(--ink); }
-.opt input:checked + span .ph-bold { display: inline-block; }
-.opt input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
-.form-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
-.form-foot .form-msg { margin: 0; }
-.done-panel { display: none; padding: 4px 0; }
-.form-card.is-done form { display: none; }
-.form-card.is-done .done-panel { display: block; }
-.done-panel .ph-bold { font-size: 24px; }
-.done-panel h3 { font-size: 1.5rem; letter-spacing: -0.04em; margin-top: 14px; }
-.done-panel p { color: var(--muted); margin-top: 8px; }
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
-.foot { position: relative; z-index: 1; padding: 32px 0 40px; font-size: 0.8125rem; color: var(--muted); }
-.foot .wrap { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
-.foot-l { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.foot .logo { color: var(--ink); }
-.foot-links { display: flex; gap: 22px; }
-.foot-links a { text-decoration: none; transition: color var(--t) var(--ease); }
-.foot-links a:hover { color: var(--ink); }
-
-/* ============================================================
-   DRAFT MODE (?draft): outlines everything that still needs confirming
-   ============================================================ */
-html.draft .ph-draft { outline: 1px dashed var(--ink); outline-offset: 3px; }
-.draft-chip { display: none; }
-html.draft .draft-chip { display: flex; position: fixed; left: 16px; bottom: 16px; z-index: 90; align-items: center; gap: 8px; padding: 10px 14px; background: var(--ink); color: var(--surface); font: 500 0.6875rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
-html.draft [data-draft] { position: relative; }
-html.draft [data-draft]:hover::after {
-  content: attr(data-draft); position: absolute; z-index: 95; left: 0; top: calc(100% + 8px); width: max-content; max-width: 260px;
-  background: var(--ink); color: var(--surface); font: 500 11px/1.4 var(--font-mono); padding: 7px 9px; white-space: normal; text-align: left; direction: ltr; letter-spacing: 0; text-transform: none;
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-@media (max-width: 1080px) {
-  .hero-grid { grid-template-columns: 1fr; gap: 48px; }
-  .bench, .cta-grid { grid-template-columns: 1fr; gap: 36px; }
-  .pipe .wrap { gap: 28px; }
-}
-@media (max-width: 900px) {
-  .nav-links { display: none; }
-  .case { grid-template-columns: 1fr; }
-  .crop { min-height: 260px; border-right: 0; border-bottom: 1px solid var(--hairline); }
-  .c1, .c2, .c3, .c4 { grid-column: span 6; }
-  .strip { grid-template-columns: 1fr; gap: 14px; margin-top: 56px; }
-}
-@media (max-width: 767px) {
-  .grid-overlay { grid-template-columns: repeat(2, 1fr); }
-  .grid-overlay span:nth-child(n+3) { display: none; }
-}
-@media (max-width: 760px) {
-  .pipe .wrap { grid-template-columns: 1fr; gap: 20px; }
-  .pipe-l { display: contents; }
-  .pipe .sec-h { order: 1; }
-  .pipe .lede { display: none; }
-  .p-wrap { order: 2; }
-  .steps { order: 3; }
-  .step { display: none; }
-  .step.on { display: block; }
-}
-@media (max-width: 640px) {
-  .wrap { padding: 0 16px; }
-  .bar-row { grid-template-columns: minmax(0, 1fr) 62px; gap: 8px 12px; }
-  .bar-name { grid-column: 1 / -1; }
-  .bar { height: 22px; }
-  .kv { grid-template-columns: 1fr; gap: 2px; }
-  .kv .why { grid-column: 1; }
-  .out { padding: 16px 16px 8px; }
-  .crop { padding: 16px; }
-  .cell { padding: 22px; min-height: 0; }
-  .zero { font-size: 6rem; }
-  .form-grid { grid-template-columns: 1fr; }
-  .form-card { padding: 20px; }
-  .wl-row { flex-direction: column; }
-  .wl-row input { border-bottom: 1px solid var(--hairline); }
-  .wl-row .btn { margin: 0 -1px -1px; }
-  .cp-name { font-size: 18px; }
-  .cp-line .num, .cp-date .val { font-size: 22px; }
-  .cp-hand { font-size: 24px; }
-  .cp-table { font-size: 13px; }
-}
-
-/* ============================================================
-   REDUCED MOTION
-   ============================================================ */
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .marquee-track { animation: none; flex-wrap: wrap; width: auto; }
-  .marquee { -webkit-mask-image: none; mask-image: none; }
-  .marquee-track .dupe { display: none; }
-  .spin i, .sp i { animation: none; opacity: .8; }
-  * { transition-duration: 0s !important; }
-}
-</style>
+<link rel="stylesheet" href="site.css">
 </head>
 <body>
 <div class="page">
@@ -620,9 +47,10 @@ html.draft [data-draft]:hover::after {
       <span>simsim</span><span class="ar" lang="ar">سمسم</span>
     </a>
     <nav class="nav-links" aria-label="Sections">
+      <a class="keep" href="use-cases.html">Use cases</a>
       <a href="#why">Hard cases</a>
       <a href="#benchmarks">Benchmarks</a>
-      <a href="#how">How it reads</a>
+      <a href="#how">How it works</a>
       <a href="#security">Security</a>
     </nav>
     <a class="nav-cta" href="#waitlist">Join waitlist<i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
@@ -635,15 +63,16 @@ html.draft [data-draft]:hover::after {
 <section class="section section--band hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <h1 aria-label="Any document, read like a native.">
-        <mark class="hl on"><span class="w"><span>Any</span></span></mark>
+      <span class="eyebrow">For banks, insurers and procurement teams</span>
+      <h1 aria-label="Any document, read like an expert.">
+        <span class="w"><span>Any</span></span>
         <span class="w"><span>document,</span></span>
         <span class="w"><span>read</span></span>
         <span class="w"><span>like</span></span>
-        <span class="w"><span>a</span></span>
-        <span class="w"><span>native.</span></span>
+        <span class="w"><span>an</span></span>
+        <mark class="hl on"><span class="w"><span>expert</span></span></mark><span class="w"><span>.</span></span>
       </h1>
-      <p class="hero-sub">Simsim pulls clean, verified data from scans, stamps and handwriting, in English, Arabic and beyond.</p>
+      <p class="hero-sub">Simsim reads complex financial documents, understands what the numbers mean, and gets the expert work done.</p>
       <form class="wl" id="wl-hero" novalidate>
         <label class="field-label" for="hero-email">Work email</label>
         <div class="wl-row">
@@ -657,109 +86,98 @@ html.draft [data-draft]:hover::after {
       </form>
     </div>
 
-    <figure class="demo" id="demo" aria-label="Animated example: Simsim reads an English and an Arabic invoice and returns structured fields." style="margin:0">
+    <figure class="demo" id="demo" aria-label="Animated example: Simsim reads an income statement and an Arabic bank statement, then flags the risks a credit analyst would." style="margin:0">
       <div class="demo-box" style="height:600px">
       <div class="demo-stage">
 
         <!-- Output card (rows are generated from CONTENT.demo) -->
         <div class="out-card" aria-hidden="true">
           <div class="out-head">
-            <span class="out-title">extract <b class="out-type"></b></span>
+            <span class="out-title">analyse <b class="out-type"></b></span>
             <span class="status"></span>
           </div>
           <div class="out-foot"><i class="ph-bold ph-check-circle"></i><span class="out-foot-t"></span></div>
         </div>
 
-        <!-- English source document (fictional company) -->
-        <div class="doc doc-invoice on" data-doc="en" dir="ltr" lang="en" aria-hidden="true">
+        <!-- English source: income statement with notes and a chart (fictional company) -->
+        <div class="doc doc-sheet doc-fs on" data-doc="fs" dir="ltr" lang="en" aria-hidden="true">
           <div class="scan"></div>
-          <div class="inv-head">
-            <div class="inv-brand">
-              <div class="inv-logo inv-logo-en">H&amp;P</div>
-              <div>
-                <div class="inv-name f" data-f="seller">Harbour &amp; Pine Trading Ltd</div>
-                <div class="inv-addr">Unit 4, Wharfside Park, Leeds LS10 1PZ</div>
-                <div class="inv-addr">VAT GB 284 6153 07</div>
-              </div>
+          <div class="fs-head">
+            <div class="fs-co">Halden Freight Holdings plc</div>
+            <div class="fs-title">Consolidated statement of profit or loss</div>
+            <div class="fs-sub">Year ended 31 December 2024, £'000</div>
+          </div>
+          <table class="fs-table">
+            <thead><tr><th></th><th>Note</th><th>2024</th><th>2023</th></tr></thead>
+            <tbody>
+              <tr><td>Revenue</td><td>3</td><td><span class="f" data-f="rev">48,210</span></td><td>42,960</td></tr>
+              <tr><td>Cost of sales</td><td></td><td>(31,874)</td><td>(27,402)</td></tr>
+              <tr class="sum"><td>Gross profit</td><td></td><td>16,336</td><td>15,558</td></tr>
+              <tr><td>Administrative expenses</td><td></td><td>(9,012)</td><td>(8,145)</td></tr>
+              <tr><td>Other operating income</td><td>5</td><td>2,140</td><td>310</td></tr>
+              <tr class="sum"><td>Operating profit</td><td></td><td><span class="f" data-f="op">9,464</span></td><td>7,723</td></tr>
+              <tr><td>Finance costs</td><td>7</td><td><span class="f" data-f="fin">(3,880)</span></td><td>(2,215)</td></tr>
+              <tr class="sum"><td>Profit before tax</td><td></td><td>5,584</td><td>5,508</td></tr>
+              <tr><td>Taxation</td><td>8</td><td>(1,396)</td><td>(1,322)</td></tr>
+              <tr class="total"><td><span class="f" data-f="pfy">Profit for the year</span></td><td></td><td>4,188</td><td>4,186</td></tr>
+            </tbody>
+          </table>
+          <div class="fs-lower">
+            <div class="fs-chart f" data-f="chart">
+              <div class="fs-chart-t">Operating margin, %</div>
+              <svg viewBox="0 -4 140 60" aria-hidden="true">
+                <line x1="0" y1="42.5" x2="140" y2="42.5"/>
+                <rect x="6" y="25.2" width="18" height="16.8"/><rect x="33" y="18.8" width="18" height="23.2"/><rect x="60" y="14.8" width="18" height="27.2"/><rect x="87" y="18" width="18" height="24"/><rect class="cur" x="114" y="5.2" width="18" height="36.8"/>
+                <text x="15" y="22.4">17.1</text><text x="42" y="16">17.9</text><text x="69" y="12">18.4</text><text x="96" y="15.2">18.0</text><text x="123" y="2.4">19.6</text>
+                <text x="15" y="51">2020</text><text x="42" y="51">2021</text><text x="69" y="51">2022</text><text x="96" y="51">2023</text><text x="123" y="51">2024</text>
+              </svg>
             </div>
-            <div class="inv-title"><div class="t-main">Invoice</div><div class="t-sub">TAX INVOICE</div></div>
+            <div class="fs-notes">
+              <div class="fs-notes-t">Notes (extract)</div>
+              <p><b>5</b><span class="f" data-f="n5">Other operating income includes a non-recurring gain of £1,920k on the sale of the Felixstowe depot.</span></p>
+              <p><b>7</b><span class="f" data-f="n7">Finance costs rose after a £22.0m revolving facility was drawn in March 2024 at SONIA + 3.25%.</span></p>
+            </div>
           </div>
-          <div class="inv-meta">
-            <div><span class="lbl">Invoice no.</span><span class="val f" data-f="invoice_no">HP-20418</span></div>
-            <div><span class="lbl">Date</span><span class="val f" data-f="issue_date">14 March 2025</span></div>
-            <div><span class="lbl">Due</span><span class="val">13 April 2025</span></div>
-            <div><span class="lbl">Terms</span><span class="val">30 days, bank transfer</span></div>
-          </div>
-          <div class="inv-buyer">
-            <div><span class="lbl">Bill to</span><span class="val f" data-f="buyer">Northgate Builders Ltd</span></div>
-            <span class="lbl">Bradford BD1 4QT</span>
-          </div>
-          <div class="inv-tablewrap f" data-f="line_items">
-            <table class="inv-table">
-              <thead><tr><th>Description</th><th>Qty</th><th>Unit price</th><th>Amount</th></tr></thead>
-              <tbody>
-                <tr><td>Portland cement, 25 kg bag</td><td>120</td><td>£6.40</td><td>£768.00</td></tr>
-                <tr><td>Rebar 12 mm, per tonne</td><td>3</td><td>£640.00</td><td>£1,920.00</td></tr>
-                <tr><td>Washed sharp sand, per m³</td><td>40</td><td>£38.50</td><td>£1,540.00</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="inv-totals">
-            <div><span>Subtotal</span><span>£4,228.00</span></div>
-            <div><span>VAT (20%)</span><span>£845.60</span></div>
-            <div class="grand"><span>Total due</span><span class="f" data-f="total">£5,073.60</span></div>
-          </div>
-          <div class="inv-foot">
-            <div class="inv-hand"><span class="f" data-f="note">Received in full, J. Okafor</span><svg class="sig"><use href="#sig-b"/></svg></div>
-            <div class="stamp stamp-rect inv-stamp f" data-f="seal"><div><b>PAID</b>18 MAR 2025</div></div>
-          </div>
-          <div class="inv-bottom"><span>Thank you for your business</span><span>Company no. 09284716</span></div>
+          <div class="inv-bottom"><span>Annual report 2024</span><span>Page 41</span></div>
         </div>
 
-        <!-- Arabic source document (fictional company) -->
-        <div class="doc doc-invoice" data-doc="ar" dir="rtl" lang="ar" aria-hidden="true">
+        <!-- Arabic source: bank statement from a loan application (fictional bank and customer) -->
+        <div class="doc doc-sheet doc-bs" data-doc="bs" dir="rtl" lang="ar" aria-hidden="true">
           <div class="scan"></div>
           <div class="inv-head">
             <div class="inv-brand">
-              <div class="inv-logo">ن</div>
+              <div class="inv-logo">ج</div>
               <div>
-                <div class="inv-name f" data-f="seller">شركة النور للتجارة ش.م.م</div>
-                <div class="inv-en">Al Noor Trading LLC</div>
-                <div class="inv-addr">ص.ب ١٢٣، الرمز البريدي ١١٢، روي، مسقط</div>
+                <div class="inv-name">بنك الجسر</div>
+                <div class="inv-en">Al Jisr Bank</div>
               </div>
             </div>
-            <div class="inv-title"><div class="t-main">فاتورة ضريبية</div><div class="t-sub">TAX INVOICE</div></div>
+            <div class="inv-title"><div class="t-main">كشف حساب</div><div class="t-sub">ACCOUNT STATEMENT</div></div>
           </div>
           <div class="inv-meta">
-            <div><span class="lbl">رقم الفاتورة</span><span class="val f" data-f="invoice_no">٠٤١٨</span></div>
-            <div><span class="lbl">التاريخ</span><span class="val f" data-f="issue_date">١٤ رمضان ١٤٤٦هـ</span></div>
-            <div><span class="lbl">الرقم الضريبي للمورد</span><span class="val" style="font-family:var(--font-mono);font-size:9.4px">OM1100234567</span></div>
-            <div><span class="lbl">طريقة الدفع</span><span class="val">تحويل بنكي</span></div>
+            <div><span class="lbl">اسم العميل</span><span class="val f" data-f="holder">مؤسسة الحارثي للمقاولات</span></div>
+            <div><span class="lbl">رقم الحساب</span><span class="val" dir="ltr" style="font-family:var(--font-mono);font-size:9px;unicode-bidi:isolate">0401 2274 9381 01</span></div>
+            <div><span class="lbl">الفترة</span><span class="val f" data-f="period">من ١ يناير إلى ٣١ مارس ٢٠٢٥</span></div>
+            <div><span class="lbl">العملة</span><span class="val">ريال عُماني</span></div>
           </div>
-          <div class="inv-buyer">
-            <div><span class="lbl">فاتورة إلى</span><span class="val f" data-f="buyer">مؤسسة الحارثي للمقاولات</span></div>
-            <span class="lbl">السيب، مسقط</span>
-          </div>
-          <div class="inv-tablewrap f" data-f="line_items">
-            <table class="inv-table">
-              <thead><tr><th>البيان</th><th>الكمية</th><th>سعر الوحدة</th><th>المجموع</th></tr></thead>
-              <tbody>
-                <tr><td>أسمنت بورتلاندي (كيس ٥٠ كغ)</td><td>١٢٠</td><td>١٫٨٥٠</td><td>٢٢٢٫٠٠٠</td></tr>
-                <tr><td>حديد تسليح ١٢ مم (طن)</td><td>٣</td><td>٢٤٥٫٠٠٠</td><td>٧٣٥٫٠٠٠</td></tr>
-                <tr><td>رمل مغسول (متر مكعب)</td><td>٤٠</td><td>٤٫٥٠٠</td><td>١٨٠٫٠٠٠</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="inv-totals">
-            <div><span>المجموع الفرعي</span><span>١٬١٣٧٫٠٠٠</span></div>
-            <div><span>ضريبة القيمة المضافة (٥٪)</span><span>٥٦٫٨٥٠</span></div>
-            <div class="grand"><span>الإجمالي</span><span class="f" data-f="total">١٬١٩٣٫٨٥٠ ر.ع.</span></div>
-          </div>
+          <table class="inv-table bs-table">
+            <thead><tr><th>التاريخ</th><th>البيان</th><th>مدين</th><th>دائن</th><th>الرصيد</th></tr></thead>
+            <tbody>
+              <tr><td>٠١/٠١</td><td>رصيد افتتاحي</td><td></td><td></td><td>٦٠٬٦١٠٫٥٠٠</td></tr>
+              <tr><td>٠٥/٠١</td><td><span class="f" data-f="sal">تحويل رواتب الموظفين</span></td><td>١٢٬٤٠٠٫٠٠٠</td><td></td><td>٤٨٬٢١٠٫٥٠٠</td></tr>
+              <tr><td>١٢/٠١</td><td><span class="f" data-f="gov">دفعة وزارة الإسكان، مستخلص ٧</span></td><td></td><td>٦٥٬٠٠٠٫٠٠٠</td><td>١١٣٬٢١٠٫٥٠٠</td></tr>
+              <tr><td>٠٣/٠٢</td><td><span class="f" data-f="chq">شيك مرتجع ٤٤١٨، رصيد غير كافٍ</span></td><td>٨٬٧٥٠٫٠٠٠</td><td></td><td>١٠٤٬٤٦٠٫٥٠٠</td></tr>
+              <tr><td>١٥/٠٢</td><td><span class="f" data-f="cash">إيداع نقدي</span></td><td></td><td>٣٠٬٠٠٠٫٠٠٠</td><td>١٣٤٬٤٦٠٫٥٠٠</td></tr>
+              <tr><td>٢٨/٠٢</td><td>قسط تمويل سيارات</td><td>٦٬٢٠٠٫٠٠٠</td><td></td><td>١٢٨٬٢٦٠٫٥٠٠</td></tr>
+              <tr><td>٠٥/٠٣</td><td>تحويل رواتب الموظفين</td><td>١٢٬٤٠٠٫٠٠٠</td><td></td><td>١١٥٬٨٦٠٫٥٠٠</td></tr>
+            </tbody>
+          </table>
+          <div class="bs-close"><span>الرصيد الختامي</span><span class="f" data-f="closing">١١٥٬٨٦٠٫٥٠٠ ر.ع.</span></div>
           <div class="inv-foot">
-            <div class="inv-hand"><span class="f" data-f="note">استلمت البضاعة كاملة</span><svg class="sig"><use href="#sig-a"/></svg></div>
-            <div class="stamp inv-stamp f" data-f="seal"><div><b>شركة النور للتجارة</b>ش.م.م<div class="star">★ مسقط ★</div></div></div>
+            <div class="inv-hand"><span>تمت المطابقة</span><svg class="sig"><use href="#sig-a"/></svg></div>
+            <div class="stamp inv-stamp"><div><b>بنك الجسر</b>فرع روي<div class="star">★ مسقط ★</div></div></div>
           </div>
-          <div class="inv-bottom"><span>شكراً لتعاملكم معنا</span><span>س.ت ١٢٣٤٥٦٧</span></div>
+          <div class="inv-bottom"><span>كشف صادر إلكترونياً</span><span>صفحة ١ من ٣</span></div>
         </div>
 
         <svg class="demo-lines" aria-hidden="true"></svg>
@@ -768,17 +186,53 @@ html.draft [data-draft]:hover::after {
       <figcaption class="demo-switch">
         <span class="demo-switch-l">Document</span>
         <span class="demo-switch-b" role="group" aria-label="Choose example document">
-          <button type="button" class="chip" data-doc="en" aria-pressed="true">English invoice</button>
-          <button type="button" class="chip" data-doc="ar" aria-pressed="false">Arabic invoice</button>
+          <button type="button" class="chip" data-doc="fs" aria-pressed="true">Income statement</button>
+          <button type="button" class="chip" data-doc="bs" aria-pressed="false">Arabic bank statement</button>
         </span>
       </figcaption>
     </figure>
   </div>
   <div class="wrap">
     <div class="strip" role="group" aria-label="Document types">
-      <p class="strip-label">Reads the paperwork businesses run on</p>
+      <p class="strip-label">Reads the paperwork finance runs on</p>
       <div class="marquee"><div class="marquee-track" id="mq"></div></div>
     </div>
+  </div>
+</section>
+
+
+<!-- ============================== USE CASES (teaser) ============================== -->
+<section class="section" id="work">
+  <div class="wrap">
+    <div class="sec-h">
+      <span class="eyebrow">Use cases</span>
+      <h2>Not just the read. The work that follows.</h2>
+      <p class="lede">Extraction is where Simsim starts. Its agents then do the expert work your team does by hand today, and hand back a finished file.</p>
+    </div>
+    <div class="uc-list">
+      <a class="uc-row" href="use-cases.html#banking">
+        <span class="uc-ind">Banking</span>
+        <span class="uc-name">Loan origination</span>
+        <span class="uc-io"><span class="uc-k">Reads</span>Audited financials and notes, bank statements, management accounts</span>
+        <span class="uc-io"><span class="uc-k">Delivers</span>A credit memo with the risks found, ready for committee</span>
+        <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+      </a>
+      <a class="uc-row" href="use-cases.html#insurance">
+        <span class="uc-ind">Insurance</span>
+        <span class="uc-name">Commercial underwriting</span>
+        <span class="uc-io"><span class="uc-k">Reads</span>Broker submissions, financial statements, five years of loss runs</span>
+        <span class="uc-io"><span class="uc-k">Delivers</span>An underwriting file with a risk score and premium range</span>
+        <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+      </a>
+      <a class="uc-row" href="use-cases.html#procurement">
+        <span class="uc-ind">Procurement</span>
+        <span class="uc-name">Supplier due diligence</span>
+        <span class="uc-io"><span class="uc-k">Reads</span>Registrations, certificates, supplier financials, quotes and contracts</span>
+        <span class="uc-io"><span class="uc-k">Delivers</span>A supplier risk score and an approval pack</span>
+        <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+      </a>
+    </div>
+    <a class="uc-more" href="use-cases.html">See how each one works<i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
   </div>
 </section>
 
@@ -817,7 +271,7 @@ html.draft [data-draft]:hover::after {
     <div class="sec-h">
       <span class="eyebrow">Benchmarks</span>
       <h2 class="rv">Leading where documents get hard.</h2>
-      <p class="lede rv">Field-level accuracy on real business documents: invoices, statements, contracts and forms, in English, Arabic and mixed-language sets.</p>
+      <p class="lede rv">Field-level accuracy on real financial documents: statements, filings, contracts and forms, in English, Arabic and mixed-language sets.</p>
     </div>
     <div class="bench">
       <div class="callout rv">
@@ -838,8 +292,8 @@ html.draft [data-draft]:hover::after {
     <div class="wrap">
       <div class="pipe-l">
         <div class="sec-h">
-          <span class="eyebrow">How it reads</span>
-          <h2>From a crooked phone photo to data you can trust.</h2>
+          <span class="eyebrow">How it works</span>
+          <h2>From a crooked phone photo to work that’s done.</h2>
           <p class="lede">Every document goes through the same five passes. Scroll to watch a handwritten Arabic lease go through them.</p>
         </div>
         <div class="steps" id="steps">
@@ -847,7 +301,7 @@ html.draft [data-draft]:hover::after {
           <button class="step" type="button" data-i="1"><span class="st-t">Read</span><span class="st-b"><span>Finds printed text, handwriting, tables, stamps and signatures, and reads each one in the right order.</span></span></button>
           <button class="step" type="button" data-i="2"><span class="st-t">Understand</span><span class="st-b"><span>Turns marks into named fields. Dates become ISO, digits in any script become numbers, names get consistent spellings.</span></span></button>
           <button class="step" type="button" data-i="3"><span class="st-t">Verify</span><span class="st-b"><span>Checks the math and the formats. Anything uncertain goes to a reviewer instead of into your system.</span></span></button>
-          <button class="step" type="button" data-i="4"><span class="st-t">Deliver</span><span class="st-b"><span>Clean JSON over API or webhook, or straight into Excel and your ERP.</span></span></button>
+          <button class="step" type="button" data-i="4"><span class="st-t">Act</span><span class="st-b"><span>Agents take it from there: a credit memo, an underwriting file, a supplier check. Or clean JSON into your own systems.</span></span></button>
         </div>
       </div>
       <div class="p-wrap" aria-hidden="true">
@@ -894,7 +348,7 @@ html.draft [data-draft]:hover::after {
           <div class="p-dest">
             <span class="dest"><i class="ph ph-brackets-curly"></i>REST API</span>
             <span class="dest"><i class="ph ph-webhooks-logo"></i>Webhooks</span>
-            <span class="dest"><i class="ph ph-microsoft-excel-logo"></i>Excel</span>
+            <span class="dest"><i class="ph ph-robot"></i>Agents</span>
             <span class="dest"><i class="ph ph-database"></i>Your ERP</span>
           </div>
         </div>
@@ -963,7 +417,7 @@ html.draft [data-draft]:hover::after {
     <div class="cta-grid">
       <div>
         <h2 class="rv">Get early access.</h2>
-        <p class="lede rv">We're onboarding a small group of teams first. Tell us what you process and we'll reach out.</p>
+        <p class="lede rv">We're onboarding a small group of banks, insurers and procurement teams first. Tell us the work you want off your team's plate.</p>
       </div>
       <div class="form-card rv" id="form-card">
         <form id="wl-main" novalidate>
@@ -977,7 +431,7 @@ html.draft [data-draft]:hover::after {
               <input class="inp" id="m-company" name="company" type="text" autocomplete="organization" placeholder="Company name">
             </div>
             <fieldset class="fld full">
-              <legend>What do you process?</legend>
+              <legend>What work do you want done?</legend>
               <div class="opts" id="opts"></div>
             </fieldset>
           </div>
@@ -1004,7 +458,7 @@ html.draft [data-draft]:hover::after {
   <div class="wrap">
     <div class="foot-l">
       <a class="logo" href="#top" aria-label="Back to top"><svg aria-hidden="true"><use href="#mark"/></svg><span>simsim</span></a>
-      <span>Document AI for the hard ones</span>
+      <span>Document AI that gets the work done</span>
     </div>
     <div class="foot-l">
       <nav class="foot-links" aria-label="Footer">
@@ -1020,6 +474,7 @@ html.draft [data-draft]:hover::after {
 
 <div class="draft-chip" aria-hidden="true">Draft view: <b id="draft-count">0</b> items to confirm</div>
 
+<script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script>
@@ -1029,58 +484,55 @@ html.draft [data-draft]:hover::after {
 /* ============================================================
    CONFIG
    ============================================================ */
-var CONFIG = {
-  // POST target for both waitlist forms. Receives JSON { email, company, documents, source }.
-  // Leave empty to simulate success while the backend is not wired up.
-  waitlistEndpoint: ''
-};
+// Waitlist endpoint and other shared settings live in config.js (used by every page).
+var CONFIG = window.SIMSIM_CONFIG || { waitlistEndpoint: '' };
 
 /* ============================================================
    CONTENT (edit copy and data here)
    ============================================================ */
 var CONTENT = {
   docTypes: [
-    ['ph-receipt', 'Invoices'],
+    ['ph-chart-line-up', 'Financial statements'],
     ['ph-bank', 'Bank statements'],
-    ['ph-house-line', 'Lease contracts'],
-    ['ph-package', 'Customs declarations'],
+    ['ph-notebook', 'Management accounts'],
+    ['ph-handshake', 'Loan agreements'],
+    ['ph-scroll', 'Letters of credit'],
     ['ph-boat', 'Bills of lading'],
-    ['ph-shield-check', 'Insurance claims'],
-    ['ph-first-aid-kit', 'Medical reports'],
-    ['ph-money', 'Payslips'],
-    ['ph-identification-card', 'Passports and IDs'],
+    ['ph-shield-check', 'Insurance submissions'],
+    ['ph-warning-diamond', 'Loss runs'],
+    ['ph-first-aid-kit', 'Claims forms'],
+    ['ph-file-text', 'Supplier contracts'],
     ['ph-shopping-cart', 'Purchase orders'],
-    ['ph-scales', 'Court filings'],
+    ['ph-receipt', 'Invoices'],
+    ['ph-identification-card', 'KYC documents'],
     ['ph-storefront', 'Company registrations']
   ],
 
-  // Hero demo: one entry per example document, cycled in order. Fields are listed in reading
-  // order for that script; `f` matches data-f inside the document with the same data-doc id.
+  // Hero demo: one entry per example document, cycled in order. `f` matches data-f inside the
+  // document with the same data-doc id. Rows with `flag` are agent findings, not extracted fields.
   demo: [
     {
-      id: 'en', type: 'commercial_invoice', foot: 'Subtotal + 20% VAT = total',
+      id: 'fs', type: 'income_statement', done: '2 risks', foot: 'Credit memo drafted, 2 risks flagged',
       fields: [
-        { k: 'seller',     f: 'seller',     v: 'Harbour & Pine Trading',  raw: '',                         c: '0.99' },
-        { k: 'invoice_no', f: 'invoice_no', v: 'HP-20418',                raw: '',                         c: '0.99' },
-        { k: 'issue_date', f: 'issue_date', v: '2025-03-14',              raw: '14 March 2025',            c: '0.99' },
-        { k: 'buyer',      f: 'buyer',      v: 'Northgate Builders Ltd',  raw: '',                         c: '0.98' },
-        { k: 'line_items', f: 'line_items', v: '3 rows, 4,228.00',        raw: '',                         c: '0.98' },
-        { k: 'total',      f: 'total',      v: '5,073.60 GBP',            raw: '£5,073.60',                c: '0.99' },
-        { k: 'note',       f: 'note',       v: 'Received in full',        raw: 'handwritten, J. Okafor',   c: '0.94' },
-        { k: 'seal',       f: 'seal',       v: 'Paid, 18 Mar 2025',       raw: '',                         c: '0.97' }
+        { k: 'revenue',          f: 'rev',   v: '48,210',                       raw: "£'000, up 12.2% on 2023",      c: '0.99' },
+        { k: 'op_profit',        f: 'op',    v: '9,464',                        raw: 'includes note 5',               c: '0.99' },
+        { k: 'note_5',           f: 'n5',    v: 'One-off gain, 1,920',          raw: 'depot sale, non-recurring',     c: '0.97' },
+        { k: 'note_7',           f: 'n7',    v: 'New £22m facility',            raw: 'SONIA + 3.25%',                 c: '0.98' },
+        { k: 'chart',            f: 'chart', v: '19.6% in 2024',                raw: 'read from the bar chart',       c: '0.95' },
+        { k: 'risk',             f: 'pfy',   v: 'Underlying profit down 2.3%',  raw: 'after removing the note 5 gain', flag: true },
+        { k: 'risk',             f: 'fin',   v: 'Interest cover 3.5x to 1.9x',  raw: 'finance costs up 75%',          flag: true }
       ]
     },
     {
-      id: 'ar', type: 'tax_invoice', foot: 'Subtotal + 5% VAT = total',
+      id: 'bs', type: 'bank_statement', done: '2 risks', foot: 'Loan file drafted, 2 risks flagged',
       fields: [
-        { k: 'seller',     f: 'seller',     v: 'Al Noor Trading LLC',     raw: 'شركة النور للتجارة ش.م.م', c: '0.99' },
-        { k: 'invoice_no', f: 'invoice_no', v: '0418',                    raw: '٠٤١٨',                     c: '0.99' },
-        { k: 'issue_date', f: 'issue_date', v: '2025-03-14',              raw: '١٤ رمضان ١٤٤٦هـ',          c: '0.98' },
-        { k: 'buyer',      f: 'buyer',      v: 'Al Harthy Contracting',   raw: 'مؤسسة الحارثي للمقاولات',  c: '0.97' },
-        { k: 'line_items', f: 'line_items', v: '3 rows, 1,137.000',       raw: '',                         c: '0.98' },
-        { k: 'total',      f: 'total',      v: '1,193.850 OMR',           raw: '١٬١٩٣٫٨٥٠ ر.ع.',           c: '0.99' },
-        { k: 'note',       f: 'note',       v: 'Goods received in full',  raw: 'استلمت البضاعة كاملة',     c: '0.93' },
-        { k: 'seal',       f: 'seal',       v: 'Seller stamp found',      raw: '',                         c: '0.96' }
+        { k: 'holder',          f: 'holder',  v: 'Al Harthy Contracting',    raw: 'مؤسسة الحارثي للمقاولات',       c: '0.98' },
+        { k: 'period',          f: 'period',  v: 'Q1 2025',                  raw: 'من ١ يناير إلى ٣١ مارس ٢٠٢٥',    c: '0.99' },
+        { k: 'closing',         f: 'closing', v: '115,860.500 OMR',          raw: '١١٥٬٨٦٠٫٥٠٠ ر.ع.',              c: '0.99' },
+        { k: 'payroll',         f: 'sal',     v: '12,400.000 a month',       raw: 'تحويل رواتب الموظفين',          c: '0.97' },
+        { k: 'main_inflow',     f: 'gov',     v: 'Government contract',      raw: 'وزارة الإسكان، مستخلص ٧',       c: '0.96' },
+        { k: 'risk',            f: 'chq',     v: 'Customer cheque bounced',  raw: 'شيك مرتجع، رصيد غير كافٍ',      flag: true },
+        { k: 'risk',            f: 'cash',    v: 'Cash deposit, no source',  raw: '30,000.000 OMR on 15 Feb',      flag: true }
       ]
     }
   ],
@@ -1193,7 +645,7 @@ var CONTENT = {
     { k: 'rent',     v: '350.000 OMR / month' }
   ],
 
-  docOptions: ['Invoices', 'Bank statements', 'Contracts', 'IDs and KYC', 'Claims', 'Customs', 'Something else']
+  docOptions: ['Loan origination', 'Trade finance', 'Underwriting', 'Claims', 'Supplier onboarding', 'Spend analysis', 'Something else']
 };
 
 /* ============================================================
@@ -1319,9 +771,10 @@ function heroIntro(onDone) {
   if (!ANIM) { root.classList.remove('pre'); onDone(); return; }
   mark.classList.remove('on');
   G.set(mark, { '--hl': 0 });
-  G.set(['.hero h1', '.hero-sub', '.wl', '.demo'], { opacity: 0, y: 6 });
+  G.set(['.hero-copy .eyebrow', '.hero h1', '.hero-sub', '.wl', '.demo'], { opacity: 0, y: 6 });
   root.classList.remove('pre');
   G.timeline({ defaults: { ease: 'power2.out', duration: 0.2 } })
+    .to('.hero-copy .eyebrow', { opacity: 1, y: 0 }, 0)
     .to('.hero h1', { opacity: 1, y: 0 }, 0.05)
     .to('.hero-sub', { opacity: 1, y: 0 }, 0.12)
     .to('.wl', { opacity: 1, y: 0 }, 0.19)
@@ -1350,9 +803,11 @@ function initDemo() {
       var bx = h('span', 'box', '<span class="fill"></span><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>');
       fel.appendChild(bx);
       var ar = /[\u0600-\u06FF]/.test(fd.raw);
-      var row = h('div', 'row', '<span class="k">' + fd.k + '</span><span class="v"><span class="v-main"></span>' +
+      var conf = fd.flag ? '<span class="conf agent">agent</span>'
+        : '<span class="conf' + (parseFloat(fd.c) < 0.95 ? ' mid' : '') + '">' + fd.c + '</span>';
+      var row = h('div', 'row' + (fd.flag ? ' flag' : ''), '<span class="k">' + fd.k + '</span><span class="v"><span class="v-main"></span>' +
         (fd.raw ? '<span class="v-raw' + (ar ? ' ar" dir="rtl" lang="ar"' : '"') + '>' + esc(fd.raw) + '</span>' : '') +
-        '</span><span class="conf' + (parseFloat(fd.c) < 0.95 ? ' mid' : '') + '">' + fd.c + '</span>');
+        '</span>' + conf);
       rowsEl.appendChild(row);
       var path = document.createElementNS(SVGNS, 'path'); path.setAttribute('pathLength', '1'); svg.appendChild(path);
       var dot = document.createElementNS(SVGNS, 'circle'); dot.setAttribute('r', '3.2'); svg.appendChild(dot);
@@ -1416,7 +871,7 @@ function initDemo() {
   function setStatus(s) {
     status.innerHTML = s === 'reading'
       ? '<span class="sp" aria-hidden="true"><i></i><i></i><i></i></span>Reading'
-      : '<i class="ph-bold ph-check" aria-hidden="true"></i>' + docs[active].items.length + ' fields';
+      : '<i class="ph-bold ph-check" aria-hidden="true"></i>' + docs[active].D.done;
   }
 
   // Hover link between a row and its source on the page (only once the read is complete).
