@@ -1,0 +1,1891 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simsim · Arabic-first document AI</title>
+<meta name="description" content="Simsim pulls clean, verified data from Arabic and bilingual documents. Scans, stamps and handwriting included. Join the early access waitlist.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Simsim · Arabic documents, read like a native">
+<meta property="og:description" content="Document AI built for Arabic. Scans, stamps, handwriting, Hijri dates and right-to-left tables, turned into clean data.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath transform='translate(3 6) rotate(-16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%230a0a0a'/%3E%3Cpath transform='translate(13 6) rotate(16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%23737373'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<script>
+  /* Hide hero pieces until the intro animation takes over. Failsafe reveals after 3s. */
+  document.documentElement.classList.add('pre');
+  setTimeout(function () { document.documentElement.classList.remove('pre'); }, 3000);
+  if (/[?&#]draft\b/.test(location.search + location.hash)) document.documentElement.classList.add('draft');
+</script>
+<style>
+/* ============================================================
+   TOKENS: "Full-bleed Grid with Dividers" (PATTERN-full-bleed-grid.md)
+   Every colour, font and radius comes from that file. The rgba values are the
+   pattern's own foreground alphas (0.04 band, 0.06 grid, 0.08 divider, 0.10 marks).
+   One addition: Arabic companion fonts, because Geist has no Arabic glyphs.
+   ============================================================ */
+:root {
+  --ink: #0a0a0a;
+  --surface: #ffffff;
+  --accent: #0a0a0a;
+  --muted: #737373;
+  --hairline: #e5e5e5;
+  --grid-line: rgba(15, 15, 15, 0.06);
+  --divider: rgba(15, 15, 15, 0.08);
+  --mark: rgba(15, 15, 15, 0.10);
+  --tint: rgba(15, 15, 15, 0.04);
+  --band: repeating-linear-gradient(135deg, rgba(15, 15, 15, 0.04) 0 1px, transparent 1px 8px);
+  --content-max: 1200px;
+  --section-y: 96px;
+  --radius: 0px;
+  --t: 180ms;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+
+  --font-sans: "Geist", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-ar: "IBM Plex Sans Arabic", "Geist", sans-serif;
+  --font-ruqaa: "Aref Ruqaa", "IBM Plex Sans Arabic", serif;
+
+  --noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 64px; }
+body {
+  margin: 0; background: var(--surface); color: var(--ink);
+  font-family: var(--font-sans); font-size: 0.9375rem; line-height: 1.55;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: clip;
+}
+h1, h2 { margin: 0; font-size: clamp(2.25rem, 4vw, 3.25rem); line-height: 1; font-weight: 600; letter-spacing: -0.04em; text-wrap: balance; }
+h3 { margin: 0; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; }
+button, input { font: inherit; color: inherit; }
+img, svg, canvas { display: block; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.mono { font-family: var(--font-mono); }
+[dir="rtl"] { text-align: right; }
+
+/* ============================================================
+   LAYOUT CONTRACT: full-bleed 6-column grid, 1200px content, 96px sections
+   ============================================================ */
+.page { position: relative; min-height: 100vh; }
+.grid-overlay { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, 1fr); pointer-events: none; z-index: 0; }
+.grid-overlay span { border-right: 1px solid var(--grid-line); }
+.grid-overlay span:first-child { border-left: 1px solid var(--grid-line); }
+.section { position: relative; z-index: 1; padding: var(--section-y) 0; border-bottom: 1px solid var(--divider); }
+.section--band { background-image: var(--band); }
+.wrap { max-width: var(--content-max); margin: 0 auto; padding: 0 24px; }
+.sec-h { max-width: 760px; }
+.eyebrow { display: block; font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); margin-bottom: 20px; }
+.lede { color: var(--muted); max-width: 62ch; margin-top: 18px; }
+
+/* ============================================================
+   PRIMARY CTA (one per section)
+   ============================================================ */
+.btn {
+  appearance: none; border: 0; border-radius: var(--radius); cursor: pointer; position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 22px; font: 500 0.9375rem/1.2 var(--font-sans); white-space: nowrap; text-decoration: none;
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+}
+.btn-primary { background: var(--accent); color: var(--surface); }
+.btn-primary:hover { opacity: .86; }
+.btn:active { transform: translateY(1px); }
+.btn .ph-bold { font-size: 15px; transition: transform var(--t) var(--ease); }
+.btn:hover .ph-arrow-right { transform: translateX(2px); }
+.btn[disabled] { cursor: progress; }
+.btn .spin { display: none; gap: 3px; }
+.btn.loading .btn-l, .btn.loading .ph-arrow-right { opacity: 0; }
+.btn.loading .spin { display: inline-flex; position: absolute; inset: 0; align-items: center; justify-content: center; }
+
+/* Seed loader (buttons, status chips) */
+.spin i, .sp i {
+  width: 6px; height: 3.4px; border-radius: 50%; background: currentColor; display: inline-block;
+  transform: rotate(-30deg); animation: seedpulse 1s linear infinite;
+}
+.spin i:nth-child(2), .sp i:nth-child(2) { animation-delay: .12s; }
+.spin i:nth-child(3), .sp i:nth-child(3) { animation-delay: .24s; }
+@keyframes seedpulse { 0%, 100% { opacity: .25; } 40% { opacity: 1; } }
+
+html.pre .hero-copy > *, html.pre .demo { opacity: 0; }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav {
+  position: sticky; top: 0; z-index: 50; height: 64px; display: flex; align-items: center;
+  background: rgba(255, 255, 255, .9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--divider);
+}
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 24px; }
+.logo { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font-weight: 600; font-size: 1.125rem; letter-spacing: -0.04em; }
+.logo svg { width: 26px; height: 26px; }
+.logo .ar { font-family: var(--font-ar); font-weight: 500; font-size: 0.9375rem; color: var(--muted); letter-spacing: 0; padding-top: 2px; }
+.seed-a { fill: var(--ink); }
+.seed-b { fill: var(--muted); }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { text-decoration: none; font-size: 0.875rem; color: var(--muted); transition: color var(--t) var(--ease); }
+.nav-links a:hover { color: var(--ink); }
+.nav-cta { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 500; color: var(--ink); }
+.nav-cta .ph-bold { font-size: 13px; transition: transform var(--t) var(--ease); }
+.nav-cta:hover .ph-bold { transform: translateX(2px); }
+
+/* ============================================================
+   HERO (the page's one diagonal-stripe band)
+   ============================================================ */
+.hero-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 48px; align-items: center; }
+.hero h1 { position: relative; isolation: isolate; }
+.hero h1 .w > span { display: inline-block; }
+.hero h1 .w { display: inline-block; }
+mark.hl { background: none; color: inherit; position: relative; white-space: nowrap; --hl: 1; transition: color var(--t) var(--ease); }
+mark.hl.on { color: var(--surface); }
+mark.hl::before {
+  content: ""; position: absolute; z-index: -1; left: -.08em; right: -.08em; top: .02em; bottom: -.06em;
+  background: var(--accent); transform-origin: right center; transform: scaleX(var(--hl));
+}
+.hero-sub { font-size: 1.0625rem; color: var(--muted); max-width: 30em; margin-top: 24px; }
+.wl { margin-top: 36px; max-width: 460px; }
+.field-label { display: block; font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+.wl-row { display: flex; background: var(--surface); border: 1px solid var(--hairline); transition: border-color var(--t) var(--ease); }
+.wl-row:focus-within { border-color: var(--ink); }
+.wl-row input { flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; font-size: 0.9375rem; padding: 0 14px; outline: none; }
+.wl-row input::placeholder { color: var(--muted); }
+.wl-row .btn { margin: -1px -1px -1px 0; }
+.wl-row[aria-invalid="true"] { border-color: var(--ink); border-style: dashed; }
+.form-msg { font-size: 0.875rem; margin-top: 10px; min-height: 21px; display: flex; align-items: center; gap: 6px; color: var(--ink); }
+.wl-done { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--ink); background: var(--surface); }
+.wl-done .ph-bold { font-size: 18px; }
+.wl-done a { font-weight: 500; }
+
+/* Doc-type strip (inside the hero) */
+.strip { margin-top: 80px; display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 24px; align-items: center; }
+.strip-label { font: 500 0.6875rem/1.6 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); }
+.marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.marquee-track { display: flex; width: max-content; animation: mq 80s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@keyframes mq { to { transform: translateX(-50%); } }
+.dchip { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; margin-right: -1px; border: 1px solid var(--hairline); background: var(--surface); white-space: nowrap; }
+.dchip .ph { font-size: 16px; color: var(--ink); }
+.dchip .a { font: 500 0.9375rem/1 var(--font-ar); }
+.dchip .e { font-size: 0.8125rem; color: var(--muted); }
+
+/* ---------- Demo stage ---------- */
+.demo { position: relative; width: 100%; }
+.demo-stage { position: absolute; top: 0; left: 0; width: 680px; height: 600px; transform-origin: 0 0; }
+.demo-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 4; }
+.demo-lines path { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
+.demo-lines circle { fill: var(--ink); stroke: var(--surface); stroke-width: 2; opacity: 0; }
+
+/* ---------- Output card ---------- */
+.out-card { position: absolute; left: 0; top: 84px; width: 270px; z-index: 3; background: var(--surface); border: 1px solid var(--ink); }
+.out-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--hairline); }
+.out-title { display: flex; align-items: center; gap: 8px; font: 500 10px/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.out-title b { font-weight: 500; color: var(--ink); text-transform: none; letter-spacing: 0; font-size: 11px; }
+.status { display: inline-flex; align-items: center; gap: 7px; font: 500 11px/1 var(--font-mono); color: var(--ink); white-space: nowrap; }
+.status .ph-bold { font-size: 12px; }
+.status .sp { display: inline-flex; gap: 2px; }
+.rows { padding: 4px 0; }
+.row { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 6px 14px; transition: background-color var(--t) var(--ease); cursor: default; }
+.row .k { font: 500 10.5px/1.75 var(--font-mono); color: var(--muted); }
+.row .v-main { display: block; font-size: 12.8px; font-weight: 500; line-height: 1.35; min-height: 1.35em; letter-spacing: -0.01em; }
+.row .v-raw { display: block; font: 400 10.5px/1.6 var(--font-ar); color: var(--muted); text-align: left; }
+.row .conf { font: 500 10px/1.85 var(--font-mono); color: var(--muted); }
+.row .conf.mid { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+.row.hot { background: var(--tint); }
+.out-foot { display: flex; align-items: center; gap: 7px; padding: 10px 14px; border-top: 1px solid var(--hairline); font: 500 10.5px/1.3 var(--font-mono); color: var(--ink); }
+.out-foot .ph-bold { font-size: 13px; }
+
+/* ---------- Paper documents (imagery, monochrome) ---------- */
+.doc { position: absolute; background: var(--surface); color: var(--ink); border: 1px solid var(--hairline); font-family: var(--font-ar); overflow: hidden; isolation: isolate; }
+.doc::before { content: ""; position: absolute; inset: 0; background-image: var(--noise); opacity: .08; mix-blend-mode: multiply; pointer-events: none; z-index: 5; }
+.f, .hw { position: relative; }
+.f { display: inline-block; }
+.box { position: absolute; inset: -3px -5px; pointer-events: none; opacity: 0; z-index: 2; }
+.box .fill { position: absolute; inset: 0; background: var(--mark); transform-origin: right center; }
+.box .c { position: absolute; width: 6px; height: 6px; border: 1.5px solid var(--ink); }
+.c.tl { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.c.tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+.c.bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+.c.br { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+.box.hot { outline: 1px solid var(--ink); }
+.scan { position: absolute; left: 0; right: 0; top: -60px; height: 60px; pointer-events: none; opacity: 0; z-index: 4; background: linear-gradient(to bottom, transparent, var(--tint) 60%, var(--mark)); border-bottom: 1px solid var(--ink); }
+.stamp {
+  position: absolute; width: 84px; height: 84px; border-radius: 50%; border: 2px solid var(--ink); color: var(--ink);
+  display: grid; place-items: center; text-align: center; transform: rotate(-14deg); opacity: .55;
+  font: 600 7px/1.35 var(--font-ar); padding: 10px;
+  -webkit-mask-image: radial-gradient(circle at 30% 35%, #000 55%, rgba(0, 0, 0, .55) 75%, #000 92%);
+  mask-image: radial-gradient(circle at 30% 35%, #000 55%, rgba(0, 0, 0, .55) 75%, #000 92%);
+}
+.stamp::before { content: ""; position: absolute; inset: 4px; border-radius: 50%; border: 1px solid currentColor; }
+.stamp b { display: block; font-size: 8.5px; font-weight: 700; }
+.stamp .star { font-size: 9px; letter-spacing: 2px; }
+.sig { stroke: var(--ink); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Invoice ---------- */
+.doc-invoice { right: 0; top: 18px; width: 386px; height: 548px; padding: 22px 22px 16px; font-size: 9.6px; line-height: 1.5; transform: rotate(1.1deg); z-index: 1; }
+.inv-head { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 1.5px solid var(--ink); }
+.inv-brand { display: flex; gap: 10px; align-items: flex-start; }
+.inv-logo { width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--surface); display: grid; place-items: center; font: 700 16px/1 var(--font-ar); flex: none; }
+.inv-name { font-size: 12.4px; font-weight: 700; line-height: 1.35; }
+.inv-en { font: 500 8.6px/1.4 var(--font-sans); color: var(--muted); direction: ltr; text-align: right; }
+.inv-addr { font-size: 8.3px; color: var(--muted); }
+.inv-title { text-align: left; }
+.inv-title .t-ar { font-size: 15px; font-weight: 700; line-height: 1.2; }
+.inv-title .t-en { font: 500 7.6px/1.6 var(--font-mono); letter-spacing: .16em; color: var(--muted); }
+.inv-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 18px; padding: 12px 0; border-bottom: 1px solid var(--hairline); }
+.lbl { display: block; font-size: 8.2px; color: var(--muted); }
+.val { font-size: 10.2px; font-weight: 600; }
+.inv-buyer { padding: 10px 0 12px; display: flex; justify-content: space-between; align-items: flex-end; }
+.inv-buyer .val { font-size: 11px; }
+.inv-tablewrap { display: block; width: 100%; }
+.inv-table { width: 100%; border-collapse: collapse; font-size: 9px; }
+.inv-table th { background: var(--tint); font-weight: 600; text-align: right; padding: 5px 6px; border-bottom: 1px solid var(--hairline); }
+.inv-table td { padding: 6px; border-bottom: 1px solid var(--hairline); }
+.inv-table th:nth-child(n+2), .inv-table td:nth-child(n+2) { text-align: left; white-space: nowrap; }
+.inv-totals { width: 58%; margin-right: auto; margin-top: 10px; display: grid; gap: 3px; }
+.inv-totals > div { display: flex; justify-content: space-between; gap: 8px; }
+.inv-totals .grand { border-top: 1.5px solid var(--ink); padding-top: 5px; margin-top: 3px; font-size: 11.5px; font-weight: 700; }
+.inv-foot { position: relative; height: 104px; margin-top: 6px; }
+.inv-hand { position: absolute; right: 2px; top: 10px; font: 400 16px/1.2 var(--font-ruqaa); color: var(--ink); transform: rotate(-3deg); }
+.inv-hand .sig { width: 92px; height: 30px; margin-top: 2px; margin-right: 24px; }
+.inv-stamp { left: 34px; top: 4px; }
+.inv-bottom { position: absolute; left: 22px; right: 22px; bottom: 12px; display: flex; justify-content: space-between; font-size: 7.6px; color: var(--muted); border-top: 1px solid var(--hairline); padding-top: 6px; }
+
+/* ============================================================
+   WHY ARABIC: comparison cases
+   ============================================================ */
+.tabs { display: flex; margin-top: 40px; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab, .chip {
+  position: relative; appearance: none; cursor: pointer; flex: none; padding: 10px 16px; margin-right: -1px;
+  border: 1px solid var(--hairline); border-radius: var(--radius); background: var(--surface); color: var(--muted);
+  font-size: 0.875rem; font-weight: 500; overflow: hidden;
+  transition: color var(--t) var(--ease), background-color var(--t) var(--ease), border-color var(--t) var(--ease);
+}
+.tab:hover, .chip:hover { color: var(--ink); }
+.tab[aria-selected="true"], .chip[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); z-index: 1; }
+.tab .prog { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--surface); opacity: .55; transform-origin: left; transform: scaleX(0); }
+.case-note { margin-top: 20px; color: var(--muted); max-width: 64ch; min-height: 3.1em; }
+.case { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: 8px; border: 1px solid var(--hairline); background: var(--surface); }
+.crop { background: var(--tint); padding: 24px; display: flex; flex-direction: column; gap: 14px; min-height: 380px; border-right: 1px solid var(--hairline); }
+.crop-label { font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); }
+.crop-paper { position: relative; flex: 1; display: grid; place-items: center; overflow: hidden; isolation: isolate; background: var(--surface); color: var(--ink); border: 1px solid var(--hairline); padding: 30px 26px; }
+.crop-paper::before { content: ""; position: absolute; inset: 0; background-image: var(--noise); opacity: .08; mix-blend-mode: multiply; pointer-events: none; }
+.outs { display: grid; grid-template-rows: auto 1fr; }
+.out { padding: 20px 24px 12px; }
+.out + .out { border-top: 1px solid var(--hairline); }
+.out-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.out-name { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9375rem; letter-spacing: -0.02em; }
+.out-name svg { width: 18px; height: 18px; }
+.out-name .ph { font-size: 17px; color: var(--muted); }
+.verdict { display: inline-flex; align-items: center; gap: 6px; font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 8px; white-space: nowrap; }
+.verdict.bad { color: var(--ink); border: 1px solid var(--hairline); }
+.verdict.ok { color: var(--surface); background: var(--ink); }
+.kv { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 4px 16px; align-items: baseline; padding: 11px 0; border-top: 1px solid var(--hairline); }
+.kv:first-of-type { border-top: 0; }
+.kv .k { font: 500 0.75rem/1.6 var(--font-mono); color: var(--muted); }
+.kv .vw { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.kv .v { font-size: 1.0625rem; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; }
+.kv .v.arv { font-family: var(--font-ar); text-align: left; }
+.kv .v.iso { font-family: var(--font-ar); direction: ltr; unicode-bidi: bidi-override; }
+.kv .v.wrong { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--ink); text-decoration-thickness: 1px; }
+.kv .tick { color: var(--ink); font-size: 14px; flex: none; }
+.kv .why { grid-column: 2; display: flex; align-items: center; gap: 6px; font-size: 0.8125rem; color: var(--ink); }
+.kv .why .ph { font-size: 15px; }
+
+/* Crop contents */
+.cp { position: relative; width: 100%; }
+.cp-rtl { display: flex; align-items: center; gap: 14px; justify-content: flex-start; }
+.cp-rtl .inv-logo { width: 46px; height: 46px; font-size: 21px; }
+.cp-name { font-size: 22px; font-weight: 700; line-height: 1.4; }
+.cp-addr { font-size: 14px; color: var(--muted); }
+.cp-line { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--hairline); padding: 14px 4px; }
+.cp-line .lbl { font-size: 15px; display: inline; }
+.cp-line .num { font-size: 26px; font-weight: 700; white-space: nowrap; }
+.cp-hand { font: 400 30px/1.5 var(--font-ruqaa); color: var(--ink); transform: rotate(-2.5deg); }
+.cp-hand .sig { width: 150px; height: 48px; margin: 4px 30% 0 0; }
+.cp-date { display: grid; gap: 6px; }
+.cp-date .lbl { font-size: 15px; }
+.cp-date .val { font-size: 30px; font-weight: 700; }
+.cp-stampwrap { position: relative; }
+.cp-stampwrap .stamp { width: 132px; height: 132px; font-size: 10px; left: 22px; top: -38px; padding: 16px; transform: rotate(-12deg); }
+.cp-stampwrap .stamp b { font-size: 13px; }
+.cp-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.cp-table th { background: var(--tint); font-weight: 600; padding: 9px 10px; border-bottom: 1.5px solid var(--ink); }
+.cp-table td { padding: 10px; border-bottom: 1px solid var(--hairline); }
+.cp-table td:nth-child(n+2), .cp-table th:nth-child(n+2) { text-align: left; white-space: nowrap; }
+
+/* ============================================================
+   BENCHMARKS
+   ============================================================ */
+.bench { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 56px; margin-top: 56px; align-items: start; }
+.callout .big { font-size: clamp(4.5rem, 8vw, 7rem); font-weight: 600; letter-spacing: -0.04em; line-height: .9; font-variant-numeric: tabular-nums; display: flex; align-items: flex-start; gap: 10px; }
+.callout .big small { font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; margin-top: .9em; }
+.callout p { margin-top: 18px; color: var(--muted); max-width: 20em; }
+.chips { display: flex; flex-wrap: wrap; margin-bottom: 28px; }
+.bars { display: grid; gap: 14px; }
+.bar-row { display: grid; grid-template-columns: 200px minmax(0, 1fr) 64px; align-items: center; gap: 16px; }
+.bar-name { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.bar-name svg { width: 18px; height: 18px; }
+.bar { height: 28px; background: var(--hairline); width: 0; }
+.bar-row.me .bar-name { color: var(--ink); font-weight: 600; }
+.bar-row.me .bar { background: var(--ink); }
+.bar-val { font: 500 0.875rem/1 var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.bar-row.me .bar-val { color: var(--ink); }
+.bench-note { margin-top: 28px; font-size: 0.8125rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+.bench-note .ph { font-size: 15px; margin-top: 2px; }
+
+/* ============================================================
+   HOW IT READS (pinned pipeline)
+   ============================================================ */
+/* The pinned frame is exactly as tall as its content (heading, steps, stage) and pins centred
+   below the nav, so no screen height leaves an empty band above or below it. */
+.pipe { position: relative; z-index: 1; overflow-x: clip; }
+.pipe .wrap { width: 100%; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: start; }
+.pipe-l { display: grid; gap: 32px; }
+.steps { display: grid; }
+.step { appearance: none; display: block; width: 100%; text-align: left; background: none; border: 0; border-left: 1px solid var(--hairline); cursor: pointer; padding: 10px 0 10px 20px; color: var(--muted); transition: color var(--t) var(--ease), border-color var(--t) var(--ease); }
+.step:hover { color: var(--ink); }
+.step.on { color: var(--ink); border-left: 2px solid var(--ink); padding-left: 19px; }
+.st-t { display: block; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
+.st-b { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--t) var(--ease); }
+.st-b > span { overflow: hidden; font-size: 0.9375rem; color: var(--muted); max-width: 26em; }
+.step.on .st-b { grid-template-rows: 1fr; }
+.step.on .st-b > span { padding-top: 6px; }
+.p-wrap { position: relative; height: 620px; }
+.p-stage { position: absolute; top: 0; left: 0; width: 600px; height: 620px; transform-origin: 0 0; }
+
+.p-doc { right: 0; top: 64px; width: 360px; height: 486px; padding: 24px 24px 18px; font-family: var(--font-ar); font-size: 10.5px; line-height: 1.6; z-index: 1; }
+.p-dirt { position: absolute; inset: 0; background: var(--ink); opacity: 0; z-index: 6; pointer-events: none; }
+.p-shade { position: absolute; inset: 0; background: linear-gradient(118deg, var(--ink), transparent 55%, transparent 75%, var(--ink)); opacity: 0; z-index: 6; pointer-events: none; }
+.p-noise { position: absolute; inset: 0; background-image: var(--noise); background-size: 140px; z-index: 6; opacity: 0; mix-blend-mode: multiply; pointer-events: none; }
+.ld-head { text-align: center; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 3px double var(--ink); display: block; }
+.ld-title { font-size: 17px; font-weight: 700; line-height: 1.3; }
+.ld-sub { font: 500 8.5px/1.4 var(--font-mono); letter-spacing: .16em; color: var(--muted); text-transform: uppercase; }
+.ld-rows { display: grid; gap: 9px; }
+.ld-row { display: flex; align-items: baseline; gap: 6px; border-bottom: 1px dotted var(--muted); padding-bottom: 3px; white-space: nowrap; }
+.ld-l { font-size: 10px; color: var(--muted); font-weight: 600; }
+.hw { display: inline-block; font: 400 15px/1.15 var(--font-ruqaa); color: var(--ink); }
+.ld-clause { margin-top: 14px; font-size: 9.3px; line-height: 1.75; color: var(--muted); display: block; }
+.ld-sigs { display: flex; justify-content: space-between; margin-top: 16px; }
+.ld-sigs > div { width: 44%; text-align: center; }
+.ld-sigs .sigwrap { display: inline-block; position: relative; }
+.ld-sigs .sig { width: 96px; height: 34px; margin: 4px auto 0; }
+.ld-stamp { left: 96px; bottom: 22px; width: 78px; height: 78px; transform: rotate(10deg); }
+.reg { position: absolute; inset: -4px -6px; border: 1px solid var(--ink); background: var(--tint); pointer-events: none; z-index: 3; opacity: 0; }
+.reg-tag { position: absolute; top: -9px; left: -1px; font: 500 7.5px/1 var(--font-mono); letter-spacing: .1em; color: var(--surface); background: var(--ink); padding: 2px 4px; white-space: nowrap; direction: ltr; }
+.reg.r-hand { border-style: dashed; }
+.reg.r-sig { border-style: dotted; }
+.reg.r-text { border-color: var(--muted); }
+.p-scan { position: absolute; left: 0; right: 0; top: -14%; height: 14%; z-index: 4; opacity: 0; pointer-events: none; background: linear-gradient(to bottom, transparent, var(--mark)); border-bottom: 1px solid var(--ink); }
+
+.p-chips { position: absolute; left: 14px; top: 92px; display: grid; gap: 8px; z-index: 5; }
+.pchip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--surface); border: 1px solid var(--ink); font: 500 11px/1 var(--font-mono); white-space: nowrap; justify-self: start; }
+.p-rows { position: absolute; left: 0; top: 70px; width: 236px; display: grid; gap: 8px; z-index: 5; }
+.prow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 12px; background: var(--surface); border: 1px solid var(--hairline); }
+.prow .k { display: block; font: 500 10.5px/1.3 var(--font-mono); color: var(--muted); }
+.prow .v { display: block; font-size: 13px; font-weight: 500; line-height: 1.3; min-height: 1.3em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prow .st { position: relative; width: 78px; height: 22px; }
+.prow .st > span { position: absolute; right: 0; top: 0; height: 22px; display: inline-flex; align-items: center; gap: 4px; padding: 0 8px; font: 500 10.5px/1 var(--font-mono); white-space: nowrap; }
+.st .s-wait { color: var(--muted); background: var(--tint); }
+.st .s-ok { color: var(--ink); background: var(--tint); opacity: 0; }
+.st .s-rev { color: var(--ink); background: var(--surface); border: 1px dashed var(--ink); opacity: 0; }
+.p-math { position: absolute; left: 0; top: 494px; width: 236px; z-index: 5; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid var(--ink); background: var(--surface); font: 500 11px/1.35 var(--font-mono); }
+.p-math .ph-bold { font-size: 15px; flex: none; }
+.p-json { position: absolute; left: 50px; top: 118px; width: 500px; z-index: 6; background: var(--ink); color: var(--surface); padding: 18px 22px 20px; font: 400 12.5px/1.75 var(--font-mono); }
+.p-json .jh { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 11px; letter-spacing: .08em; padding-bottom: 10px; margin-bottom: 8px; border-bottom: 1px solid var(--muted); }
+.p-json .jh b { color: var(--surface); font-weight: 500; }
+.p-json .jl { white-space: pre; }
+.p-json .jk { color: var(--muted); }
+.p-json .js { color: var(--surface); }
+.p-json .jn { color: var(--hairline); }
+.p-dest { position: absolute; left: 50px; top: 418px; width: 500px; display: grid; grid-template-columns: repeat(4, 1fr); z-index: 6; }
+.dest { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 8px; margin-right: -1px; border: 1px solid var(--hairline); background: var(--surface); font-size: 0.8125rem; font-weight: 500; }
+.dest .ph { font-size: 20px; color: var(--ink); }
+
+/* ============================================================
+   SECURITY (cells share hairlines, like the page grid)
+   ============================================================ */
+.bento { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: 56px; border-top: 1px solid var(--hairline); border-left: 1px solid var(--hairline); }
+.cell { position: relative; overflow: hidden; border-right: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); background: var(--surface); padding: 28px; min-height: 320px; display: flex; flex-direction: column; isolation: isolate; }
+.cell h3 { font-size: 1.25rem; }
+.cell p { color: var(--muted); margin-top: 8px; max-width: 34em; }
+.c1 { grid-column: span 4; background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.c1 p { color: var(--hairline); }
+.c1 h3, .c1 p { width: fit-content; max-width: 100%; }
+.c2 { grid-column: span 2; }
+.c3, .c4 { grid-column: span 3; }
+.c1-stip { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.deploy { position: relative; margin-top: auto; padding-top: 28px; display: grid; max-width: 440px; }
+.dep { position: relative; z-index: 1; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px 14px; }
+.dep .ph { font-size: 20px; color: var(--muted); transition: color var(--t) var(--ease); }
+.dep b { display: block; font-weight: 500; font-size: 0.9375rem; }
+.dep span { display: block; font-size: 0.8125rem; color: var(--muted); }
+.dep.on .ph { color: var(--surface); }
+.dep-ind { position: absolute; left: 0; right: 0; top: 28px; height: 64px; border: 1px solid var(--muted); z-index: 0; }
+.zero { margin-top: auto; padding-top: 24px; font-size: 8rem; font-weight: 600; line-height: .8; letter-spacing: -0.04em; }
+.zero-cap { font-size: 0.8125rem; color: var(--muted); margin-top: 12px; max-width: 16em; }
+.trail { margin-top: auto; padding-top: 26px; display: grid; }
+.trail-top { font: 500 0.75rem/1 var(--font-mono); padding: 8px 10px; background: var(--tint); border: 1px solid var(--hairline); justify-self: start; margin-bottom: 14px; }
+.tr { position: relative; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 7px 0; font-size: 0.875rem; }
+.tr::before { content: ""; position: absolute; left: 10.5px; top: 26px; bottom: -8px; width: 1px; background: var(--hairline); }
+.tr:last-child::before { display: none; }
+.tr .ph { font-size: 18px; color: var(--muted); background: var(--surface); position: relative; }
+.tr .ph.ok { color: var(--ink); }
+.tr .mono { font-size: 0.75rem; color: var(--muted); margin-left: 6px; }
+.feats { margin-top: auto; padding-top: 24px; display: flex; flex-wrap: wrap; gap: 8px; }
+.feat { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--hairline); background: var(--surface); font-size: 0.8125rem; }
+.feat .ph { font-size: 15px; color: var(--ink); }
+
+/* ============================================================
+   WAITLIST
+   ============================================================ */
+.seeds { position: relative; height: clamp(140px, 28vw, 360px); margin: 0 auto 48px; touch-action: pan-y; }
+.seeds canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cta-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 56px; align-items: start; }
+.form-card { background: var(--surface); border: 1px solid var(--hairline); padding: 28px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.fld { display: grid; gap: 10px; }
+.fld.full { grid-column: 1 / -1; }
+.fld > label, .fld > legend { font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); padding: 0; }
+.fld legend { margin-bottom: 10px; }
+.fld .req { color: var(--muted); }
+.inp { height: 44px; width: 100%; border: 1px solid var(--hairline); border-radius: var(--radius); background: var(--surface); padding: 0 12px; font-size: 0.9375rem; outline: none; transition: border-color var(--t) var(--ease); }
+.inp::placeholder { color: var(--muted); }
+.inp:focus { border-color: var(--ink); }
+.inp[aria-invalid="true"] { border-color: var(--ink); border-style: dashed; }
+fieldset.fld { border: 0; margin: 0; padding: 0; min-width: 0; display: block; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; pointer-events: none; }
+.opt span { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid var(--hairline); font-size: 0.8125rem; cursor: pointer; user-select: none; transition: background-color var(--t) var(--ease), color var(--t) var(--ease), border-color var(--t) var(--ease); }
+.opt span:hover { border-color: var(--ink); }
+.opt span .ph-bold { display: none; font-size: 12px; }
+.opt input:checked + span { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.opt input:checked + span .ph-bold { display: inline-block; }
+.opt input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
+.form-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+.form-foot .form-msg { margin: 0; }
+.done-panel { display: none; padding: 4px 0; }
+.form-card.is-done form { display: none; }
+.form-card.is-done .done-panel { display: block; }
+.done-panel .ph-bold { font-size: 24px; }
+.done-panel h3 { font-size: 1.5rem; letter-spacing: -0.04em; margin-top: 14px; }
+.done-panel p { color: var(--muted); margin-top: 8px; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.foot { position: relative; z-index: 1; padding: 32px 0 40px; font-size: 0.8125rem; color: var(--muted); }
+.foot .wrap { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+.foot-l { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.foot .logo { color: var(--ink); }
+.foot-links { display: flex; gap: 22px; }
+.foot-links a { text-decoration: none; transition: color var(--t) var(--ease); }
+.foot-links a:hover { color: var(--ink); }
+
+/* ============================================================
+   DRAFT MODE (?draft): outlines everything that still needs confirming
+   ============================================================ */
+html.draft .ph-draft { outline: 1px dashed var(--ink); outline-offset: 3px; }
+.draft-chip { display: none; }
+html.draft .draft-chip { display: flex; position: fixed; left: 16px; bottom: 16px; z-index: 90; align-items: center; gap: 8px; padding: 10px 14px; background: var(--ink); color: var(--surface); font: 500 0.6875rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+html.draft [data-draft] { position: relative; }
+html.draft [data-draft]:hover::after {
+  content: attr(data-draft); position: absolute; z-index: 95; left: 0; top: calc(100% + 8px); width: max-content; max-width: 260px;
+  background: var(--ink); color: var(--surface); font: 500 11px/1.4 var(--font-mono); padding: 7px 9px; white-space: normal; text-align: left; direction: ltr; letter-spacing: 0; text-transform: none;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1080px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+  .bench, .cta-grid { grid-template-columns: 1fr; gap: 36px; }
+  .pipe .wrap { gap: 28px; }
+}
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .case { grid-template-columns: 1fr; }
+  .crop { min-height: 260px; border-right: 0; border-bottom: 1px solid var(--hairline); }
+  .c1, .c2, .c3, .c4 { grid-column: span 6; }
+  .strip { grid-template-columns: 1fr; gap: 14px; margin-top: 56px; }
+}
+@media (max-width: 767px) {
+  .grid-overlay { grid-template-columns: repeat(2, 1fr); }
+  .grid-overlay span:nth-child(n+3) { display: none; }
+}
+@media (max-width: 760px) {
+  .pipe .wrap { grid-template-columns: 1fr; gap: 20px; }
+  .pipe-l { display: contents; }
+  .pipe .sec-h { order: 1; }
+  .pipe .lede { display: none; }
+  .p-wrap { order: 2; }
+  .steps { order: 3; }
+  .step { display: none; }
+  .step.on { display: block; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .bar-row { grid-template-columns: minmax(0, 1fr) 62px; gap: 8px 12px; }
+  .bar-name { grid-column: 1 / -1; }
+  .bar { height: 22px; }
+  .kv { grid-template-columns: 1fr; gap: 2px; }
+  .kv .why { grid-column: 1; }
+  .out { padding: 16px 16px 8px; }
+  .crop { padding: 16px; }
+  .cell { padding: 22px; min-height: 0; }
+  .zero { font-size: 6rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-card { padding: 20px; }
+  .wl-row { flex-direction: column; }
+  .wl-row input { border-bottom: 1px solid var(--hairline); }
+  .wl-row .btn { margin: 0 -1px -1px; }
+  .cp-name { font-size: 18px; }
+  .cp-line .num, .cp-date .val { font-size: 22px; }
+  .cp-hand { font-size: 24px; }
+  .cp-table { font-size: 13px; }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .marquee-track { animation: none; flex-wrap: wrap; width: auto; }
+  .marquee { -webkit-mask-image: none; mask-image: none; }
+  .marquee-track .dupe { display: none; }
+  .spin i, .sp i { animation: none; opacity: .8; }
+  * { transition-duration: 0s !important; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="grid-overlay" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="seed" d="M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z"/>
+    <symbol id="mark" viewBox="0 0 32 32">
+      <use href="#seed" class="seed-a" transform="translate(3 6) rotate(-16 10 10)"/>
+      <use href="#seed" class="seed-b" transform="translate(13 6) rotate(16 10 10)"/>
+    </symbol>
+    <symbol id="sig-a" viewBox="0 0 120 40"><path d="M6 30c8-10 14-19 19-17 5 2-6 17 0 18 6 1 12-21 18-19 5 2-3 15 2 16 5 1 9-9 14-11 4-2 4 7 9 6 6-1 11-9 17-10 6-1 3 6 9 6 6 0 12-6 20-8"/></symbol>
+    <symbol id="sig-b" viewBox="0 0 120 40"><path d="M10 24c6-2 12-14 20-14s-6 20 2 20 10-16 16-17c4 0 0 12 6 12 7 0 9-12 16-12 5 0 2 9 8 9 8 0 14-14 22-14 4 0 4 5 10 4"/><path d="M28 34c18-3 40-4 70-2"/></symbol>
+  </defs>
+</svg>
+
+<!-- ============================== NAV ============================== -->
+<header class="nav" id="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Simsim home">
+      <svg aria-hidden="true"><use href="#mark"/></svg>
+      <span>simsim</span><span class="ar" lang="ar">سمسم</span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#why">Why Arabic</a>
+      <a href="#benchmarks">Benchmarks</a>
+      <a href="#how">How it reads</a>
+      <a href="#security">Security</a>
+    </nav>
+    <a class="nav-cta" href="#waitlist">Join waitlist<i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
+  </div>
+</header>
+<div id="nav-sentinel" aria-hidden="true" style="position:absolute;top:8px;height:1px;width:1px"></div>
+
+<main>
+<!-- ============================== HERO ============================== -->
+<section class="section section--band hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1 aria-label="Arabic documents, read like a native.">
+        <mark class="hl on"><span class="w"><span>Arabic</span></span></mark>
+        <span class="w"><span>documents,</span></span>
+        <span class="w"><span>read</span></span>
+        <span class="w"><span>like</span></span>
+        <span class="w"><span>a</span></span>
+        <span class="w"><span>native.</span></span>
+      </h1>
+      <p class="hero-sub">Simsim pulls clean, verified data from Arabic and bilingual documents. Scans, stamps and handwriting included.</p>
+      <form class="wl" id="wl-hero" novalidate>
+        <label class="field-label" for="hero-email">Work email</label>
+        <div class="wl-row">
+          <input id="hero-email" name="email" type="email" autocomplete="email" placeholder="name@company.com" required>
+          <button class="btn btn-primary" type="submit">
+            <span class="btn-l">Join waitlist</span><i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+            <span class="spin" aria-hidden="true"><i></i><i></i><i></i></span>
+          </button>
+        </div>
+        <p class="form-msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <figure class="demo" id="demo" aria-label="Animated example: Simsim reads an Arabic tax invoice and returns structured fields." style="margin:0;height:600px">
+      <div class="demo-stage">
+
+        <!-- Output card (rows are generated from CONTENT.demo) -->
+        <div class="out-card" aria-hidden="true">
+          <div class="out-head">
+            <span class="out-title">extract <b>tax_invoice</b></span>
+            <span class="status"></span>
+          </div>
+          <div class="rows"></div>
+          <div class="out-foot"><i class="ph-bold ph-check-circle"></i><span>Subtotal + 5% VAT = total</span></div>
+        </div>
+
+        <!-- The source document (fictional company) -->
+        <div class="doc doc-invoice" dir="rtl" lang="ar" aria-hidden="true">
+          <div class="scan"></div>
+          <div class="inv-head">
+            <div class="inv-brand">
+              <div class="inv-logo">ن</div>
+              <div>
+                <div class="inv-name f" data-f="seller">شركة النور للتجارة ش.م.م</div>
+                <div class="inv-en">Al Noor Trading LLC</div>
+                <div class="inv-addr">ص.ب ١٢٣، الرمز البريدي ١١٢، روي، مسقط</div>
+              </div>
+            </div>
+            <div class="inv-title"><div class="t-ar">فاتورة ضريبية</div><div class="t-en">TAX INVOICE</div></div>
+          </div>
+          <div class="inv-meta">
+            <div><span class="lbl">رقم الفاتورة</span><span class="val f" data-f="invoice_no">٠٤١٨</span></div>
+            <div><span class="lbl">التاريخ</span><span class="val f" data-f="issue_date">١٤ رمضان ١٤٤٦هـ</span></div>
+            <div><span class="lbl">الرقم الضريبي للمورد</span><span class="val" style="font-family:var(--font-mono);font-size:9.4px">OM1100234567</span></div>
+            <div><span class="lbl">طريقة الدفع</span><span class="val">تحويل بنكي</span></div>
+          </div>
+          <div class="inv-buyer">
+            <div><span class="lbl">فاتورة إلى</span><span class="val f" data-f="buyer">مؤسسة الحارثي للمقاولات</span></div>
+            <span class="lbl">السيب، مسقط</span>
+          </div>
+          <div class="inv-tablewrap f" data-f="line_items">
+            <table class="inv-table">
+              <thead><tr><th>البيان</th><th>الكمية</th><th>سعر الوحدة</th><th>المجموع</th></tr></thead>
+              <tbody>
+                <tr><td>أسمنت بورتلاندي (كيس ٥٠ كغ)</td><td>١٢٠</td><td>١٫٨٥٠</td><td>٢٢٢٫٠٠٠</td></tr>
+                <tr><td>حديد تسليح ١٢ مم (طن)</td><td>٣</td><td>٢٤٥٫٠٠٠</td><td>٧٣٥٫٠٠٠</td></tr>
+                <tr><td>رمل مغسول (متر مكعب)</td><td>٤٠</td><td>٤٫٥٠٠</td><td>١٨٠٫٠٠٠</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="inv-totals">
+            <div><span>المجموع الفرعي</span><span>١٬١٣٧٫٠٠٠</span></div>
+            <div><span>ضريبة القيمة المضافة (٥٪)</span><span>٥٦٫٨٥٠</span></div>
+            <div class="grand"><span>الإجمالي</span><span class="f" data-f="total">١٬١٩٣٫٨٥٠ ر.ع.</span></div>
+          </div>
+          <div class="inv-foot">
+            <div class="inv-hand"><span class="f" data-f="note">استلمت البضاعة كاملة</span><svg class="sig"><use href="#sig-a"/></svg></div>
+            <div class="stamp inv-stamp f" data-f="seal"><div><b>شركة النور للتجارة</b>ش.م.م<div class="star">★ مسقط ★</div></div></div>
+          </div>
+          <div class="inv-bottom"><span>شكراً لتعاملكم معنا</span><span>س.ت ١٢٣٤٥٦٧</span></div>
+        </div>
+
+        <svg class="demo-lines" aria-hidden="true"></svg>
+      </div>
+    </figure>
+  </div>
+  <div class="wrap">
+    <div class="strip" role="group" aria-label="Document types">
+      <p class="strip-label">Reads the paperwork the region runs on</p>
+      <div class="marquee"><div class="marquee-track" id="mq"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== WHY ARABIC ============================== -->
+<section class="section" id="why">
+  <div class="wrap">
+    <div class="sec-h">
+      <span class="eyebrow">Why Arabic</span>
+      <h2 class="rv">Arabic is where most document AI breaks.</h2>
+      <p class="lede rv">Generic OCR treats Arabic as an edge case. These cases are the ones Simsim was built on. Same input, two very different outputs.</p>
+    </div>
+    <div class="tabs rv" role="tablist" aria-label="Arabic document challenges" id="case-tabs"></div>
+    <p class="case-note" id="case-note"></p>
+    <div class="case" id="case-panel" role="tabpanel">
+      <div class="crop">
+        <span class="crop-label">What the page says</span>
+        <div class="crop-paper" id="case-crop"></div>
+      </div>
+      <div class="outs">
+        <div class="out" id="out-generic">
+          <div class="out-top"><span class="out-name"><i class="ph ph-scan" aria-hidden="true"></i>Generic OCR + LLM</span><span class="verdict bad"></span></div>
+          <div class="kvs"></div>
+        </div>
+        <div class="out me" id="out-me">
+          <div class="out-top"><span class="out-name"><svg aria-hidden="true"><use href="#mark"/></svg>Simsim</span><span class="verdict ok"></span></div>
+          <div class="kvs"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== BENCHMARKS ============================== -->
+<section class="section" id="benchmarks">
+  <div class="wrap">
+    <div class="sec-h">
+      <span class="eyebrow">Benchmarks</span>
+      <h2 class="rv">Leading on Arabic, by a wide margin.</h2>
+      <p class="lede rv">Field-level accuracy on Arabic business documents: invoices, statements, contracts and government forms.</p>
+    </div>
+    <div class="bench">
+      <div class="callout rv">
+        <div class="big ph-draft" data-draft="Placeholder: replace with published benchmark delta"><span id="delta">+14.7</span><small>pts</small></div>
+        <p id="delta-cap">ahead of the next best system across all document types.</p>
+      </div>
+      <div class="rv">
+        <div class="chips" id="bench-chips" role="group" aria-label="Document category"></div>
+        <div class="bars" id="bars"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== HOW IT READS ============================== -->
+<section class="section how" id="how">
+  <div class="pipe" id="pipe">
+    <div class="wrap">
+      <div class="pipe-l">
+        <div class="sec-h">
+          <span class="eyebrow">How it reads</span>
+          <h2>From a crooked phone photo to data you can trust.</h2>
+          <p class="lede">Every document goes through the same five passes. Scroll to watch one lease agreement go through them.</p>
+        </div>
+        <div class="steps" id="steps">
+          <button class="step on" type="button" data-i="0"><span class="st-t">Clean</span><span class="st-b"><span>Straightens skewed photos, lifts shadows and noise, and splits bundled PDFs into single documents.</span></span></button>
+          <button class="step" type="button" data-i="1"><span class="st-t">Read</span><span class="st-b"><span>Finds printed text, handwriting, tables, stamps and signatures, and reads each one in the right order.</span></span></button>
+          <button class="step" type="button" data-i="2"><span class="st-t">Understand</span><span class="st-b"><span>Turns marks into named fields. Dates become ISO, Arabic digits become numbers, names get English spellings.</span></span></button>
+          <button class="step" type="button" data-i="3"><span class="st-t">Verify</span><span class="st-b"><span>Checks the math and the formats. Anything uncertain goes to a reviewer instead of into your system.</span></span></button>
+          <button class="step" type="button" data-i="4"><span class="st-t">Deliver</span><span class="st-b"><span>Clean JSON over API or webhook, or straight into Excel and your ERP.</span></span></button>
+        </div>
+      </div>
+      <div class="p-wrap" aria-hidden="true">
+        <div class="p-stage" id="p-stage">
+          <div class="doc p-doc" dir="rtl" lang="ar">
+            <div class="p-dirt"></div><div class="p-shade"></div><div class="p-noise"></div><div class="p-scan"></div>
+            <div class="ld-head" data-reg="text:TITLE"><div class="ld-title">عقد إيجار وحدة سكنية</div><div class="ld-sub">Residential lease agreement</div></div>
+            <div class="ld-rows">
+              <div class="ld-row"><span class="ld-l">اسم المؤجر:</span><span class="hw" data-k="landlord" data-reg="hand:HANDWRITING" style="transform:rotate(-1.5deg)">سالم بن حمد الكندي</span></div>
+              <div class="ld-row"><span class="ld-l">اسم المستأجر:</span><span class="hw" data-k="tenant" data-reg="hand" style="transform:rotate(.8deg)">أحمد بن خالد البلوشي</span></div>
+              <div class="ld-row"><span class="ld-l">رقم البطاقة المدنية:</span><span class="hw" data-k="civil_id" data-reg="hand" style="transform:rotate(-.6deg)">٠٩٨٤٥٦٢١</span></div>
+              <div class="ld-row"><span class="ld-l">موقع العقار:</span><span class="hw" data-k="unit" data-reg="hand" style="transform:rotate(1deg)">الخوير، مسقط، شقة ١٢</span></div>
+              <div class="ld-row"><span class="ld-l">مدة العقد من:</span><span class="hw" data-k="term" data-reg="hand">١ / ٤ / ٢٠٢٥</span><span class="ld-l">إلى:</span><span class="hw" data-k="term2" data-reg="hand" style="transform:rotate(-1deg)">٣١ / ٣ / ٢٠٢٦</span></div>
+              <div class="ld-row"><span class="ld-l">الإيجار الشهري:</span><span class="hw" data-k="rent" data-reg="hand" style="transform:rotate(-.8deg)">٣٥٠ ر.ع.</span><span class="ld-l">السنوي:</span><span class="hw" data-k="annual" data-reg="hand" style="transform:rotate(.6deg)">٤٢٠٠ ر.ع.</span></div>
+            </div>
+            <p class="ld-clause" data-reg="text:PRINTED">يلتزم المستأجر بسداد الإيجار مقدماً في بداية كل شهر ميلادي، ولا يحق له التأجير من الباطن إلا بموافقة كتابية من المؤجر. ويُسجَّل هذا العقد لدى البلدية خلال ثلاثين يوماً من تاريخ توقيعه.</p>
+            <div class="ld-sigs">
+              <div><span class="ld-l">توقيع المؤجر</span><br><span class="sigwrap" data-reg="sig:SIGNATURE"><svg class="sig"><use href="#sig-a"/></svg></span></div>
+              <div><span class="ld-l">توقيع المستأجر</span><br><span class="sigwrap" data-reg="sig"><svg class="sig"><use href="#sig-b"/></svg></span></div>
+            </div>
+            <div class="stamp ld-stamp" data-reg="stamp:STAMP"><div><b>مكتب الخوير</b>للعقارات<div class="star">★ مسقط ★</div></div></div>
+          </div>
+
+          <div class="p-chips">
+            <span class="pchip"><i class="ph-bold ph-check"></i>Deskewed 7.4°</span>
+            <span class="pchip"><i class="ph-bold ph-check"></i>Shadow removed</span>
+            <span class="pchip"><i class="ph-bold ph-check"></i>1 document, 1 page</span>
+          </div>
+
+          <div class="p-rows" id="p-rows"></div>
+          <div class="p-math"><i class="ph-bold ph-equals"></i><span>350.000 × 12 = 4,200.000<br>matches annual rent</span></div>
+
+          <div class="p-json">
+            <div class="jh"><span>POST /v1/extract</span><b>200 OK</b></div>
+            <div class="jl">{</div>
+            <div class="jl">  <span class="jk">"document_type"</span>: <span class="js">"residential_lease"</span>,</div>
+            <div class="jl">  <span class="jk">"tenant"</span>: <span class="js">"Ahmed bin Khalid Al Balushi"</span>,</div>
+            <div class="jl">  <span class="jk">"landlord"</span>: <span class="js">"Salim bin Hamad Al Kindi"</span>,</div>
+            <div class="jl">  <span class="jk">"term"</span>: { <span class="jk">"start"</span>: <span class="js">"2025-04-01"</span>, <span class="jk">"end"</span>: <span class="js">"2026-03-31"</span> },</div>
+            <div class="jl">  <span class="jk">"rent"</span>: { <span class="jk">"monthly"</span>: <span class="jn">350.000</span>, <span class="jk">"currency"</span>: <span class="js">"OMR"</span> },</div>
+            <div class="jl">  <span class="jk">"checks"</span>: <span class="js">"passed"</span>, <span class="jk">"reviewed_fields"</span>: <span class="jn">1</span></div>
+            <div class="jl">}</div>
+          </div>
+          <div class="p-dest">
+            <span class="dest"><i class="ph ph-brackets-curly"></i>REST API</span>
+            <span class="dest"><i class="ph ph-webhooks-logo"></i>Webhooks</span>
+            <span class="dest"><i class="ph ph-microsoft-excel-logo"></i>Excel</span>
+            <span class="dest"><i class="ph ph-database"></i>Your ERP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECURITY ============================== -->
+<section class="section" id="security">
+  <div class="wrap">
+    <div class="sec-h">
+      <span class="eyebrow">Security</span>
+      <h2 class="rv">Your documents stay yours.</h2>
+      <p class="lede rv">Built for banks, insurers and public-sector teams whose data cannot leave the country.</p>
+    </div>
+    <div class="bento">
+      <article class="cell c1 rv">
+        <canvas class="c1-stip" aria-hidden="true"></canvas>
+        <h3>Deploy where your data must live</h3>
+        <p>Same models and the same accuracy, wherever you run them.</p>
+        <div class="deploy" id="deploy">
+          <div class="dep-ind" aria-hidden="true"></div>
+          <div class="dep on"><i class="ph ph-cloud-check" aria-hidden="true"></i><div><b>In-region cloud</b><span class="ph-draft" data-draft="Confirm hosting regions before launch">Hosted in GCC data centres, run by us</span></div></div>
+          <div class="dep"><i class="ph ph-buildings" aria-hidden="true"></i><div><b>Your private cloud</b><span>Runs inside your own cloud tenancy</span></div></div>
+          <div class="dep"><i class="ph ph-hard-drives" aria-hidden="true"></i><div><b>On-premise</b><span>Air-gapped, with no outbound calls</span></div></div>
+        </div>
+      </article>
+      <article class="cell c2 rv">
+        <h3>Never used for training</h3>
+        <p>Documents are processed, returned, and deleted on your schedule.</p>
+        <div class="zero ph-draft" data-draft="Confirm data-use policy">0</div>
+        <p class="zero-cap">customer documents used to train shared models</p>
+      </article>
+      <article class="cell c3 rv">
+        <h3>Every value is traceable</h3>
+        <p>Click any field to see where it came from and who touched it.</p>
+        <div class="trail" id="trail">
+          <span class="trail-top">total = 1193.850 OMR</span>
+          <div class="tr"><i class="ph ph-crosshair" aria-hidden="true"></i><span>Page 1, region 212 × 418</span></div>
+          <div class="tr"><i class="ph ph-eye" aria-hidden="true"></i><span>Read by model<span class="mono">conf 0.99</span></span></div>
+          <div class="tr"><i class="ph ph-check-circle ok" aria-hidden="true"></i><span>Rule: subtotal + VAT = total</span></div>
+          <div class="tr"><i class="ph ph-export" aria-hidden="true"></i><span>Exported to ERP<span class="mono">10:42:07</span></span></div>
+        </div>
+      </article>
+      <article class="cell c4 rv">
+        <h3>Ready for regulated teams</h3>
+        <p>The controls your security review will ask for.</p>
+        <div class="feats">
+          <span class="feat"><i class="ph ph-key" aria-hidden="true"></i>SSO and SAML</span>
+          <span class="feat"><i class="ph ph-users-three" aria-hidden="true"></i>Role-based access</span>
+          <span class="feat"><i class="ph ph-list-checks" aria-hidden="true"></i>Full audit logs</span>
+          <span class="feat"><i class="ph ph-lock" aria-hidden="true"></i>Encrypted in transit and at rest</span>
+          <span class="feat"><i class="ph ph-map-pin" aria-hidden="true"></i>Data residency</span>
+          <span class="feat ph-draft" data-draft="Confirm with legal before claiming"><i class="ph ph-scales" aria-hidden="true"></i>PDPL-aligned: Oman, KSA, UAE</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== WAITLIST ============================== -->
+<section class="section cta" id="waitlist">
+  <div class="wrap">
+    <div class="seeds" id="seeds" aria-hidden="true"><canvas></canvas></div>
+    <div class="cta-grid">
+      <div>
+        <h2 class="rv">Get early access.</h2>
+        <p class="lede rv">We're onboarding a small group of teams first. Tell us what you process and we'll reach out.</p>
+      </div>
+      <div class="form-card rv" id="form-card">
+        <form id="wl-main" novalidate>
+          <div class="form-grid">
+            <div class="fld">
+              <label for="m-email">Work email <span class="req" aria-hidden="true">*</span></label>
+              <input class="inp" id="m-email" name="email" type="email" autocomplete="email" placeholder="name@company.com" required>
+            </div>
+            <div class="fld">
+              <label for="m-company">Company</label>
+              <input class="inp" id="m-company" name="company" type="text" autocomplete="organization" placeholder="Company name">
+            </div>
+            <fieldset class="fld full">
+              <legend>What do you process?</legend>
+              <div class="opts" id="opts"></div>
+            </fieldset>
+          </div>
+          <div class="form-foot">
+            <p class="form-msg" role="status" aria-live="polite"></p>
+            <button class="btn btn-primary" type="submit">
+              <span class="btn-l">Join waitlist</span><i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+              <span class="spin" aria-hidden="true"><i></i><i></i><i></i></span>
+            </button>
+          </div>
+        </form>
+        <div class="done-panel" role="status" aria-live="polite">
+          <i class="ph-bold ph-check-circle" aria-hidden="true"></i>
+          <h3>You're on the list.</h3>
+          <p>Thanks. We'll be in touch soon about early access.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-l">
+      <a class="logo" href="#top" aria-label="Back to top"><svg aria-hidden="true"><use href="#mark"/></svg><span>simsim</span></a>
+      <span>Arabic-first document AI</span>
+    </div>
+    <div class="foot-l">
+      <nav class="foot-links" aria-label="Footer">
+        <a class="ph-draft" data-draft="Link to privacy policy" href="#">Privacy</a>
+        <a class="ph-draft" data-draft="Replace with real contact address" href="mailto:hello@simsim.ai">Contact</a>
+      </nav>
+      <span>© 2026 Simsim</span>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /.page -->
+
+<div class="draft-chip" aria-hidden="true">Draft view: <b id="draft-count">0</b> items to confirm</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script>
+(function () {
+'use strict';
+
+/* ============================================================
+   CONFIG
+   ============================================================ */
+var CONFIG = {
+  // POST target for both waitlist forms. Receives JSON { email, company, documents, source }.
+  // Leave empty to simulate success while the backend is not wired up.
+  waitlistEndpoint: ''
+};
+
+/* ============================================================
+   CONTENT (edit copy and data here)
+   ============================================================ */
+var CONTENT = {
+  docTypes: [
+    ['ph-receipt', 'فاتورة ضريبية', 'Tax invoices'],
+    ['ph-bank', 'كشف حساب بنكي', 'Bank statements'],
+    ['ph-house-line', 'عقد إيجار', 'Lease contracts'],
+    ['ph-package', 'بيان جمركي', 'Customs declarations'],
+    ['ph-storefront', 'سجل تجاري', 'Commercial registrations'],
+    ['ph-shield-check', 'مطالبة تأمين', 'Insurance claims'],
+    ['ph-first-aid-kit', 'تقرير طبي', 'Medical reports'],
+    ['ph-boat', 'بوليصة شحن', 'Bills of lading'],
+    ['ph-certificate', 'شهادة راتب', 'Salary certificates'],
+    ['ph-identification-card', 'جواز سفر', 'Passports'],
+    ['ph-scales', 'حكم قضائي', 'Court judgments'],
+    ['ph-shopping-cart', 'أمر شراء', 'Purchase orders']
+  ],
+
+  // Hero demo: rows in reading order (right to left, top to bottom). `f` matches data-f in the document.
+  demo: [
+    { k: 'seller',     f: 'seller',     v: 'Al Noor Trading LLC',   raw: 'شركة النور للتجارة ش.م.م', c: '0.99' },
+    { k: 'invoice_no', f: 'invoice_no', v: '0418',                  raw: '٠٤١٨',                     c: '0.99' },
+    { k: 'issue_date', f: 'issue_date', v: '2025-03-14',            raw: '١٤ رمضان ١٤٤٦هـ',          c: '0.98' },
+    { k: 'buyer',      f: 'buyer',      v: 'Al Harthy Contracting', raw: 'مؤسسة الحارثي للمقاولات',  c: '0.97' },
+    { k: 'line_items', f: 'line_items', v: '3 rows, 1,137.000',     raw: '',                         c: '0.98' },
+    { k: 'total',      f: 'total',      v: '1,193.850 OMR',         raw: '١٬١٩٣٫٨٥٠ ر.ع.',           c: '0.99' },
+    { k: 'note',       f: 'note',       v: 'Goods received in full', raw: 'استلمت البضاعة كاملة',     c: '0.93' },
+    { k: 'seal',       f: 'seal',       v: 'Seller stamp found',    raw: '',                         c: '0.96' }
+  ],
+
+  // "Why Arabic" cases. `iso: true` renders the value the way broken pipelines do (reversed, unjoined letters).
+  cases: [
+    {
+      tab: 'Right-to-left',
+      note: 'Arabic runs right to left and its letters join. Pipelines built for English often store it backwards and broken apart, so names and addresses come out unreadable.',
+      crop: '<div class="cp cp-rtl" dir="rtl" lang="ar"><div class="inv-logo">ن</div><div><div class="cp-name">شركة النور للتجارة ش.م.م</div><div class="cp-addr">روي، مسقط، سلطنة عُمان</div></div></div>',
+      generic: [
+        { k: 'seller', v: 'شركة النور للتجارة ش.م.م', iso: true, why: 'Letters reversed and disconnected' },
+        { k: 'city', v: 'روي، مسقط', iso: true, why: 'Reversed' }
+      ],
+      simsim: [
+        { k: 'seller_ar', v: 'شركة النور للتجارة ش.م.م', ar: true },
+        { k: 'seller_en', v: 'Al Noor Trading LLC' },
+        { k: 'city', v: 'Ruwi, Muscat' }
+      ]
+    },
+    {
+      tab: 'Arabic digits',
+      note: 'Arabic-Indic digits and the Arabic decimal mark get misread as Latin look-alikes. One misplaced separator moves the decimal point three places.',
+      crop: '<div class="cp cp-line" dir="rtl" lang="ar"><span class="lbl">الإجمالي المستحق</span><span class="num">١٬١٩٣٫٨٥٠ ر.ع.</span></div>',
+      generic: [
+        { k: 'total', v: '1,193,850', why: 'Decimal mark read as a comma: 1,000× too high' },
+        { k: 'currency', v: 'null', why: 'ر.ع. not detected' }
+      ],
+      simsim: [
+        { k: 'total', v: '1193.850' },
+        { k: 'currency', v: 'OMR' },
+        { k: 'precision', v: '3 decimals (baisa)' }
+      ]
+    },
+    {
+      tab: 'Handwriting',
+      note: 'Handwritten Arabic drops and merges dots. Miss a single dot and ض becomes ص, which changes the word entirely.',
+      crop: '<div class="cp cp-hand" dir="rtl" lang="ar">استلمت البضاعة كاملة بحالة جيدة<svg class="sig"><use href="#sig-a"/></svg></div>',
+      generic: [
+        { k: 'note', v: 'اسلمت البصاعه كامله بحاله حيده', ar: true, why: 'Dots dropped: every word misread' }
+      ],
+      simsim: [
+        { k: 'note_ar', v: 'استلمت البضاعة كاملة بحالة جيدة', ar: true },
+        { k: 'note_en', v: 'Goods received in full, in good condition' },
+        { k: 'confidence', v: '0.94' }
+      ]
+    },
+    {
+      tab: 'Hijri dates',
+      note: 'Government and banking documents often carry Hijri dates. Read as Gregorian, they land almost six centuries off.',
+      crop: '<div class="cp cp-date" dir="rtl" lang="ar"><span class="lbl">تاريخ الإصدار</span><span class="val">١٤ رمضان ١٤٤٦هـ</span></div>',
+      generic: [
+        { k: 'issue_date', v: '1446-09-14', why: 'Hijri year read as Gregorian: 579 years off' }
+      ],
+      simsim: [
+        { k: 'issue_date', v: '2025-03-14' },
+        { k: 'source', v: '14 Ramadan 1446 AH' }
+      ]
+    },
+    {
+      tab: 'Stamps',
+      note: 'Seals and stamps sit right on top of the values they certify. Generic OCR reads them as part of the number.',
+      crop: '<div class="cp cp-stampwrap" dir="rtl" lang="ar"><div class="cp-line" style="border-top:0"><span class="lbl">المبلغ المستحق</span><span class="num">١٬١٩٣٫٨٥٠</span></div><div class="stamp"><div><b>شركة النور للتجارة</b>ش.م.م<div class="star">★ مسقط ★</div></div></div></div>',
+      generic: [
+        { k: 'amount_due', v: '١١٩٣ مسقط ٨٥٠', ar: true, why: 'Stamp text merged into the amount' }
+      ],
+      simsim: [
+        { k: 'amount_due', v: '1193.850' },
+        { k: 'stamp', v: 'Al Noor Trading LLC, Muscat' },
+        { k: 'overlaps', v: 'amount_due' }
+      ]
+    },
+    {
+      tab: 'Tables',
+      note: 'Arabic tables run right to left too. Read in English column order, quantities and prices quietly swap places.',
+      crop: '<table class="cp-table" dir="rtl" lang="ar"><thead><tr><th>البيان</th><th>الكمية</th><th>سعر الوحدة</th></tr></thead><tbody><tr><td>أسمنت بورتلاندي</td><td>١٢٠</td><td>١٫٨٥٠</td></tr><tr><td>حديد تسليح ١٢ مم</td><td>٣</td><td>٢٤٥٫٠٠٠</td></tr></tbody></table>',
+      generic: [
+        { k: 'item', v: 'أسمنت بورتلاندي', ar: true },
+        { k: 'quantity', v: '1.850', why: 'Columns read left to right' },
+        { k: 'unit_price', v: '120', why: 'Swapped with quantity' }
+      ],
+      simsim: [
+        { k: 'item', v: 'Portland cement' },
+        { k: 'quantity', v: '120' },
+        { k: 'unit_price', v: '1.850 OMR' }
+      ]
+    }
+  ],
+
+  // PLACEHOLDER benchmark figures (field-level accuracy, %). Replace with real results.
+  bench: {
+    systems: ['Simsim', 'Global document AI', 'General vision LLM', 'Classic OCR engine'],
+    cats: [
+      { name: 'All documents', cap: 'across all document types', v: [96.1, 81.4, 76.9, 58.3] },
+      { name: 'Printed',       cap: 'on printed documents',      v: [98.7, 91.2, 88.4, 79.5] },
+      { name: 'Scanned',       cap: 'on scans and phone photos', v: [96.4, 79.8, 75.1, 52.6] },
+      { name: 'Handwritten',   cap: 'on handwritten fields',     v: [89.2, 54.3, 61.7, 18.9] },
+      { name: 'Tables',        cap: 'on right-to-left tables',   v: [95.8, 77.5, 70.2, 41.0] }
+    ]
+  },
+
+  // Pipeline rows (Understand / Verify). `k` matches data-k on the lease handwriting.
+  pipe: [
+    { k: 'landlord', v: 'Salim bin Hamad Al Kindi' },
+    { k: 'tenant',   v: 'Ahmed bin Khalid Al Balushi' },
+    { k: 'civil_id', v: '09845621', review: true },
+    { k: 'unit',     v: 'Al Khuwair, Muscat, Apt 12' },
+    { k: 'term',     v: '2025-04-01 to 2026-03-31' },
+    { k: 'rent',     v: '350.000 OMR / month' }
+  ],
+
+  docOptions: ['Invoices', 'Bank statements', 'Contracts', 'IDs and KYC', 'Claims', 'Customs', 'Something else']
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var G = window.gsap;
+var ANIM = !!G && !RM;
+var SVGNS = 'http://www.w3.org/2000/svg';
+if (G && window.ScrollTrigger) G.registerPlugin(window.ScrollTrigger);
+var ST = window.ScrollTrigger;
+
+function h(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function onVisible(el, cb, opts) {
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { cb(e.isIntersecting, e); }); }, opts || { threshold: 0.15 });
+  io.observe(el); return io;
+}
+function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+// How broken pipelines render Arabic: letters forced apart (zero-width non-joiner) and laid out left to right.
+function broken(s) { return Array.from(s).join('‌ '); }
+
+// Text decode effect. Deterministic for a given progress, so it scrubs backwards cleanly.
+var POOLS = {
+  ar: 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي',
+  num: '0123456789',
+  lat: 'abcdefghkmnoprstuvwxyzABCDEFGHKMNPRSTUVWXYZ0123456789'
+};
+function poolFor(s) {
+  if (/[؀-ۿ]/.test(s)) return POOLS.ar;
+  if (/^[\d.,\s-]+$/.test(s)) return POOLS.num;
+  return POOLS.lat;
+}
+function decode(to, p, pool, seed) {
+  var chars = Array.from(to), n = chars.length, out = '', tick = Math.floor(p * 28);
+  for (var i = 0; i < n; i++) {
+    var c = chars[i];
+    if (/[\s.,:\-\/()]/.test(c)) { out += c; continue; }
+    var at = (i / Math.max(1, n)) * 0.65 + 0.3;
+    out += p >= at ? c : (p <= 0.02 ? '' : pool[(tick * 7 + i * 13 + (seed || 0)) % pool.length]);
+  }
+  return out;
+}
+function tweenDecode(el, to, opts) {
+  opts = opts || {};
+  var pool = opts.pool || poolFor(to), fmt = opts.fmt || function (x) { return x; };
+  if (!ANIM) { el.textContent = fmt(to); return null; }
+  var o = { p: 0 };
+  return G.to(o, { p: 1, duration: opts.duration || 0.7, delay: opts.delay || 0, ease: 'none', onUpdate: function () { el.textContent = fmt(decode(to, o.p, pool, opts.seed)); }, onComplete: function () { el.textContent = fmt(to); } });
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+(function nav() {
+  var navEl = $('.nav');
+  onVisible($('#nav-sentinel'), function (vis) { navEl.classList.toggle('scrolled', !vis); }, { threshold: 0 });
+})();
+
+/* ============================================================
+   SEED STIPPLE (static texture)
+   ============================================================ */
+function stipple(canvas, density, opts) {
+  opts = opts || {};
+  var r = canvas.getBoundingClientRect(); if (!r.width) return;
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+  var ctx = canvas.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  var rand = rng(opts.seed || 7), gap = opts.gap || 7;
+  var pI = new Path2D(), pA = new Path2D();
+  for (var y = 0; y < r.height; y += gap) {
+    for (var x = 0; x < r.width; x += gap) {
+      var jx = x + (rand() - 0.5) * gap, jy = y + (rand() - 0.5) * gap;
+      if (rand() < density(jx / r.width, jy / r.height)) {
+        var a = -0.9 + Math.sin(jx * 0.013) * 0.5 + Math.cos(jy * 0.021) * 0.4;
+        var rx = 1.5 + rand() * 1.1, P = rand() < (opts.acc || 0.5) ? pA : pI;
+        P.moveTo(jx + Math.cos(a) * rx, jy + Math.sin(a) * rx);
+        P.ellipse(jx, jy, rx, rx * 0.48, a, 0, Math.PI * 2);
+      }
+    }
+  }
+  ctx.globalAlpha = opts.inkAlpha || 0.2; ctx.fillStyle = opts.ink || cssVar('--ink'); ctx.fill(pI);
+  ctx.globalAlpha = opts.accAlpha || 0.85; ctx.fillStyle = opts.accent || cssVar('--muted'); ctx.fill(pA);
+}
+// Halftone dot lattice for the Deploy card. Dots sit on a regular grid, grow toward the
+// top-right corner, and never cross the text: the field starts where the widest text block ends.
+function halftone(canvas, avoid) {
+  var r = canvas.getBoundingClientRect(); if (!r.width) return;
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+  var ctx = canvas.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, r.width, r.height);
+  var x0 = 0;
+  avoid.forEach(function (el) { if (el) x0 = Math.max(x0, el.getBoundingClientRect().right - r.left); });
+  x0 += 40;
+  var room = r.width - x0, gap = 14, maxR = 2.6;
+  if (room < 140) return;
+  ctx.fillStyle = cssVar('--surface');
+  for (var y = gap; y < r.height - gap / 2; y += gap) {
+    for (var x = r.width - gap; x > x0; x -= gap) {
+      var u = (x - x0) / room, v = y / r.height;
+      var d = Math.min(1, u * 1.2) * (1 - v * 0.6);
+      var rad = maxR * d;
+      if (rad < 0.45) continue;
+      ctx.globalAlpha = 0.2 + 0.55 * d;
+      ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+}
+function drawStipples() {
+  var c1 = $('.c1-stip');
+  if (c1) halftone(c1, [$('.c1 h3'), $('.c1 p'), $('#deploy')]);
+}
+
+/* ============================================================
+   HERO INTRO
+   ============================================================ */
+function heroIntro(onDone) {
+  var root = document.documentElement, mark = $('mark.hl');
+  if (!ANIM) { root.classList.remove('pre'); onDone(); return; }
+  mark.classList.remove('on');
+  G.set(mark, { '--hl': 0 });
+  G.set(['.hero h1', '.hero-sub', '.wl', '.demo'], { opacity: 0, y: 6 });
+  root.classList.remove('pre');
+  G.timeline({ defaults: { ease: 'power2.out', duration: 0.2 } })
+    .to('.hero h1', { opacity: 1, y: 0 }, 0.05)
+    .to('.hero-sub', { opacity: 1, y: 0 }, 0.12)
+    .to('.wl', { opacity: 1, y: 0 }, 0.19)
+    .to('.demo', { opacity: 1, y: 0 }, 0.26)
+    .to(mark, { '--hl': 1, ease: 'power2.inOut' }, 0.4)
+    .call(function () { mark.classList.add('on'); }, null, 0.5)
+    .call(onDone, null, 0.5);
+}
+
+/* ============================================================
+   HERO DEMO: live extraction loop
+   ============================================================ */
+function initDemo() {
+  var demo = $('#demo'), stage = $('.demo-stage', demo), doc = $('.doc-invoice', stage), card = $('.out-card', stage);
+  var svg = $('.demo-lines', stage), scan = $('.scan', doc), rowsWrap = $('.rows', card), status = $('.status', card), foot = $('.out-foot', card);
+  var scale = 1, stacked = false, holding = false, hovering = false, visible = true, cur = null;
+
+  var items = CONTENT.demo.map(function (fd, i) {
+    var el = $('[data-f="' + fd.f + '"]', doc);
+    var box = h('span', 'box', '<span class="fill"></span><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>');
+    el.appendChild(box);
+    var row = h('div', 'row', '<span class="k">' + fd.k + '</span><span class="v"><span class="v-main"></span>' +
+      (fd.raw ? '<span class="v-raw" dir="rtl" lang="ar">' + esc(fd.raw) + '</span>' : '') + '</span><span class="conf' + (parseFloat(fd.c) < 0.95 ? ' mid' : '') + '">' + fd.c + '</span>');
+    rowsWrap.appendChild(row);
+    var path = document.createElementNS(SVGNS, 'path'); path.setAttribute('pathLength', '1'); svg.appendChild(path);
+    var dot = document.createElementNS(SVGNS, 'circle'); dot.setAttribute('r', '3.2'); svg.appendChild(dot);
+    var it = { fd: fd, el: el, box: box, fill: $('.fill', box), row: row, main: $('.v-main', row), path: path, dot: dot, i: i };
+    row.addEventListener('mouseenter', function () { hot(it, true); });
+    row.addEventListener('mouseleave', function () { hot(it, false); });
+    el.addEventListener('mouseenter', function () { hot(it, true); });
+    el.addEventListener('mouseleave', function () { hot(it, false); });
+    return it;
+  });
+
+  function fit() {
+    var w = demo.clientWidth;
+    if (!w) return;
+    var nowStacked = w < 560;
+    if (nowStacked !== stacked) {
+      stacked = nowStacked;
+      stage.style.width = stacked ? '386px' : '680px';
+      doc.style.cssText = stacked ? 'right:auto;left:0;top:0' : '';
+      card.style.cssText = stacked ? 'left:22px;top:500px;width:342px' : '';
+    }
+    var dw = stacked ? 386 : 680;
+    var dh = stacked ? 500 + card.offsetHeight + 16 : 600;
+    scale = Math.min(1, w / dw);
+    stage.style.height = dh + 'px';
+    stage.style.transform = 'scale(' + scale + ')';
+    stage.style.left = Math.max(0, (w - dw * scale) / 2) + 'px';
+    demo.style.height = Math.ceil(dh * scale) + 'px';
+  }
+  fit();
+  new ResizeObserver(fit).observe(demo);
+
+  function local(r, sr) { return { l: (r.left - sr.left) / scale, t: (r.top - sr.top) / scale, r: (r.right - sr.left) / scale, b: (r.bottom - sr.top) / scale }; }
+  function setPath(it) {
+    var sr = stage.getBoundingClientRect();
+    var b = local(it.box.getBoundingClientRect(), sr), r = local(it.row.getBoundingClientRect(), sr), d;
+    if (!stacked) {
+      var x1 = b.l, y1 = (b.t + b.b) / 2, x2 = r.r - 1, y2 = (r.t + r.b) / 2, dx = Math.max(36, (x1 - x2) * 0.5);
+      d = 'M' + x1 + ',' + y1 + ' C' + (x1 - dx) + ',' + y1 + ' ' + (x2 + dx) + ',' + y2 + ' ' + x2 + ',' + y2;
+    } else {
+      var sx = (b.l + b.r) / 2, sy = b.b, ex = r.r - 1, ey = (r.t + r.b) / 2;
+      d = 'M' + sx + ',' + sy + ' C' + sx + ',' + (sy + 70) + ' ' + (ex + 70) + ',' + ey + ' ' + ex + ',' + ey;
+    }
+    it.path.setAttribute('d', d);
+  }
+  function moveDot(it, p) {
+    var L = it.path.getTotalLength(), pt = it.path.getPointAtLength(L * p);
+    it.dot.setAttribute('cx', pt.x); it.dot.setAttribute('cy', pt.y);
+  }
+  function setStatus(s) {
+    status.innerHTML = s === 'reading'
+      ? '<span class="sp" aria-hidden="true"><i></i><i></i><i></i></span>Reading'
+      : '<i class="ph-bold ph-check" aria-hidden="true"></i>' + items.length + ' fields';
+  }
+
+  // Hover link between a row and its source on the page (only once the read is complete).
+  function hot(it, on) {
+    if (!holding && on) return;
+    hovering = on;
+    it.row.classList.toggle('hot', on); it.box.classList.toggle('hot', on);
+    if (!ANIM) return;
+    if (on) {
+      if (cur) cur.pause();
+      setPath(it);
+      G.killTweensOf(it.path);
+      G.fromTo(it.path, { opacity: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.18, ease: 'power2.out' });
+    } else {
+      G.to(it.path, { opacity: 0, duration: 0.18 });
+      if (cur && visible) cur.resume();
+    }
+  }
+
+  function showFinal() {
+    setStatus('done');
+    items.forEach(function (it) { it.box.style.opacity = 1; it.fill.style.transform = 'none'; it.main.textContent = it.fd.v; });
+    holding = true;
+  }
+  if (!ANIM) { showFinal(); return { start: function () {} }; }
+
+  function cycle() {
+    holding = false;
+    var tl = G.timeline({ onComplete: function () { cur = cycle(); if (!visible) cur.pause(); } });
+    G.set(items.map(function (i) { return i.row; }), { opacity: 0, y: 8 });
+    G.set(items.map(function (i) { return i.box; }), { opacity: 0 });
+    G.set(items.map(function (i) { return i.fill; }), { scaleX: 0 });
+    G.set(items.map(function (i) { return i.path; }), { opacity: 0, strokeDashoffset: 1 });
+    G.set(items.map(function (i) { return i.dot; }), { opacity: 0 });
+    G.set(foot, { opacity: 0, y: 6 });
+    items.forEach(function (it) { it.main.textContent = ''; });
+    tl.call(setStatus, ['reading'], 0)
+      .fromTo(scan, { top: -60, opacity: 1 }, { top: 560, duration: 1.6, ease: 'power1.inOut' }, 0.15)
+      .set(scan, { opacity: 0 }, 1.75);
+    items.forEach(function (it, i) {
+      var t = 0.5 + i * 0.46, pr = { p: 0 }, vr = { p: 0 }, pool = poolFor(it.fd.v);
+      tl.to(it.box, { opacity: 1, duration: 0.2, ease: 'power2.out' }, t)
+        .fromTo(it.box, { scale: 1.14 }, { scale: 1, duration: 0.45, ease: 'expo.out' }, t)
+        .to(it.fill, { scaleX: 1, duration: 0.42, ease: 'power3.out' }, t + 0.05)
+        .call(setPath, [it], t + 0.14)
+        .fromTo(it.path, { opacity: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.42, ease: 'power2.inOut' }, t + 0.15)
+        .set(it.dot, { opacity: 1 }, t + 0.15)
+        .to(pr, { p: 1, duration: 0.42, ease: 'power2.inOut', onUpdate: function () { moveDot(it, pr.p); } }, t + 0.15)
+        .to(it.dot, { opacity: 0, duration: 0.2 }, t + 0.57)
+        .to(it.row, { opacity: 1, y: 0, duration: 0.45, ease: 'expo.out' }, t + 0.5)
+        .to(vr, { p: 1, duration: 0.5, ease: 'none', onUpdate: function () { it.main.textContent = decode(it.fd.v, vr.p, pool, i * 5); } }, t + 0.5)
+        .to(it.path, { opacity: 0, duration: 0.5, ease: 'power1.out' }, t + 0.95);
+    });
+    var end = 0.5 + items.length * 0.46 + 0.6;
+    tl.call(setStatus, ['done'], end)
+      .to(foot, { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out' }, end)
+      .call(function () { holding = true; }, null, end)
+      .to({}, { duration: 3.6 })
+      .call(function () { holding = false; })
+      .to(items.map(function (i) { return i.row; }), { opacity: 0, y: -6, duration: 0.32, stagger: 0.03, ease: 'power2.in' })
+      .to(items.map(function (i) { return i.box; }), { opacity: 0, duration: 0.35, stagger: 0.02 }, '<')
+      .to(foot, { opacity: 0, duration: 0.3 }, '<');
+    return tl;
+  }
+
+  onVisible(demo, function (vis) {
+    visible = vis;
+    if (!cur) return;
+    if (vis && !hovering) cur.resume(); else cur.pause();
+  }, { threshold: 0.05 });
+
+  return { start: function () { cur = cycle(); if (!visible) cur.pause(); } };
+}
+
+/* ============================================================
+   DOC-TYPE MARQUEE
+   ============================================================ */
+(function marquee() {
+  var track = $('#mq');
+  function chips(dupe) {
+    return CONTENT.docTypes.map(function (d) {
+      return '<span class="dchip' + (dupe ? ' dupe' : '') + '"' + (dupe ? ' aria-hidden="true"' : '') + '><i class="ph ' + d[0] + '" aria-hidden="true"></i><span class="a" lang="ar">' + d[1] + '</span><span class="e">' + d[2] + '</span></span>';
+    }).join('');
+  }
+  track.innerHTML = chips(false) + chips(true);
+})();
+
+/* ============================================================
+   WHY ARABIC: comparison tabs
+   ============================================================ */
+(function cases() {
+  var tabsEl = $('#case-tabs'), note = $('#case-note'), crop = $('#case-crop');
+  var gen = $('#out-generic'), me = $('#out-me');
+  var idx = 0, auto = true, timer = null, inView = false;
+  var tabs = CONTENT.cases.map(function (c, i) {
+    var b = h('button', 'tab', esc(c.tab) + '<span class="prog" aria-hidden="true"></span>');
+    b.type = 'button'; b.setAttribute('role', 'tab'); b.id = 'case-tab-' + i;
+    b.setAttribute('aria-controls', 'case-panel');
+    b.addEventListener('click', function () { auto = false; stopTimer(); show(i); });
+    b.addEventListener('keydown', function (e) {
+      var n = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!n) return;
+      e.preventDefault(); auto = false; stopTimer();
+      var j = (idx + n + tabs.length) % tabs.length; show(j); tabs[j].focus();
+    });
+    tabsEl.appendChild(b);
+    return b;
+  });
+
+  function kvRow(r, mine) {
+    var cls = 'v' + (r.iso ? ' iso' : '') + (r.ar ? ' arv' : '');
+    var row = h('div', 'kv', '<span class="k">' + esc(r.k) + '</span><span class="vw"><span class="' + cls + '"' + (r.ar ? ' dir="rtl" lang="ar"' : '') + (r.iso ? ' lang="ar"' : '') + '></span></span>' +
+      (r.why ? '<span class="why"><i class="ph ph-warning-circle" aria-hidden="true"></i>' + esc(r.why) + '</span>' : ''));
+    var v = $('.v', row), target = r.v;
+    return { row: row, v: v, vw: $('.vw', row), target: target, r: r, why: $('.why', row), mine: mine };
+  }
+
+  function show(i) {
+    var c = CONTENT.cases[i]; idx = i;
+    tabs.forEach(function (t, j) { t.setAttribute('aria-selected', j === i ? 'true' : 'false'); t.tabIndex = j === i ? 0 : -1; });
+    $('#case-panel').setAttribute('aria-labelledby', 'case-tab-' + i);
+    note.textContent = c.note;
+    crop.innerHTML = c.crop;
+
+    var gRows = c.generic.map(function (r) { return kvRow(r, false); });
+    var mRows = c.simsim.map(function (r) { return kvRow(r, true); });
+    var gk = $('.kvs', gen), mk = $('.kvs', me);
+    gk.innerHTML = ''; mk.innerHTML = '';
+    gRows.forEach(function (x) { gk.appendChild(x.row); });
+    mRows.forEach(function (x) { mk.appendChild(x.row); });
+    var errs = c.generic.filter(function (r) { return r.why; }).length;
+    $('.verdict', gen).innerHTML = '<i class="ph-bold ph-x" aria-hidden="true"></i>' + errs + (errs === 1 ? ' error' : ' errors');
+    $('.verdict', me).innerHTML = '<i class="ph-bold ph-check" aria-hidden="true"></i>Correct';
+
+    if (!ANIM) {
+      gRows.concat(mRows).forEach(function (x) { x.v.textContent = x.r.iso ? broken(x.target) : x.target; if (x.r.why) x.v.classList.add('wrong'); });
+      mRows.forEach(function (x) { x.vw.insertAdjacentHTML('beforeend', '<i class="ph-bold ph-check tick" aria-hidden="true"></i>'); });
+    } else {
+      G.fromTo(crop, { clipPath: 'inset(0 0 0 100%)' }, { clipPath: 'inset(0 0 0 0%)', duration: 0.2, ease: 'power2.out' });
+      G.fromTo(note, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'power2.out' });
+      gRows.forEach(function (x, k) {
+        if (x.why) G.set(x.why, { opacity: 0, y: -4 });
+        tweenDecode(x.v, x.target, { fmt: x.r.iso ? broken : null, delay: 0.1 + k * 0.08, duration: 0.55, seed: k });
+        if (x.why) {
+          G.delayedCall(0.75 + k * 0.08, function () { x.v.classList.add('wrong'); });
+          G.to(x.why, { opacity: 1, y: 0, duration: 0.18, ease: 'power2.out', delay: 0.75 + k * 0.08 });
+        }
+      });
+      mRows.forEach(function (x, k) {
+        var tw = tweenDecode(x.v, x.target, { delay: 0.35 + k * 0.12, duration: 0.85, seed: k + 3 });
+        tw.eventCallback('onComplete', function () {
+          x.v.textContent = x.target;
+          var tick = h('i', 'ph-bold ph-check tick'); tick.setAttribute('aria-hidden', 'true'); x.vw.appendChild(tick);
+          G.from(tick, { opacity: 0, duration: 0.18 });
+        });
+      });
+    }
+    if (auto) runTimer();
+  }
+
+  function stopTimer() {
+    if (timer) { timer.kill(); timer = null; }
+    tabs.forEach(function (t) { var p = $('.prog', t); if (G) G.set(p, { scaleX: 0 }); });
+  }
+  function runTimer() {
+    stopTimer();
+    if (!ANIM || !auto) return;
+    timer = G.fromTo($('.prog', tabs[idx]), { scaleX: 0 }, { scaleX: 1, duration: 7, ease: 'none', paused: !inView, onComplete: function () { show((idx + 1) % tabs.length); } });
+  }
+  onVisible($('#why'), function (vis) { inView = vis; if (timer) vis ? timer.resume() : timer.pause(); }, { threshold: 0.35 });
+  show(0);
+})();
+
+/* ============================================================
+   BENCHMARKS
+   ============================================================ */
+(function bench() {
+  var B = CONTENT.bench, chipsEl = $('#bench-chips'), barsEl = $('#bars'), deltaEl = $('#delta'), capEl = $('#delta-cap');
+  var cur = 0, revealed = !ANIM;
+  var rows = B.systems.map(function (s, i) {
+    var r = h('div', 'bar-row' + (i === 0 ? ' me' : ''),
+      '<span class="bar-name">' + (i === 0 ? '<svg aria-hidden="true"><use href="#mark"/></svg>' : '') + esc(s) + '</span>' +
+      '<span class="bar ph-draft" data-draft="Placeholder figure"></span><span class="bar-val">0.0%</span>');
+    barsEl.appendChild(r);
+    return { el: r, bar: $('.bar', r), val: $('.bar-val', r), shown: 0 };
+  });
+  var chips = B.cats.map(function (c, i) {
+    var b = h('button', 'chip', esc(c.name)); b.type = 'button';
+    b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+    b.addEventListener('click', function () { set(i); });
+    chipsEl.appendChild(b);
+    return b;
+  });
+  function delta(v) { var s = v.slice(1).sort(function (a, b) { return b - a; }); return v[0] - s[0]; }
+  function set(i, first) {
+    cur = i;
+    chips.forEach(function (c, j) { c.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+    var cat = B.cats[i], d = delta(cat.v);
+    capEl.textContent = 'ahead of the next best system ' + cat.cap + '.';
+    if (!revealed) return;
+    rows.forEach(function (r, k) {
+      var v = cat.v[k];
+      if (!ANIM) { r.bar.style.width = v + '%'; r.val.textContent = v.toFixed(1) + '%'; return; }
+      G.to(r.bar, { width: v + '%', duration: 0.2, delay: k * 0.04, ease: 'power2.out' });
+      var o = { n: r.shown };
+      G.to(o, { n: v, duration: 0.2, delay: k * 0.04, ease: 'power2.out', onUpdate: function () { r.val.textContent = o.n.toFixed(1) + '%'; r.shown = o.n; } });
+    });
+    if (!ANIM) { deltaEl.textContent = '+' + d.toFixed(1); return; }
+    var od = { n: parseFloat(deltaEl.textContent) || 0 };
+    G.to(od, { n: d, duration: 0.2, ease: 'power2.out', onUpdate: function () { deltaEl.textContent = '+' + od.n.toFixed(1); } });
+  }
+  if (ANIM && ST) {
+    deltaEl.textContent = '+0.0';
+    ST.create({ trigger: barsEl, start: 'top 82%', once: true, onEnter: function () { revealed = true; set(cur, true); } });
+  } else { set(0); }
+})();
+
+/* ============================================================
+   HOW IT READS: scroll-scrubbed pipeline
+   ============================================================ */
+function initPipeline() {
+  var NAV_H = 64;
+  var pin = $('#pipe'), stage = $('#p-stage'), wrap = $('.p-wrap'), doc = $('.p-doc', stage);
+  var steps = $$('.step', pin);
+  var rowsEl = $('#p-rows');
+
+  // Layout regions found during "Read"
+  var regs = $$('[data-reg]', doc).map(function (el) {
+    var spec = el.getAttribute('data-reg').split(':');
+    var r = h('span', 'reg r-' + spec[0], spec[1] ? '<span class="reg-tag">' + spec[1] + '</span>' : '');
+    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+    el.appendChild(r);
+    return { el: r, kind: spec[0], tag: $('.reg-tag', r) };
+  });
+
+  var prow = CONTENT.pipe.map(function (p) {
+    var hw = $('[data-k="' + p.k + '"]', doc);
+    var r = h('div', 'prow', '<div><span class="k">' + p.k + '</span><span class="v"></span></div><span class="st"><span class="s-wait">pending</span><span class="s-ok"><i class="ph-bold ph-check"></i>' + (p.review ? 'confirmed' : 'valid') + '</span>' + (p.review ? '<span class="s-rev">0.71 review</span>' : '') + '</span>');
+    rowsEl.appendChild(r);
+    return { p: p, el: r, v: $('.v', r), raw: hw ? hw.textContent : '', wait: $('.s-wait', r), ok: $('.s-ok', r), rev: $('.s-rev', r) };
+  });
+
+  function fit() {
+    var w = wrap.clientWidth, mobile = innerWidth <= 760;
+    if (!w) return;
+    var hMax = mobile
+      ? innerHeight - NAV_H - 48 - $('.sec-h', pin).offsetHeight - 160
+      : innerHeight - NAV_H - 48;
+    hMax = Math.max(240, hMax);
+    var s = Math.min(1, w / 600, hMax / 620);
+    stage.style.transform = 'scale(' + s + ')';
+    stage.style.left = Math.max(0, (w - 600 * s) / 2) + 'px';
+    wrap.style.height = Math.ceil(620 * s) + 'px';
+  }
+  fit();
+  window.addEventListener('resize', fit);
+
+  var active = -1;
+  function setStep(i) {
+    if (i === active) return; active = i;
+    steps.forEach(function (s, j) { s.classList.toggle('on', j === i); s.setAttribute('aria-current', j === i ? 'step' : 'false'); });
+  }
+
+  var chips = $$('.pchip', stage), json = $('.p-json', stage), jl = $$('.jl', json), dest = $$('.dest', stage), math = $('.p-math', stage);
+  var scan = $('.p-scan', doc), dirt = $('.p-dirt', doc), shade = $('.p-shade', doc), noise = $('.p-noise', doc);
+  var regEls = regs.map(function (r) { return r.el; }), tagEls = regs.filter(function (r) { return r.tag; }).map(function (r) { return r.tag; });
+  var nonHand = regs.filter(function (r) { return r.kind !== 'hand'; }).map(function (r) { return r.el; });
+  var handRegs = regs.filter(function (r) { return r.kind === 'hand'; }).map(function (r) { return r.el; });
+
+  if (!ANIM || !ST) {
+    // Static: show the "Understand" moment with every row resolved.
+    G && G.set([json].concat(dest), { opacity: 0 });
+    if (!G) { json.style.opacity = 0; dest.forEach(function (d) { d.style.opacity = 0; }); }
+    chips.forEach(function (c) { c.style.opacity = 0; });
+    handRegs.forEach(function (r) { r.style.opacity = 1; });
+    prow.forEach(function (r) { r.v.textContent = r.p.v; r.wait.style.opacity = 0; r.ok.style.opacity = 1; });
+    steps.forEach(function (s) { s.classList.add('on'); });
+    return;
+  }
+
+  G.set(doc, { rotation: -8, rotationX: 18, scale: 0.9, x: -16, y: 24, transformPerspective: 900, transformOrigin: '50% 60%' });
+  G.set(shade, { opacity: 0.32 }); G.set(dirt, { opacity: 0.08 }); G.set(noise, { opacity: 0.6 });
+  G.set(chips, { opacity: 0, x: -10 });
+  G.set(regEls, { opacity: 0, scale: 1.08 });
+  G.set(prow.map(function (r) { return r.el; }), { opacity: 0, x: -16 });
+  G.set(math, { opacity: 0, y: 10 });
+  G.set(json, { opacity: 0, y: 24, scale: 0.96 });
+  G.set(jl, { opacity: 0, x: -6 });
+  G.set(dest, { opacity: 0, y: 12 });
+
+  var tl = G.timeline({ defaults: { ease: 'power2.inOut' } });
+  // Clean
+  tl.to(doc, { rotation: -0.8, rotationX: 0, scale: 1, x: 0, y: 0, duration: 0.75 }, 0.05)
+    .to([dirt, shade], { opacity: 0, duration: 0.55 }, 0.2)
+    .to(noise, { opacity: 0.06, duration: 0.55 }, 0.2)
+    .to(chips, { opacity: 1, x: 0, stagger: 0.1, duration: 0.25, ease: 'power2.out' }, 0.45)
+  // Read
+    .to(chips, { opacity: 0, x: -8, stagger: 0.04, duration: 0.18 }, 0.98)
+    .fromTo(scan, { top: '-14%', opacity: 1 }, { top: '100%', duration: 0.75, ease: 'none' }, 1.02)
+    .set(scan, { opacity: 0 }, 1.78)
+    .to(regEls, { opacity: 1, scale: 1, stagger: 0.045, duration: 0.22, ease: 'power2.out' }, 1.08)
+  // Understand
+    .to(nonHand, { opacity: 0.12, duration: 0.25 }, 2.02)
+    .to(tagEls, { opacity: 0, duration: 0.2 }, 2.02);
+  prow.forEach(function (r, i) {
+    var o = { p: 0 }, poolA = POOLS.ar, poolL = POOLS.lat, t = 2.08 + i * 0.12;
+    tl.to(r.el, { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, t)
+      .to(o, { p: 1, duration: 0.42, ease: 'none', onUpdate: function () {
+        // Handwritten Arabic dissolves, then resolves into the clean English value.
+        r.v.textContent = o.p < 0.4 ? r.raw : decode(r.p.v, (o.p - 0.4) / 0.6, poolL, i);
+        r.v.style.fontFamily = o.p < 0.4 ? 'var(--font-ruqaa)' : '';
+        r.v.style.direction = o.p < 0.4 ? 'rtl' : '';
+      } }, t + 0.05);
+  });
+  // Verify
+  tl.to(handRegs, { opacity: 0.25, duration: 0.2 }, 3.0);
+  prow.forEach(function (r, i) {
+    var t = 3.05 + i * 0.07;
+    tl.to(r.wait, { opacity: 0, duration: 0.12 }, t);
+    if (r.rev) tl.to(r.rev, { opacity: 1, duration: 0.12 }, t).to(r.el, { borderColor: cssVar('--ink'), duration: 0.15 }, t)
+      .to(r.rev, { opacity: 0, duration: 0.12 }, 3.62).to(r.ok, { opacity: 1, duration: 0.15 }, 3.66).to(r.el, { borderColor: cssVar('--hairline'), duration: 0.2 }, 3.66);
+    else tl.to(r.ok, { opacity: 1, duration: 0.15 }, t + 0.04);
+  });
+  tl.to(math, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' }, 3.4)
+  // Deliver
+    .to(prow.map(function (r) { return r.el; }).concat(math), { opacity: 0, x: -12, stagger: 0.025, duration: 0.2 }, 4.0)
+    .to(doc, { scale: 0.62, x: 120, y: -30, rotation: 3, opacity: 0, duration: 0.45 }, 4.0)
+    .to(json, { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power3.out' }, 4.18)
+    .to(jl, { opacity: 1, x: 0, stagger: 0.03, duration: 0.14, ease: 'power2.out' }, 4.26)
+    .to(dest, { opacity: 1, y: 0, stagger: 0.05, duration: 0.22, ease: 'power2.out' }, 4.5)
+    .to({}, { duration: 0.2 }, 4.8);
+
+  var st = ST.create({
+    trigger: pin,
+    start: function () {
+      var avail = innerHeight - NAV_H;
+      return pin.offsetHeight <= avail ? 'center ' + Math.round(NAV_H + avail / 2) + 'px' : 'top ' + NAV_H + 'px';
+    },
+    end: function () { return '+=' + Math.round(innerHeight * 3.4); },
+    pin: true, scrub: 0.7, animation: tl, invalidateOnRefresh: true,
+    onUpdate: function (self) { setStep(Math.min(4, Math.floor(self.progress * 5 * 0.999))); }
+  });
+  setStep(0);
+  steps.forEach(function (s, i) {
+    s.addEventListener('click', function () {
+      var y = st.start + (st.end - st.start) * ((i + 0.62) / 5);
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+  });
+}
+
+/* ============================================================
+   SECURITY: deploy switcher + audit trail
+   ============================================================ */
+function initSecurity() {
+  var deps = $$('.dep'), ind = $('.dep-ind'), trail = $$('#trail .tr, #trail .trail-top');
+  if (!ANIM) return;
+  var i = 0, loop = null;
+  function moveTo(j) {
+    var d = deps[j];
+    deps.forEach(function (x, k) { x.classList.toggle('on', k === j); });
+    G.to(ind, { y: d.offsetTop - deps[0].offsetTop, height: d.offsetHeight, duration: 0.2, ease: 'power2.out' });
+  }
+  G.set(ind, { height: deps[0].offsetHeight, top: deps[0].offsetTop });
+  onVisible($('.c1'), function (vis) {
+    if (vis && !loop) loop = setInterval(function () { i = (i + 1) % deps.length; moveTo(i); }, 2400);
+    if (!vis && loop) { clearInterval(loop); loop = null; }
+  }, { threshold: 0.4 });
+  deps.forEach(function (d, k) { d.addEventListener('mouseenter', function () { i = k; moveTo(k); }); });
+  G.set(trail, { opacity: 0 });
+  ST && ST.create({ trigger: '#trail', start: 'top 85%', once: true, onEnter: function () {
+    G.to(trail, { opacity: 1, stagger: 0.06, duration: 0.18, ease: 'power2.out' });
+  } });
+}
+
+/* ============================================================
+   WAITLIST SEEDS: particles that write سمسم right to left
+   ============================================================ */
+function initSeeds() {
+  var box = $('#seeds'), canvas = $('canvas', box), ctx = canvas.getContext('2d');
+  var W = 0, H = 0, parts = [], visible = false, raf = 0, t0 = 0, now = 0, word = 'سمسم';
+  var mouse = { x: -1e4, y: -1e4 }, inkC = '', accC = '';
+  function colors() { inkC = cssVar('--ink'); accC = cssVar('--muted'); }
+  colors();
+
+  function size() {
+    var r = box.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = r.width; H = r.height;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function targets(text) {
+    if (W < 10 || H < 10) return [];
+    var off = document.createElement('canvas'); off.width = Math.ceil(W); off.height = Math.ceil(H);
+    var o = off.getContext('2d'), fs = H * 0.95;
+    o.font = '700 ' + fs + 'px "IBM Plex Sans Arabic", sans-serif';
+    var w = o.measureText(text).width;
+    if (w > W * 0.86) { fs *= (W * 0.86) / w; o.font = '700 ' + fs + 'px "IBM Plex Sans Arabic", sans-serif'; }
+    o.direction = 'rtl'; o.textAlign = 'center'; o.textBaseline = 'middle';
+    o.fillText(text, W / 2, H * 0.5);
+    var data = o.getImageData(0, 0, off.width, off.height).data, pts = [], gap = W < 600 ? 3.3 : 6.2, rand = rng(5);
+    for (var y = 0; y < H; y += gap) for (var x = 0; x < W; x += gap) {
+      var jx = x + (rand() - 0.5) * gap * 0.9, jy = y + (rand() - 0.5) * gap * 0.9;
+      var idx = ((jy | 0) * off.width + (jx | 0)) * 4 + 3;
+      if (data[idx] > 140) pts.push([jx, jy]);
+    }
+    return pts;
+  }
+  function seedScale() { return Math.max(0.5, Math.min(1, W / 900)); }
+  function flow(x, y) { return -0.9 + Math.sin(x * 0.012) * 0.55 + Math.cos(y * 0.02) * 0.4; }
+  function delayFor(hx) { return now + (1 - hx / W) * 1100 + Math.random() * 260; }
+
+  function build(text, morph) {
+    var pts = targets(text), rand = Math.random;
+    if (!morph) {
+      parts = pts.map(function (p) {
+        return { hx: p[0], hy: p[1], x: rand() * W, y: H * 0.5 + (rand() - 0.5) * H * 1.6, vx: 0, vy: 0, a: flow(p[0], p[1]), rx: (2 + rand() * 1.25) * seedScale(), acc: rand() < 0.13, ph: rand() * 6.28, delay: 0, free: false };
+      });
+      // A few loose seeds around the word
+      for (var i = 0; i < Math.round(pts.length * 0.06); i++) {
+        var fx = rand() * W, fy = rand() * H;
+        parts.push({ hx: fx, hy: fy, x: rand() * W, y: rand() * H, vx: 0, vy: 0, a: flow(fx, fy), rx: (1.8 + rand()) * seedScale(), acc: rand() < 0.3, ph: rand() * 6.28, delay: 0, free: true });
+      }
+      parts.forEach(function (p) { p.delay = (1 - p.hx / W) * 1100 + rand() * 260; });
+    } else {
+      pts.sort(function (a, b) { return b[0] - a[0]; });
+      var bound = parts.filter(function (p) { return !p.free; }).sort(function (a, b) { return b.hx - a.hx; });
+      var loose = parts.filter(function (p) { return p.free; });
+      var pool = bound.concat(loose);
+      while (pool.length < pts.length) { var np = { x: rand() * W, y: rand() * H, vx: 0, vy: 0, rx: (2 + rand() * 1.2) * seedScale(), acc: rand() < 0.13, ph: rand() * 6.28 }; pool.push(np); parts.push(np); }
+      pool.forEach(function (p, i) {
+        if (i < pts.length) { p.hx = pts[i][0]; p.hy = pts[i][1]; p.free = false; }
+        else { p.hx = rand() * W; p.hy = rand() * H; p.free = true; }
+        p.a = flow(p.hx, p.hy);
+        // burst outward first, then resettle right to left
+        var dx = p.x - W / 2, dy = p.y - H / 2, d = Math.sqrt(dx * dx + dy * dy) || 1;
+        p.vx += dx / d * (6 + rand() * 6); p.vy += dy / d * (6 + rand() * 6);
+        p.delay = delayFor(p.hx) + 250;
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    var pI = new Path2D(), pA = new Path2D();
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i], ang = p.a + p.vx * 0.06, P = p.acc ? pA : pI;
+      P.moveTo(p.x + Math.cos(ang) * p.rx, p.y + Math.sin(ang) * p.rx);
+      P.ellipse(p.x, p.y, p.rx, p.rx * 0.48, ang, 0, Math.PI * 2);
+    }
+    ctx.fillStyle = inkC; ctx.fill(pI);
+    ctx.fillStyle = accC; ctx.fill(pA);
+  }
+  function step(ts) {
+    if (!t0) t0 = ts;
+    now = ts - t0;
+    var R = 86, R2 = R * R;
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      if (now > p.delay) {
+        var wx = Math.sin(now * 0.0011 + p.ph) * (p.free ? 3 : 0.6), wy = Math.cos(now * 0.0009 + p.ph) * (p.free ? 3 : 0.6);
+        p.vx = (p.vx + (p.hx + wx - p.x) * 0.05) * 0.84;
+        p.vy = (p.vy + (p.hy + wy - p.y) * 0.05) * 0.84;
+      } else { p.vx *= 0.96; p.vy *= 0.96; }
+      var dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
+      if (d2 < R2) { var d = Math.sqrt(d2) || 1, f = (1 - d / R) * 2.4; p.vx += dx / d * f; p.vy += dy / d * f; }
+      p.x += p.vx; p.y += p.vy;
+    }
+    draw();
+    raf = visible ? requestAnimationFrame(step) : 0;
+  }
+  function start() { if (!raf && ANIM) raf = requestAnimationFrame(step); }
+
+  var inited = false, fontsReady = false, lastW = 0;
+  function init() {
+    if (inited || !fontsReady) return;
+    size();
+    if (W < 10 || H < 10) return; // not laid out yet (hidden pane, collapsed tab); the observer retries
+    inited = true; lastW = W;
+    build(word, false);
+    if (!ANIM) { parts.forEach(function (p) { p.x = p.hx; p.y = p.hy; }); draw(); return; }
+    // Hold until the section scrolls into view, then write the word.
+    onVisible(box, function (vis) { visible = vis; if (vis) start(); }, { threshold: 0.25 });
+  }
+  var ready = (document.fonts && document.fonts.load) ? document.fonts.load('700 120px "IBM Plex Sans Arabic"', word) : Promise.resolve();
+  ready.catch(function () {}).then(function () { fontsReady = true; init(); });
+
+  box.addEventListener('pointermove', function (e) { var r = canvas.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; });
+  box.addEventListener('pointerleave', function () { mouse.x = mouse.y = -1e4; });
+
+  new ResizeObserver(function () {
+    if (!inited) { init(); return; }
+    var w = box.getBoundingClientRect().width;
+    if (!w || Math.abs(w - lastW) < 2) return;
+    lastW = w;
+    size(); build(word, false);
+    parts.forEach(function (p) { p.x = p.hx; p.y = p.hy; p.delay = 0; });
+    if (!ANIM) draw();
+  }).observe(box);
+
+  return {
+    morph: function (text) {
+      word = text;
+      if (!inited) return;
+      if (!ANIM) { build(text, false); parts.forEach(function (p) { p.x = p.hx; p.y = p.hy; }); draw(); return; }
+      build(text, true); start();
+    }
+  };
+}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+function initForms(seeds) {
+  var opts = $('#opts');
+  opts.innerHTML = CONTENT.docOptions.map(function (o, i) {
+    return '<label class="opt"><input type="checkbox" name="documents" value="' + esc(o) + '"><span><i class="ph-bold ph-check" aria-hidden="true"></i>' + esc(o) + '</span></label>';
+  }).join('');
+  var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function submit(payload) {
+    if (!CONFIG.waitlistEndpoint) return new Promise(function (res) { setTimeout(res, 900); });
+    return fetch(CONFIG.waitlistEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function (r) { if (!r.ok) throw new Error('bad status'); });
+  }
+  function wire(form, onDone) {
+    var msg = $('.form-msg', form), btn = $('button[type="submit"]', form), email = form.elements.email;
+    var group = email.closest('.wl-row') || email;
+    email.addEventListener('input', function () { if (group.getAttribute('aria-invalid')) { group.removeAttribute('aria-invalid'); email.removeAttribute('aria-invalid'); msg.textContent = ''; msg.className = 'form-msg'; } });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = email.value.trim();
+      if (!EMAIL.test(v)) {
+        msg.className = 'form-msg err';
+        msg.innerHTML = '<i class="ph-bold ph-warning-circle" aria-hidden="true"></i>Enter a work email, like name@company.com';
+        group.setAttribute('aria-invalid', 'true'); email.setAttribute('aria-invalid', 'true'); email.focus();
+        return;
+      }
+      var docs = $$('input[name="documents"]:checked', form).map(function (c) { return c.value; });
+      var payload = { email: v, company: form.elements.company ? form.elements.company.value.trim() : '', documents: docs, source: form.id };
+      btn.disabled = true; btn.classList.add('loading'); msg.textContent = ''; msg.className = 'form-msg';
+      submit(payload).then(function () { onDone(v); }).catch(function () {
+        msg.className = 'form-msg err';
+        msg.innerHTML = '<i class="ph-bold ph-warning-circle" aria-hidden="true"></i>That didn’t go through. Please try again.';
+      }).then(function () { btn.disabled = false; btn.classList.remove('loading'); });
+    });
+  }
+  wire($('#wl-hero'), function () {
+    var f = $('#wl-hero');
+    var done = h('div', 'wl-done', '<i class="ph-bold ph-check-circle" aria-hidden="true"></i><span>You’re on the list. <a href="#waitlist">Tell us what you process</a> to move up.</span>');
+    done.setAttribute('role', 'status');
+    var row = $('.wl-row', f); row.replaceWith(done); $('.field-label', f).style.visibility = 'hidden';
+    var mail = $('#m-email'); if (mail && !mail.value) mail.value = f.elements.email ? f.elements.email.value : '';
+    if (ANIM) G.from(done, { opacity: 0, duration: 0.18 });
+  });
+  wire($('#wl-main'), function () {
+    var card = $('#form-card'); card.classList.add('is-done');
+    if (ANIM) G.from($('.done-panel', card), { opacity: 0, duration: 0.18 });
+    if (seeds) seeds.morph('شكراً');
+  });
+}
+
+/* ============================================================
+   DRAFT MODE
+   ============================================================ */
+function initDraft() {
+  var n = $$('.ph-draft').length;
+  var c = $('#draft-count'); if (c) c.textContent = n;
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+var demo = initDemo();
+heroIntro(function () { demo.start(); });
+initPipeline();
+initSecurity();
+var seeds = initSeeds();
+initForms(seeds);
+initDraft();
+
+var drawAll = function () { drawStipples(); };
+(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () {
+  drawAll();
+  if (ST) ST.refresh();
+});
+var rt = 0;
+window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(drawAll, 200); });
+})();
+</script>
+</body>
+</html>
