@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Simsim · Arabic-first document AI</title>
-<meta name="description" content="Simsim pulls clean, verified data from Arabic and bilingual documents. Scans, stamps and handwriting included. Join the early access waitlist.">
+<title>Simsim · Any document, read like a native</title>
+<meta name="description" content="Simsim pulls clean, verified data from scans, stamps and handwriting, in English, Arabic and beyond. Join the early access waitlist.">
 <meta name="theme-color" content="#ffffff">
-<meta property="og:title" content="Simsim · Arabic documents, read like a native">
-<meta property="og:description" content="Document AI built for Arabic. Scans, stamps, handwriting, Hijri dates and right-to-left tables, turned into clean data.">
+<meta property="og:title" content="Simsim · Any document, read like a native">
+<meta property="og:description" content="Document AI for the hard documents: scans, stamps, handwriting, right-to-left scripts and local calendars, turned into clean data.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath transform='translate(3 6) rotate(-16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%230a0a0a'/%3E%3Cpath transform='translate(13 6) rotate(16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%23737373'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Aref+Ruqaa:wght@400;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css">
 <script>
@@ -26,7 +26,8 @@
    TOKENS: "Full-bleed Grid with Dividers" (PATTERN-full-bleed-grid.md)
    Every colour, font and radius comes from that file. The rgba values are the
    pattern's own foreground alphas (0.04 band, 0.06 grid, 0.08 divider, 0.10 marks).
-   One addition: Arabic companion fonts, because Geist has no Arabic glyphs.
+   Additions: IBM Plex Sans Arabic (Geist has no Arabic glyphs), plus Aref Ruqaa and Caveat
+   for handwriting inside the demo documents only.
    ============================================================ */
 :root {
   --ink: #0a0a0a;
@@ -49,6 +50,7 @@
   --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
   --font-ar: "IBM Plex Sans Arabic", "Geist", sans-serif;
   --font-ruqaa: "Aref Ruqaa", "IBM Plex Sans Arabic", serif;
+  --font-hand: "Caveat", cursive;
 
   --noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
@@ -175,11 +177,31 @@ mark.hl::before {
 @keyframes mq { to { transform: translateX(-50%); } }
 .dchip { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; margin-right: -1px; border: 1px solid var(--hairline); background: var(--surface); white-space: nowrap; }
 .dchip .ph { font-size: 16px; color: var(--ink); }
-.dchip .a { font: 500 0.9375rem/1 var(--font-ar); }
-.dchip .e { font-size: 0.8125rem; color: var(--muted); }
+.dchip .n { font-size: 0.875rem; font-weight: 500; }
 
 /* ---------- Demo stage ---------- */
 .demo { position: relative; width: 100%; }
+.demo-box { position: relative; }
+.demo-switch { display: flex; align-items: center; gap: 14px; margin-top: 20px; flex-wrap: wrap; }
+.demo-switch-l { font: 500 0.6875rem/1 var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); }
+.demo-switch-b { display: inline-flex; }
+.doc-invoice { transition: opacity var(--t) var(--ease), visibility var(--t) var(--ease); }
+.doc-invoice:not(.on) { opacity: 0; visibility: hidden; }
+.rows[hidden] { display: none; }
+/* English invoice: same sheet, mirrored for left-to-right */
+.doc-invoice[dir="ltr"] { font-family: var(--font-sans); transform: rotate(-1deg); }
+.doc-invoice[dir="ltr"] .inv-title { text-align: right; }
+.doc-invoice[dir="ltr"] .inv-title .t-main { font-size: 18px; letter-spacing: -0.03em; }
+.doc-invoice[dir="ltr"] .inv-table th { text-align: left; }
+.doc-invoice[dir="ltr"] .inv-table th:nth-child(n+2), .doc-invoice[dir="ltr"] .inv-table td:nth-child(n+2) { text-align: right; }
+.doc-invoice[dir="ltr"] .inv-totals { margin-right: 0; margin-left: auto; }
+.doc-invoice[dir="ltr"] .inv-hand { right: auto; left: 2px; top: 6px; font: 600 19px/1.1 var(--font-hand); transform: rotate(-2deg); }
+.doc-invoice[dir="ltr"] .inv-hand .sig { margin: 4px 0 0 20px; }
+.doc-invoice[dir="ltr"] .inv-stamp { left: auto; right: 34px; top: 16px; }
+.inv-logo-en { font: 700 10px/1 var(--font-sans); letter-spacing: -0.02em; }
+.stamp.stamp-rect { border-radius: 0; -webkit-mask-image: none; mask-image: none; width: 98px; height: 50px; padding: 6px; font: 500 7.5px/1.3 var(--font-mono); letter-spacing: .12em; transform: rotate(-8deg); }
+.stamp.stamp-rect::before { border-radius: 0; inset: 3px; }
+.stamp.stamp-rect b { font: 700 15px/1.1 var(--font-sans); letter-spacing: .14em; }
 .demo-stage { position: absolute; top: 0; left: 0; width: 680px; height: 600px; transform-origin: 0 0; }
 .demo-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 4; }
 .demo-lines path { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
@@ -197,7 +219,8 @@ mark.hl::before {
 .row { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 6px 14px; transition: background-color var(--t) var(--ease); cursor: default; }
 .row .k { font: 500 10.5px/1.75 var(--font-mono); color: var(--muted); }
 .row .v-main { display: block; font-size: 12.8px; font-weight: 500; line-height: 1.35; min-height: 1.35em; letter-spacing: -0.01em; }
-.row .v-raw { display: block; font: 400 10.5px/1.6 var(--font-ar); color: var(--muted); text-align: left; }
+.row .v-raw { display: block; font: 400 10.5px/1.6 var(--font-sans); color: var(--muted); text-align: left; }
+.row .v-raw.ar { font-family: var(--font-ar); }
 .row .conf { font: 500 10px/1.85 var(--font-mono); color: var(--muted); }
 .row .conf.mid { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
 .row.hot { background: var(--tint); }
@@ -239,8 +262,8 @@ mark.hl::before {
 .inv-en { font: 500 8.6px/1.4 var(--font-sans); color: var(--muted); direction: ltr; text-align: right; }
 .inv-addr { font-size: 8.3px; color: var(--muted); }
 .inv-title { text-align: left; }
-.inv-title .t-ar { font-size: 15px; font-weight: 700; line-height: 1.2; }
-.inv-title .t-en { font: 500 7.6px/1.6 var(--font-mono); letter-spacing: .16em; color: var(--muted); }
+.inv-title .t-main { font-size: 15px; font-weight: 700; line-height: 1.2; }
+.inv-title .t-sub { font: 500 7.6px/1.6 var(--font-mono); letter-spacing: .16em; color: var(--muted); }
 .inv-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 18px; padding: 12px 0; border-bottom: 1px solid var(--hairline); }
 .lbl { display: block; font-size: 8.2px; color: var(--muted); }
 .val { font-size: 10.2px; font-weight: 600; }
@@ -261,7 +284,7 @@ mark.hl::before {
 .inv-bottom { position: absolute; left: 22px; right: 22px; bottom: 12px; display: flex; justify-content: space-between; font-size: 7.6px; color: var(--muted); border-top: 1px solid var(--hairline); padding-top: 6px; }
 
 /* ============================================================
-   WHY ARABIC: comparison cases
+   HARD CASES: comparison tabs
    ============================================================ */
 .tabs { display: flex; margin-top: 40px; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
@@ -313,12 +336,16 @@ mark.hl::before {
 .cp-line .num { font-size: 26px; font-weight: 700; white-space: nowrap; }
 .cp-hand { font: 400 30px/1.5 var(--font-ruqaa); color: var(--ink); transform: rotate(-2.5deg); }
 .cp-hand .sig { width: 150px; height: 48px; margin: 4px 30% 0 0; }
+.cp-hand-en { font: 600 34px/1.25 var(--font-hand); transform: rotate(-2deg); }
+.cp-hand-en .sig { margin: 6px 0 0 34%; }
 .cp-date { display: grid; gap: 6px; }
 .cp-date .lbl { font-size: 15px; }
 .cp-date .val { font-size: 30px; font-weight: 700; }
 .cp-stampwrap { position: relative; }
 .cp-stampwrap .stamp { width: 132px; height: 132px; font-size: 10px; left: 22px; top: -38px; padding: 16px; transform: rotate(-12deg); }
 .cp-stampwrap .stamp b { font-size: 13px; }
+.cp-stampwrap .stamp.stamp-rect { width: 150px; height: 70px; left: auto; right: 6px; top: -16px; padding: 8px; font-size: 10px; transform: rotate(-9deg); }
+.cp-stampwrap .stamp.stamp-rect b { font-size: 22px; }
 .cp-table { width: 100%; border-collapse: collapse; font-size: 15px; }
 .cp-table th { background: var(--tint); font-weight: 600; padding: 9px 10px; border-bottom: 1.5px solid var(--ink); }
 .cp-table td { padding: 10px; border-bottom: 1px solid var(--hairline); }
@@ -593,7 +620,7 @@ html.draft [data-draft]:hover::after {
       <span>simsim</span><span class="ar" lang="ar">سمسم</span>
     </a>
     <nav class="nav-links" aria-label="Sections">
-      <a href="#why">Why Arabic</a>
+      <a href="#why">Hard cases</a>
       <a href="#benchmarks">Benchmarks</a>
       <a href="#how">How it reads</a>
       <a href="#security">Security</a>
@@ -608,15 +635,15 @@ html.draft [data-draft]:hover::after {
 <section class="section section--band hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <h1 aria-label="Arabic documents, read like a native.">
-        <mark class="hl on"><span class="w"><span>Arabic</span></span></mark>
-        <span class="w"><span>documents,</span></span>
+      <h1 aria-label="Any document, read like a native.">
+        <mark class="hl on"><span class="w"><span>Any</span></span></mark>
+        <span class="w"><span>document,</span></span>
         <span class="w"><span>read</span></span>
         <span class="w"><span>like</span></span>
         <span class="w"><span>a</span></span>
         <span class="w"><span>native.</span></span>
       </h1>
-      <p class="hero-sub">Simsim pulls clean, verified data from Arabic and bilingual documents. Scans, stamps and handwriting included.</p>
+      <p class="hero-sub">Simsim pulls clean, verified data from scans, stamps and handwriting, in English, Arabic and beyond.</p>
       <form class="wl" id="wl-hero" novalidate>
         <label class="field-label" for="hero-email">Work email</label>
         <div class="wl-row">
@@ -630,21 +657,67 @@ html.draft [data-draft]:hover::after {
       </form>
     </div>
 
-    <figure class="demo" id="demo" aria-label="Animated example: Simsim reads an Arabic tax invoice and returns structured fields." style="margin:0;height:600px">
+    <figure class="demo" id="demo" aria-label="Animated example: Simsim reads an English and an Arabic invoice and returns structured fields." style="margin:0">
+      <div class="demo-box" style="height:600px">
       <div class="demo-stage">
 
         <!-- Output card (rows are generated from CONTENT.demo) -->
         <div class="out-card" aria-hidden="true">
           <div class="out-head">
-            <span class="out-title">extract <b>tax_invoice</b></span>
+            <span class="out-title">extract <b class="out-type"></b></span>
             <span class="status"></span>
           </div>
-          <div class="rows"></div>
-          <div class="out-foot"><i class="ph-bold ph-check-circle"></i><span>Subtotal + 5% VAT = total</span></div>
+          <div class="out-foot"><i class="ph-bold ph-check-circle"></i><span class="out-foot-t"></span></div>
         </div>
 
-        <!-- The source document (fictional company) -->
-        <div class="doc doc-invoice" dir="rtl" lang="ar" aria-hidden="true">
+        <!-- English source document (fictional company) -->
+        <div class="doc doc-invoice on" data-doc="en" dir="ltr" lang="en" aria-hidden="true">
+          <div class="scan"></div>
+          <div class="inv-head">
+            <div class="inv-brand">
+              <div class="inv-logo inv-logo-en">H&amp;P</div>
+              <div>
+                <div class="inv-name f" data-f="seller">Harbour &amp; Pine Trading Ltd</div>
+                <div class="inv-addr">Unit 4, Wharfside Park, Leeds LS10 1PZ</div>
+                <div class="inv-addr">VAT GB 284 6153 07</div>
+              </div>
+            </div>
+            <div class="inv-title"><div class="t-main">Invoice</div><div class="t-sub">TAX INVOICE</div></div>
+          </div>
+          <div class="inv-meta">
+            <div><span class="lbl">Invoice no.</span><span class="val f" data-f="invoice_no">HP-20418</span></div>
+            <div><span class="lbl">Date</span><span class="val f" data-f="issue_date">14 March 2025</span></div>
+            <div><span class="lbl">Due</span><span class="val">13 April 2025</span></div>
+            <div><span class="lbl">Terms</span><span class="val">30 days, bank transfer</span></div>
+          </div>
+          <div class="inv-buyer">
+            <div><span class="lbl">Bill to</span><span class="val f" data-f="buyer">Northgate Builders Ltd</span></div>
+            <span class="lbl">Bradford BD1 4QT</span>
+          </div>
+          <div class="inv-tablewrap f" data-f="line_items">
+            <table class="inv-table">
+              <thead><tr><th>Description</th><th>Qty</th><th>Unit price</th><th>Amount</th></tr></thead>
+              <tbody>
+                <tr><td>Portland cement, 25 kg bag</td><td>120</td><td>£6.40</td><td>£768.00</td></tr>
+                <tr><td>Rebar 12 mm, per tonne</td><td>3</td><td>£640.00</td><td>£1,920.00</td></tr>
+                <tr><td>Washed sharp sand, per m³</td><td>40</td><td>£38.50</td><td>£1,540.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="inv-totals">
+            <div><span>Subtotal</span><span>£4,228.00</span></div>
+            <div><span>VAT (20%)</span><span>£845.60</span></div>
+            <div class="grand"><span>Total due</span><span class="f" data-f="total">£5,073.60</span></div>
+          </div>
+          <div class="inv-foot">
+            <div class="inv-hand"><span class="f" data-f="note">Received in full, J. Okafor</span><svg class="sig"><use href="#sig-b"/></svg></div>
+            <div class="stamp stamp-rect inv-stamp f" data-f="seal"><div><b>PAID</b>18 MAR 2025</div></div>
+          </div>
+          <div class="inv-bottom"><span>Thank you for your business</span><span>Company no. 09284716</span></div>
+        </div>
+
+        <!-- Arabic source document (fictional company) -->
+        <div class="doc doc-invoice" data-doc="ar" dir="rtl" lang="ar" aria-hidden="true">
           <div class="scan"></div>
           <div class="inv-head">
             <div class="inv-brand">
@@ -655,7 +728,7 @@ html.draft [data-draft]:hover::after {
                 <div class="inv-addr">ص.ب ١٢٣، الرمز البريدي ١١٢، روي، مسقط</div>
               </div>
             </div>
-            <div class="inv-title"><div class="t-ar">فاتورة ضريبية</div><div class="t-en">TAX INVOICE</div></div>
+            <div class="inv-title"><div class="t-main">فاتورة ضريبية</div><div class="t-sub">TAX INVOICE</div></div>
           </div>
           <div class="inv-meta">
             <div><span class="lbl">رقم الفاتورة</span><span class="val f" data-f="invoice_no">٠٤١٨</span></div>
@@ -691,25 +764,33 @@ html.draft [data-draft]:hover::after {
 
         <svg class="demo-lines" aria-hidden="true"></svg>
       </div>
+      </div>
+      <figcaption class="demo-switch">
+        <span class="demo-switch-l">Document</span>
+        <span class="demo-switch-b" role="group" aria-label="Choose example document">
+          <button type="button" class="chip" data-doc="en" aria-pressed="true">English invoice</button>
+          <button type="button" class="chip" data-doc="ar" aria-pressed="false">Arabic invoice</button>
+        </span>
+      </figcaption>
     </figure>
   </div>
   <div class="wrap">
     <div class="strip" role="group" aria-label="Document types">
-      <p class="strip-label">Reads the paperwork the region runs on</p>
+      <p class="strip-label">Reads the paperwork businesses run on</p>
       <div class="marquee"><div class="marquee-track" id="mq"></div></div>
     </div>
   </div>
 </section>
 
-<!-- ============================== WHY ARABIC ============================== -->
+<!-- ============================== HARD CASES ============================== -->
 <section class="section" id="why">
   <div class="wrap">
     <div class="sec-h">
-      <span class="eyebrow">Why Arabic</span>
-      <h2 class="rv">Arabic is where most document AI breaks.</h2>
-      <p class="lede rv">Generic OCR treats Arabic as an edge case. These cases are the ones Simsim was built on. Same input, two very different outputs.</p>
+      <span class="eyebrow">Hard cases</span>
+      <h2 class="rv">Where most document AI breaks.</h2>
+      <p class="lede rv">Generic OCR is tuned for clean, printed English. We built Simsim on Arabic, one of the hardest scripts to read, so it holds up where others fail.</p>
     </div>
-    <div class="tabs rv" role="tablist" aria-label="Arabic document challenges" id="case-tabs"></div>
+    <div class="tabs rv" role="tablist" aria-label="Hard document cases" id="case-tabs"></div>
     <p class="case-note" id="case-note"></p>
     <div class="case" id="case-panel" role="tabpanel">
       <div class="crop">
@@ -735,8 +816,8 @@ html.draft [data-draft]:hover::after {
   <div class="wrap">
     <div class="sec-h">
       <span class="eyebrow">Benchmarks</span>
-      <h2 class="rv">Leading on Arabic, by a wide margin.</h2>
-      <p class="lede rv">Field-level accuracy on Arabic business documents: invoices, statements, contracts and government forms.</p>
+      <h2 class="rv">Leading where documents get hard.</h2>
+      <p class="lede rv">Field-level accuracy on real business documents: invoices, statements, contracts and forms, in English, Arabic and mixed-language sets.</p>
     </div>
     <div class="bench">
       <div class="callout rv">
@@ -759,12 +840,12 @@ html.draft [data-draft]:hover::after {
         <div class="sec-h">
           <span class="eyebrow">How it reads</span>
           <h2>From a crooked phone photo to data you can trust.</h2>
-          <p class="lede">Every document goes through the same five passes. Scroll to watch one lease agreement go through them.</p>
+          <p class="lede">Every document goes through the same five passes. Scroll to watch a handwritten Arabic lease go through them.</p>
         </div>
         <div class="steps" id="steps">
           <button class="step on" type="button" data-i="0"><span class="st-t">Clean</span><span class="st-b"><span>Straightens skewed photos, lifts shadows and noise, and splits bundled PDFs into single documents.</span></span></button>
           <button class="step" type="button" data-i="1"><span class="st-t">Read</span><span class="st-b"><span>Finds printed text, handwriting, tables, stamps and signatures, and reads each one in the right order.</span></span></button>
-          <button class="step" type="button" data-i="2"><span class="st-t">Understand</span><span class="st-b"><span>Turns marks into named fields. Dates become ISO, Arabic digits become numbers, names get English spellings.</span></span></button>
+          <button class="step" type="button" data-i="2"><span class="st-t">Understand</span><span class="st-b"><span>Turns marks into named fields. Dates become ISO, digits in any script become numbers, names get consistent spellings.</span></span></button>
           <button class="step" type="button" data-i="3"><span class="st-t">Verify</span><span class="st-b"><span>Checks the math and the formats. Anything uncertain goes to a reviewer instead of into your system.</span></span></button>
           <button class="step" type="button" data-i="4"><span class="st-t">Deliver</span><span class="st-b"><span>Clean JSON over API or webhook, or straight into Excel and your ERP.</span></span></button>
         </div>
@@ -837,7 +918,7 @@ html.draft [data-draft]:hover::after {
         <p>Same models and the same accuracy, wherever you run them.</p>
         <div class="deploy" id="deploy">
           <div class="dep-ind" aria-hidden="true"></div>
-          <div class="dep on"><i class="ph ph-cloud-check" aria-hidden="true"></i><div><b>In-region cloud</b><span class="ph-draft" data-draft="Confirm hosting regions before launch">Hosted in GCC data centres, run by us</span></div></div>
+          <div class="dep on"><i class="ph ph-cloud-check" aria-hidden="true"></i><div><b>In-region cloud</b><span class="ph-draft" data-draft="Confirm hosting regions before launch">Hosted in your region, run by us</span></div></div>
           <div class="dep"><i class="ph ph-buildings" aria-hidden="true"></i><div><b>Your private cloud</b><span>Runs inside your own cloud tenancy</span></div></div>
           <div class="dep"><i class="ph ph-hard-drives" aria-hidden="true"></i><div><b>On-premise</b><span>Air-gapped, with no outbound calls</span></div></div>
         </div>
@@ -868,7 +949,7 @@ html.draft [data-draft]:hover::after {
           <span class="feat"><i class="ph ph-list-checks" aria-hidden="true"></i>Full audit logs</span>
           <span class="feat"><i class="ph ph-lock" aria-hidden="true"></i>Encrypted in transit and at rest</span>
           <span class="feat"><i class="ph ph-map-pin" aria-hidden="true"></i>Data residency</span>
-          <span class="feat ph-draft" data-draft="Confirm with legal before claiming"><i class="ph ph-scales" aria-hidden="true"></i>PDPL-aligned: Oman, KSA, UAE</span>
+          <span class="feat ph-draft" data-draft="Confirm with legal before claiming"><i class="ph ph-scales" aria-hidden="true"></i>GDPR and PDPL-aligned</span>
         </div>
       </article>
     </div>
@@ -923,7 +1004,7 @@ html.draft [data-draft]:hover::after {
   <div class="wrap">
     <div class="foot-l">
       <a class="logo" href="#top" aria-label="Back to top"><svg aria-hidden="true"><use href="#mark"/></svg><span>simsim</span></a>
-      <span>Arabic-first document AI</span>
+      <span>Document AI for the hard ones</span>
     </div>
     <div class="foot-l">
       <nav class="foot-links" aria-label="Footer">
@@ -959,36 +1040,83 @@ var CONFIG = {
    ============================================================ */
 var CONTENT = {
   docTypes: [
-    ['ph-receipt', 'فاتورة ضريبية', 'Tax invoices'],
-    ['ph-bank', 'كشف حساب بنكي', 'Bank statements'],
-    ['ph-house-line', 'عقد إيجار', 'Lease contracts'],
-    ['ph-package', 'بيان جمركي', 'Customs declarations'],
-    ['ph-storefront', 'سجل تجاري', 'Commercial registrations'],
-    ['ph-shield-check', 'مطالبة تأمين', 'Insurance claims'],
-    ['ph-first-aid-kit', 'تقرير طبي', 'Medical reports'],
-    ['ph-boat', 'بوليصة شحن', 'Bills of lading'],
-    ['ph-certificate', 'شهادة راتب', 'Salary certificates'],
-    ['ph-identification-card', 'جواز سفر', 'Passports'],
-    ['ph-scales', 'حكم قضائي', 'Court judgments'],
-    ['ph-shopping-cart', 'أمر شراء', 'Purchase orders']
+    ['ph-receipt', 'Invoices'],
+    ['ph-bank', 'Bank statements'],
+    ['ph-house-line', 'Lease contracts'],
+    ['ph-package', 'Customs declarations'],
+    ['ph-boat', 'Bills of lading'],
+    ['ph-shield-check', 'Insurance claims'],
+    ['ph-first-aid-kit', 'Medical reports'],
+    ['ph-money', 'Payslips'],
+    ['ph-identification-card', 'Passports and IDs'],
+    ['ph-shopping-cart', 'Purchase orders'],
+    ['ph-scales', 'Court filings'],
+    ['ph-storefront', 'Company registrations']
   ],
 
-  // Hero demo: rows in reading order (right to left, top to bottom). `f` matches data-f in the document.
+  // Hero demo: one entry per example document, cycled in order. Fields are listed in reading
+  // order for that script; `f` matches data-f inside the document with the same data-doc id.
   demo: [
-    { k: 'seller',     f: 'seller',     v: 'Al Noor Trading LLC',   raw: 'شركة النور للتجارة ش.م.م', c: '0.99' },
-    { k: 'invoice_no', f: 'invoice_no', v: '0418',                  raw: '٠٤١٨',                     c: '0.99' },
-    { k: 'issue_date', f: 'issue_date', v: '2025-03-14',            raw: '١٤ رمضان ١٤٤٦هـ',          c: '0.98' },
-    { k: 'buyer',      f: 'buyer',      v: 'Al Harthy Contracting', raw: 'مؤسسة الحارثي للمقاولات',  c: '0.97' },
-    { k: 'line_items', f: 'line_items', v: '3 rows, 1,137.000',     raw: '',                         c: '0.98' },
-    { k: 'total',      f: 'total',      v: '1,193.850 OMR',         raw: '١٬١٩٣٫٨٥٠ ر.ع.',           c: '0.99' },
-    { k: 'note',       f: 'note',       v: 'Goods received in full', raw: 'استلمت البضاعة كاملة',     c: '0.93' },
-    { k: 'seal',       f: 'seal',       v: 'Seller stamp found',    raw: '',                         c: '0.96' }
+    {
+      id: 'en', type: 'commercial_invoice', foot: 'Subtotal + 20% VAT = total',
+      fields: [
+        { k: 'seller',     f: 'seller',     v: 'Harbour & Pine Trading',  raw: '',                         c: '0.99' },
+        { k: 'invoice_no', f: 'invoice_no', v: 'HP-20418',                raw: '',                         c: '0.99' },
+        { k: 'issue_date', f: 'issue_date', v: '2025-03-14',              raw: '14 March 2025',            c: '0.99' },
+        { k: 'buyer',      f: 'buyer',      v: 'Northgate Builders Ltd',  raw: '',                         c: '0.98' },
+        { k: 'line_items', f: 'line_items', v: '3 rows, 4,228.00',        raw: '',                         c: '0.98' },
+        { k: 'total',      f: 'total',      v: '5,073.60 GBP',            raw: '£5,073.60',                c: '0.99' },
+        { k: 'note',       f: 'note',       v: 'Received in full',        raw: 'handwritten, J. Okafor',   c: '0.94' },
+        { k: 'seal',       f: 'seal',       v: 'Paid, 18 Mar 2025',       raw: '',                         c: '0.97' }
+      ]
+    },
+    {
+      id: 'ar', type: 'tax_invoice', foot: 'Subtotal + 5% VAT = total',
+      fields: [
+        { k: 'seller',     f: 'seller',     v: 'Al Noor Trading LLC',     raw: 'شركة النور للتجارة ش.م.م', c: '0.99' },
+        { k: 'invoice_no', f: 'invoice_no', v: '0418',                    raw: '٠٤١٨',                     c: '0.99' },
+        { k: 'issue_date', f: 'issue_date', v: '2025-03-14',              raw: '١٤ رمضان ١٤٤٦هـ',          c: '0.98' },
+        { k: 'buyer',      f: 'buyer',      v: 'Al Harthy Contracting',   raw: 'مؤسسة الحارثي للمقاولات',  c: '0.97' },
+        { k: 'line_items', f: 'line_items', v: '3 rows, 1,137.000',       raw: '',                         c: '0.98' },
+        { k: 'total',      f: 'total',      v: '1,193.850 OMR',           raw: '١٬١٩٣٫٨٥٠ ر.ع.',           c: '0.99' },
+        { k: 'note',       f: 'note',       v: 'Goods received in full',  raw: 'استلمت البضاعة كاملة',     c: '0.93' },
+        { k: 'seal',       f: 'seal',       v: 'Seller stamp found',      raw: '',                         c: '0.96' }
+      ]
+    }
   ],
 
-  // "Why Arabic" cases. `iso: true` renders the value the way broken pipelines do (reversed, unjoined letters).
+  // "Hard cases": universal problems first, then the Arabic depth Simsim was built on.
+  // `iso: true` renders the value the way broken pipelines do (reversed, unjoined letters).
   cases: [
     {
-      tab: 'Right-to-left',
+      tab: 'Handwriting',
+      note: 'Handwritten notes are where deliveries get confirmed and damage gets reported. Misread one digit and the claim no longer matches the shipment.',
+      crop: '<div class="cp cp-hand cp-hand-en">Received 17 boxes,<br>2 damaged. J.O.<svg class="sig"><use href="#sig-b"/></svg></div>',
+      generic: [
+        { k: 'note', v: 'Received 11 boxes, 2 dawaged', why: '7 read as 1, m read as w' },
+        { k: 'received_qty', v: '11', why: 'Wrong quantity' }
+      ],
+      simsim: [
+        { k: 'note', v: 'Received 17 boxes, 2 damaged' },
+        { k: 'received_qty', v: '17' },
+        { k: 'damaged_qty', v: '2' }
+      ]
+    },
+    {
+      tab: 'Stamps',
+      note: 'Stamps and seals land right on top of the values they certify. Generic OCR reads them as part of the number.',
+      crop: '<div class="cp cp-stampwrap"><div class="cp-line" style="border-top:0"><span class="lbl">Total due</span><span class="num">£5,073.60</span></div><div class="stamp stamp-rect"><div><b>PAID</b>18 MAR 2025</div></div></div>',
+      generic: [
+        { k: 'total_due', v: '£5,0 PAID 73.60', why: 'Stamp text merged into the amount' }
+      ],
+      simsim: [
+        { k: 'total_due', v: '5073.60 GBP' },
+        { k: 'stamp', v: 'PAID, 18 Mar 2025' },
+        { k: 'overlaps', v: 'total_due' }
+      ]
+    },
+    {
+      tab: 'Right-to-left scripts',
       note: 'Arabic runs right to left and its letters join. Pipelines built for English often store it backwards and broken apart, so names and addresses come out unreadable.',
       crop: '<div class="cp cp-rtl" dir="rtl" lang="ar"><div class="inv-logo">ن</div><div><div class="cp-name">شركة النور للتجارة ش.م.م</div><div class="cp-addr">روي، مسقط، سلطنة عُمان</div></div></div>',
       generic: [
@@ -1016,21 +1144,8 @@ var CONTENT = {
       ]
     },
     {
-      tab: 'Handwriting',
-      note: 'Handwritten Arabic drops and merges dots. Miss a single dot and ض becomes ص, which changes the word entirely.',
-      crop: '<div class="cp cp-hand" dir="rtl" lang="ar">استلمت البضاعة كاملة بحالة جيدة<svg class="sig"><use href="#sig-a"/></svg></div>',
-      generic: [
-        { k: 'note', v: 'اسلمت البصاعه كامله بحاله حيده', ar: true, why: 'Dots dropped: every word misread' }
-      ],
-      simsim: [
-        { k: 'note_ar', v: 'استلمت البضاعة كاملة بحالة جيدة', ar: true },
-        { k: 'note_en', v: 'Goods received in full, in good condition' },
-        { k: 'confidence', v: '0.94' }
-      ]
-    },
-    {
-      tab: 'Hijri dates',
-      note: 'Government and banking documents often carry Hijri dates. Read as Gregorian, they land almost six centuries off.',
+      tab: 'Local calendars',
+      note: 'Government and banking documents in many markets carry Hijri dates. Read as Gregorian, they land almost six centuries off.',
       crop: '<div class="cp cp-date" dir="rtl" lang="ar"><span class="lbl">تاريخ الإصدار</span><span class="val">١٤ رمضان ١٤٤٦هـ</span></div>',
       generic: [
         { k: 'issue_date', v: '1446-09-14', why: 'Hijri year read as Gregorian: 579 years off' }
@@ -1041,21 +1156,8 @@ var CONTENT = {
       ]
     },
     {
-      tab: 'Stamps',
-      note: 'Seals and stamps sit right on top of the values they certify. Generic OCR reads them as part of the number.',
-      crop: '<div class="cp cp-stampwrap" dir="rtl" lang="ar"><div class="cp-line" style="border-top:0"><span class="lbl">المبلغ المستحق</span><span class="num">١٬١٩٣٫٨٥٠</span></div><div class="stamp"><div><b>شركة النور للتجارة</b>ش.م.م<div class="star">★ مسقط ★</div></div></div></div>',
-      generic: [
-        { k: 'amount_due', v: '١١٩٣ مسقط ٨٥٠', ar: true, why: 'Stamp text merged into the amount' }
-      ],
-      simsim: [
-        { k: 'amount_due', v: '1193.850' },
-        { k: 'stamp', v: 'Al Noor Trading LLC, Muscat' },
-        { k: 'overlaps', v: 'amount_due' }
-      ]
-    },
-    {
       tab: 'Tables',
-      note: 'Arabic tables run right to left too. Read in English column order, quantities and prices quietly swap places.',
+      note: 'Right-to-left tables keep their columns in reading order. Parsed in English order, quantities and prices quietly swap places.',
       crop: '<table class="cp-table" dir="rtl" lang="ar"><thead><tr><th>البيان</th><th>الكمية</th><th>سعر الوحدة</th></tr></thead><tbody><tr><td>أسمنت بورتلاندي</td><td>١٢٠</td><td>١٫٨٥٠</td></tr><tr><td>حديد تسليح ١٢ مم</td><td>٣</td><td>٢٤٥٫٠٠٠</td></tr></tbody></table>',
       generic: [
         { k: 'item', v: 'أسمنت بورتلاندي', ar: true },
@@ -1074,14 +1176,13 @@ var CONTENT = {
   bench: {
     systems: ['Simsim', 'Global document AI', 'General vision LLM', 'Classic OCR engine'],
     cats: [
-      { name: 'All documents', cap: 'across all document types', v: [96.1, 81.4, 76.9, 58.3] },
-      { name: 'Printed',       cap: 'on printed documents',      v: [98.7, 91.2, 88.4, 79.5] },
-      { name: 'Scanned',       cap: 'on scans and phone photos', v: [96.4, 79.8, 75.1, 52.6] },
-      { name: 'Handwritten',   cap: 'on handwritten fields',     v: [89.2, 54.3, 61.7, 18.9] },
-      { name: 'Tables',        cap: 'on right-to-left tables',   v: [95.8, 77.5, 70.2, 41.0] }
+      { name: 'All documents',  cap: 'across all document types',        v: [95.4, 84.1, 79.6, 63.2] },
+      { name: 'Scans & photos', cap: 'on scans and phone photos',        v: [95.9, 80.6, 76.3, 55.4] },
+      { name: 'Handwriting',    cap: 'on handwritten fields',            v: [90.8, 63.5, 68.9, 31.7] },
+      { name: 'Tables',         cap: 'on complex tables',                v: [96.2, 81.0, 74.8, 50.2] },
+      { name: 'Arabic & RTL',   cap: 'on Arabic and right-to-left text', v: [96.1, 71.2, 69.4, 38.5] }
     ]
   },
-
   // Pipeline rows (Understand / Verify). `k` matches data-k on the lease handwriting.
   pipe: [
     { k: 'landlord', v: 'Salim bin Hamad Al Kindi' },
@@ -1234,25 +1335,35 @@ function heroIntro(onDone) {
    HERO DEMO: live extraction loop
    ============================================================ */
 function initDemo() {
-  var demo = $('#demo'), stage = $('.demo-stage', demo), doc = $('.doc-invoice', stage), card = $('.out-card', stage);
-  var svg = $('.demo-lines', stage), scan = $('.scan', doc), rowsWrap = $('.rows', card), status = $('.status', card), foot = $('.out-foot', card);
-  var scale = 1, stacked = false, holding = false, hovering = false, visible = true, cur = null;
+  var demo = $('#demo'), box = $('.demo-box', demo), stage = $('.demo-stage', demo), card = $('.out-card', stage);
+  var svg = $('.demo-lines', stage), status = $('.status', card), foot = $('.out-foot', card);
+  var typeEl = $('.out-type', card), footT = $('.out-foot-t', card), btns = $$('.demo-switch .chip', demo);
+  var scale = 1, stacked = null, holding = false, hovering = false, visible = true, cur = null, active = 0;
 
-  var items = CONTENT.demo.map(function (fd, i) {
-    var el = $('[data-f="' + fd.f + '"]', doc);
-    var box = h('span', 'box', '<span class="fill"></span><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>');
-    el.appendChild(box);
-    var row = h('div', 'row', '<span class="k">' + fd.k + '</span><span class="v"><span class="v-main"></span>' +
-      (fd.raw ? '<span class="v-raw" dir="rtl" lang="ar">' + esc(fd.raw) + '</span>' : '') + '</span><span class="conf' + (parseFloat(fd.c) < 0.95 ? ' mid' : '') + '">' + fd.c + '</span>');
-    rowsWrap.appendChild(row);
-    var path = document.createElementNS(SVGNS, 'path'); path.setAttribute('pathLength', '1'); svg.appendChild(path);
-    var dot = document.createElementNS(SVGNS, 'circle'); dot.setAttribute('r', '3.2'); svg.appendChild(dot);
-    var it = { fd: fd, el: el, box: box, fill: $('.fill', box), row: row, main: $('.v-main', row), path: path, dot: dot, i: i };
-    row.addEventListener('mouseenter', function () { hot(it, true); });
-    row.addEventListener('mouseleave', function () { hot(it, false); });
-    el.addEventListener('mouseenter', function () { hot(it, true); });
-    el.addEventListener('mouseleave', function () { hot(it, false); });
-    return it;
+  // One entry per example document: its sheet, its own row set in the card, and its field items.
+  var docs = CONTENT.demo.map(function (D) {
+    var el = $('.doc[data-doc="' + D.id + '"]', stage);
+    var rowsEl = h('div', 'rows'); rowsEl.hidden = true; card.insertBefore(rowsEl, foot);
+    var d = { D: D, el: el, rowsEl: rowsEl, scan: $('.scan', el) };
+    d.items = D.fields.map(function (fd, i) {
+      var fel = $('[data-f="' + fd.f + '"]', el);
+      var bx = h('span', 'box', '<span class="fill"></span><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>');
+      fel.appendChild(bx);
+      var ar = /[\u0600-\u06FF]/.test(fd.raw);
+      var row = h('div', 'row', '<span class="k">' + fd.k + '</span><span class="v"><span class="v-main"></span>' +
+        (fd.raw ? '<span class="v-raw' + (ar ? ' ar" dir="rtl" lang="ar"' : '"') + '>' + esc(fd.raw) + '</span>' : '') +
+        '</span><span class="conf' + (parseFloat(fd.c) < 0.95 ? ' mid' : '') + '">' + fd.c + '</span>');
+      rowsEl.appendChild(row);
+      var path = document.createElementNS(SVGNS, 'path'); path.setAttribute('pathLength', '1'); svg.appendChild(path);
+      var dot = document.createElementNS(SVGNS, 'circle'); dot.setAttribute('r', '3.2'); svg.appendChild(dot);
+      var it = { fd: fd, el: fel, box: bx, fill: $('.fill', bx), row: row, main: $('.v-main', row), path: path, dot: dot, i: i };
+      row.addEventListener('mouseenter', function () { hot(it, true); });
+      row.addEventListener('mouseleave', function () { hot(it, false); });
+      fel.addEventListener('mouseenter', function () { hot(it, true); });
+      fel.addEventListener('mouseleave', function () { hot(it, false); });
+      return it;
+    });
+    return d;
   });
 
   function fit() {
@@ -1262,7 +1373,7 @@ function initDemo() {
     if (nowStacked !== stacked) {
       stacked = nowStacked;
       stage.style.width = stacked ? '386px' : '680px';
-      doc.style.cssText = stacked ? 'right:auto;left:0;top:0' : '';
+      docs.forEach(function (d) { d.el.style.right = stacked ? 'auto' : ''; d.el.style.left = stacked ? '0' : ''; d.el.style.top = stacked ? '0' : ''; });
       card.style.cssText = stacked ? 'left:22px;top:500px;width:342px' : '';
     }
     var dw = stacked ? 386 : 680;
@@ -1271,9 +1382,18 @@ function initDemo() {
     stage.style.height = dh + 'px';
     stage.style.transform = 'scale(' + scale + ')';
     stage.style.left = Math.max(0, (w - dw * scale) / 2) + 'px';
-    demo.style.height = Math.ceil(dh * scale) + 'px';
+    box.style.height = Math.ceil(dh * scale) + 'px';
   }
-  fit();
+
+  function show(i) {
+    active = i;
+    var d = docs[i];
+    docs.forEach(function (x, j) { x.el.classList.toggle('on', j === i); x.rowsEl.hidden = j !== i; });
+    typeEl.textContent = d.D.type; footT.textContent = d.D.foot;
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.doc === d.D.id ? 'true' : 'false'); });
+    fit();
+  }
+  show(0);
   new ResizeObserver(fit).observe(demo);
 
   function local(r, sr) { return { l: (r.left - sr.left) / scale, t: (r.top - sr.top) / scale, r: (r.right - sr.left) / scale, b: (r.bottom - sr.top) / scale }; }
@@ -1296,7 +1416,7 @@ function initDemo() {
   function setStatus(s) {
     status.innerHTML = s === 'reading'
       ? '<span class="sp" aria-hidden="true"><i></i><i></i><i></i></span>Reading'
-      : '<i class="ph-bold ph-check" aria-hidden="true"></i>' + items.length + ' fields';
+      : '<i class="ph-bold ph-check" aria-hidden="true"></i>' + docs[active].items.length + ' fields';
   }
 
   // Hover link between a row and its source on the page (only once the read is complete).
@@ -1316,26 +1436,43 @@ function initDemo() {
     }
   }
 
-  function showFinal() {
-    setStatus('done');
-    items.forEach(function (it) { it.box.style.opacity = 1; it.fill.style.transform = 'none'; it.main.textContent = it.fd.v; });
-    holding = true;
-  }
-  if (!ANIM) { showFinal(); return { start: function () {} }; }
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var i = docs.map(function (d) { return d.D.id; }).indexOf(b.dataset.doc);
+      if (i < 0 || (i === active && cur)) return;
+      hovering = false;
+      if (!ANIM) { show(i); return; }
+      if (cur) cur.kill();
+      show(i); cur = cycle(); if (!visible) cur.pause();
+    });
+  });
 
+  if (!ANIM) {
+    docs.forEach(function (d) { d.items.forEach(function (it) { it.box.style.opacity = 1; it.fill.style.transform = 'none'; it.main.textContent = it.fd.v; }); });
+    holding = true; setStatus('done');
+    return { start: function () {} };
+  }
+
+  function resetDoc(d) {
+    var its = d.items;
+    G.set(its.map(function (i) { return i.row; }), { opacity: 0, y: 8 });
+    G.set(its.map(function (i) { return i.box; }), { opacity: 0 });
+    G.set(its.map(function (i) { return i.fill; }), { scaleX: 0 });
+    G.set(its.map(function (i) { return i.path; }), { opacity: 0, strokeDashoffset: 1 });
+    G.set(its.map(function (i) { return i.dot; }), { opacity: 0 });
+    its.forEach(function (it) { it.main.textContent = ''; it.row.classList.remove('hot'); it.box.classList.remove('hot'); });
+  }
+
+  // One read of the active document, then hand over to the next one.
   function cycle() {
     holding = false;
-    var tl = G.timeline({ onComplete: function () { cur = cycle(); if (!visible) cur.pause(); } });
-    G.set(items.map(function (i) { return i.row; }), { opacity: 0, y: 8 });
-    G.set(items.map(function (i) { return i.box; }), { opacity: 0 });
-    G.set(items.map(function (i) { return i.fill; }), { scaleX: 0 });
-    G.set(items.map(function (i) { return i.path; }), { opacity: 0, strokeDashoffset: 1 });
-    G.set(items.map(function (i) { return i.dot; }), { opacity: 0 });
+    var d = docs[active], items = d.items;
+    docs.forEach(resetDoc);
     G.set(foot, { opacity: 0, y: 6 });
-    items.forEach(function (it) { it.main.textContent = ''; });
+    var tl = G.timeline({ onComplete: function () { show((active + 1) % docs.length); cur = cycle(); if (!visible) cur.pause(); } });
     tl.call(setStatus, ['reading'], 0)
-      .fromTo(scan, { top: -60, opacity: 1 }, { top: 560, duration: 1.6, ease: 'power1.inOut' }, 0.15)
-      .set(scan, { opacity: 0 }, 1.75);
+      .fromTo(d.scan, { top: -60, opacity: 1 }, { top: 560, duration: 1.6, ease: 'power1.inOut' }, 0.15)
+      .set(d.scan, { opacity: 0 }, 1.75);
     items.forEach(function (it, i) {
       var t = 0.5 + i * 0.46, pr = { p: 0 }, vr = { p: 0 }, pool = poolFor(it.fd.v);
       tl.to(it.box, { opacity: 1, duration: 0.2, ease: 'power2.out' }, t)
@@ -1378,14 +1515,14 @@ function initDemo() {
   var track = $('#mq');
   function chips(dupe) {
     return CONTENT.docTypes.map(function (d) {
-      return '<span class="dchip' + (dupe ? ' dupe' : '') + '"' + (dupe ? ' aria-hidden="true"' : '') + '><i class="ph ' + d[0] + '" aria-hidden="true"></i><span class="a" lang="ar">' + d[1] + '</span><span class="e">' + d[2] + '</span></span>';
+      return '<span class="dchip' + (dupe ? ' dupe' : '') + '"' + (dupe ? ' aria-hidden="true"' : '') + '><i class="ph ' + d[0] + '" aria-hidden="true"></i><span class="n">' + d[1] + '</span></span>';
     }).join('');
   }
   track.innerHTML = chips(false) + chips(true);
 })();
 
 /* ============================================================
-   WHY ARABIC: comparison tabs
+   HARD CASES: comparison tabs
    ============================================================ */
 (function cases() {
   var tabsEl = $('#case-tabs'), note = $('#case-note'), crop = $('#case-crop');
@@ -1673,11 +1810,12 @@ function initSecurity() {
 }
 
 /* ============================================================
-   WAITLIST SEEDS: particles that write سمسم right to left
+   WAITLIST SEEDS: particles that write "simsim" and سمسم, each in its own reading direction
    ============================================================ */
 function initSeeds() {
   var box = $('#seeds'), canvas = $('canvas', box), ctx = canvas.getContext('2d');
-  var W = 0, H = 0, parts = [], visible = false, raf = 0, t0 = 0, now = 0, word = 'سمسم';
+  var WORDS = ['simsim', 'سمسم'], wi = 0, cycling = true;
+  var W = 0, H = 0, parts = [], visible = false, raf = 0, t0 = 0, now = 0, word = WORDS[0], rtl = false;
   var mouse = { x: -1e4, y: -1e4 }, inkC = '', accC = '';
   function colors() { inkC = cssVar('--ink'); accC = cssVar('--muted'); }
   colors();
@@ -1691,11 +1829,12 @@ function initSeeds() {
   function targets(text) {
     if (W < 10 || H < 10) return [];
     var off = document.createElement('canvas'); off.width = Math.ceil(W); off.height = Math.ceil(H);
-    var o = off.getContext('2d'), fs = H * 0.95;
-    o.font = '700 ' + fs + 'px "IBM Plex Sans Arabic", sans-serif';
+    var o = off.getContext('2d'), fs = H * 0.95, isAr = /[\u0600-\u06FF]/.test(text);
+    var fam = isAr ? '"IBM Plex Sans Arabic", sans-serif' : '"Geist", sans-serif';
+    o.font = '700 ' + fs + 'px ' + fam;
     var w = o.measureText(text).width;
-    if (w > W * 0.86) { fs *= (W * 0.86) / w; o.font = '700 ' + fs + 'px "IBM Plex Sans Arabic", sans-serif'; }
-    o.direction = 'rtl'; o.textAlign = 'center'; o.textBaseline = 'middle';
+    if (w > W * 0.86) { fs *= (W * 0.86) / w; o.font = '700 ' + fs + 'px ' + fam; }
+    o.direction = isAr ? 'rtl' : 'ltr'; o.textAlign = 'center'; o.textBaseline = 'middle';
     o.fillText(text, W / 2, H * 0.5);
     var data = o.getImageData(0, 0, off.width, off.height).data, pts = [], gap = W < 600 ? 3.3 : 6.2, rand = rng(5);
     for (var y = 0; y < H; y += gap) for (var x = 0; x < W; x += gap) {
@@ -1707,9 +1846,12 @@ function initSeeds() {
   }
   function seedScale() { return Math.max(0.5, Math.min(1, W / 900)); }
   function flow(x, y) { return -0.9 + Math.sin(x * 0.012) * 0.55 + Math.cos(y * 0.02) * 0.4; }
-  function delayFor(hx) { return now + (1 - hx / W) * 1100 + Math.random() * 260; }
+  // Seeds settle in reading order: right to left for Arabic, left to right for Latin.
+  function order(hx) { return rtl ? 1 - hx / W : hx / W; }
+  function delayFor(hx) { return now + order(hx) * 1100 + Math.random() * 260; }
 
-  function build(text, morph) {
+  function build(text, morph, gentle) {
+    rtl = /[\u0600-\u06FF]/.test(text);
     var pts = targets(text), rand = Math.random;
     if (!morph) {
       parts = pts.map(function (p) {
@@ -1720,7 +1862,7 @@ function initSeeds() {
         var fx = rand() * W, fy = rand() * H;
         parts.push({ hx: fx, hy: fy, x: rand() * W, y: rand() * H, vx: 0, vy: 0, a: flow(fx, fy), rx: (1.8 + rand()) * seedScale(), acc: rand() < 0.3, ph: rand() * 6.28, delay: 0, free: true });
       }
-      parts.forEach(function (p) { p.delay = (1 - p.hx / W) * 1100 + rand() * 260; });
+      parts.forEach(function (p) { p.delay = order(p.hx) * 1100 + rand() * 260; });
     } else {
       pts.sort(function (a, b) { return b[0] - a[0]; });
       var bound = parts.filter(function (p) { return !p.free; }).sort(function (a, b) { return b.hx - a.hx; });
@@ -1731,10 +1873,10 @@ function initSeeds() {
         if (i < pts.length) { p.hx = pts[i][0]; p.hy = pts[i][1]; p.free = false; }
         else { p.hx = rand() * W; p.hy = rand() * H; p.free = true; }
         p.a = flow(p.hx, p.hy);
-        // burst outward first, then resettle right to left
-        var dx = p.x - W / 2, dy = p.y - H / 2, d = Math.sqrt(dx * dx + dy * dy) || 1;
-        p.vx += dx / d * (6 + rand() * 6); p.vy += dy / d * (6 + rand() * 6);
-        p.delay = delayFor(p.hx) + 250;
+        // burst outward first (softly for the idle swap), then resettle in reading order
+        var dx = p.x - W / 2, dy = p.y - H / 2, d = Math.sqrt(dx * dx + dy * dy) || 1, k = gentle ? 1.6 : 6;
+        p.vx += dx / d * (k + rand() * k); p.vy += dy / d * (k + rand() * k);
+        p.delay = delayFor(p.hx) + (gentle ? 120 : 250);
       });
     }
   }
@@ -1778,10 +1920,22 @@ function initSeeds() {
     inited = true; lastW = W;
     build(word, false);
     if (!ANIM) { parts.forEach(function (p) { p.x = p.hx; p.y = p.hy; }); draw(); return; }
-    // Hold until the section scrolls into view, then write the word.
-    onVisible(box, function (vis) { visible = vis; if (vis) start(); }, { threshold: 0.25 });
+    // Hold until the section scrolls into view, then write the word; swap scripts every few seconds.
+    var timer = 0;
+    onVisible(box, function (vis) {
+      visible = vis;
+      if (vis) start();
+      if (vis && !timer) timer = setInterval(swap, 5200);
+    }, { threshold: 0.25 });
+    function swap() {
+      if (!visible || !cycling || document.hidden) return;
+      wi = (wi + 1) % WORDS.length; word = WORDS[wi];
+      build(word, true, true); start();
+    }
   }
-  var ready = (document.fonts && document.fonts.load) ? document.fonts.load('700 120px "IBM Plex Sans Arabic"', word) : Promise.resolve();
+  var ready = (document.fonts && document.fonts.load)
+    ? Promise.all([document.fonts.load('700 120px "Geist"', 'simsim'), document.fonts.load('700 120px "IBM Plex Sans Arabic"', 'سمسم')])
+    : Promise.resolve();
   ready.catch(function () {}).then(function () { fontsReady = true; init(); });
 
   box.addEventListener('pointermove', function (e) { var r = canvas.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; });
@@ -1799,7 +1953,7 @@ function initSeeds() {
 
   return {
     morph: function (text) {
-      word = text;
+      cycling = false; word = text;
       if (!inited) return;
       if (!ANIM) { build(text, false); parts.forEach(function (p) { p.x = p.hx; p.y = p.hy; }); draw(); return; }
       build(text, true); start();
@@ -1855,7 +2009,7 @@ function initForms(seeds) {
   wire($('#wl-main'), function () {
     var card = $('#form-card'); card.classList.add('is-done');
     if (ANIM) G.from($('.done-panel', card), { opacity: 0, duration: 0.18 });
-    if (seeds) seeds.morph('شكراً');
+    if (seeds) seeds.morph('thank you');
   });
 }
 
