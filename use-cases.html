@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Use cases · Simsim</title>
-<meta name="description" content="Simsim reads the documents, then its agents do the expert work: credit memos for lenders, underwriting files for insurers, supplier checks for procurement.">
+<meta name="description" content="Simsim reads the documents, then its agents do the expert work: credit memos for lenders, underwriting files for insurers, tender evaluations for procurement and statistics releases for government.">
 <meta name="theme-color" content="#ffffff">
 <meta property="og:title" content="Simsim use cases · From documents to decisions">
-<meta property="og:description" content="Loan origination, commercial underwriting and supplier due diligence, done end to end. Not just extraction.">
+<meta property="og:description" content="Loan origination, commercial underwriting, tender evaluation and official statistics, done end to end. Not just extraction.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath transform='translate(3 6) rotate(-16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%230a0a0a'/%3E%3Cpath transform='translate(13 6) rotate(16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%23737373'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -61,16 +61,31 @@
       <h1>From documents to <mark class="hl on"><span>decisions</span></mark>.</h1>
       <p class="hero-sub">Simsim reads the documents, then its agents do the expert work that follows. Your experts stay in charge.</p>
       <a class="btn btn-primary" href="#waitlist">Join waitlist<i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
-      <nav class="uc-jump" aria-label="Jump to a use case">
-        <a href="#banking"><i class="ph ph-bank" aria-hidden="true"></i>Banking</a>
-        <a href="#insurance"><i class="ph ph-shield-check" aria-hidden="true"></i>Insurance</a>
-        <a href="#procurement"><i class="ph ph-package" aria-hidden="true"></i>Procurement</a>
-      </nav>
     </div>
-    <figure class="ratio" id="ratio">
-      <div class="ratio-row"><span class="ratio-k">Software</span><span class="ratio-track"><span class="ratio-bar" style="--w:6.25%"></span></span><span class="ratio-v">$1</span></div>
-      <div class="ratio-row"><span class="ratio-k">Expert labour</span><span class="ratio-track"><span class="ratio-bar big" style="--w:100%"></span></span><span class="ratio-v">$16</span></div>
-      <figcaption><span class="ph-draft" data-draft="Confirm the source of the 1 to 16 software-to-labour figure before launch">For every $1 spent on software for document-heavy work, about $16 goes to the people doing it.</span> Simsim is built for the $16.</figcaption>
+    <figure class="outbox" id="outbox">
+      <figcaption class="ob-h"><span>Finished overnight</span><span class="ob-n"><b>4</b> files ready for review</span></figcaption>
+      <nav aria-label="Jump to a use case">
+        <a class="ob-row" href="#banking">
+          <span class="ob-ic"><i class="ph ph-bank" aria-hidden="true"></i></span>
+          <span class="ob-t"><span class="ob-ind">Banking</span><b>Credit memo</b><span>Halden Freight Holdings plc, 2 risks found</span></span>
+          <span class="ob-s"><span class="sp" aria-hidden="true"><i></i><i></i><i></i></span><span class="fin"><i class="ph-bold ph-check" aria-hidden="true"></i>Ready</span></span>
+        </a>
+        <a class="ob-row" href="#insurance">
+          <span class="ob-ic"><i class="ph ph-shield-check" aria-hidden="true"></i></span>
+          <span class="ob-t"><span class="ob-ind">Insurance</span><b>Underwriting file</b><span>Motor fleet, 140 vehicles, priced</span></span>
+          <span class="ob-s"><span class="sp" aria-hidden="true"><i></i><i></i><i></i></span><span class="fin"><i class="ph-bold ph-check" aria-hidden="true"></i>Ready</span></span>
+        </a>
+        <a class="ob-row" href="#procurement">
+          <span class="ob-ic"><i class="ph ph-scales" aria-hidden="true"></i></span>
+          <span class="ob-t"><span class="ob-ind">Procurement</span><b>Tender evaluation</b><span>214 bids, fair price set</span></span>
+          <span class="ob-s"><span class="sp" aria-hidden="true"><i></i><i></i><i></i></span><span class="fin"><i class="ph-bold ph-check" aria-hidden="true"></i>Ready</span></span>
+        </a>
+        <a class="ob-row" href="#government">
+          <span class="ob-ic"><i class="ph ph-buildings" aria-hidden="true"></i></span>
+          <span class="ob-t"><span class="ob-ind">Government</span><b>Statistics release</b><span>2,412 company filings, outliers explained</span></span>
+          <span class="ob-s"><span class="sp" aria-hidden="true"><i></i><i></i><i></i></span><span class="fin"><i class="ph-bold ph-check" aria-hidden="true"></i>Ready</span></span>
+        </a>
+      </nav>
     </figure>
   </div>
 </section>
@@ -207,57 +222,123 @@
   <div class="wrap">
     <div class="uc-head">
       <span class="eyebrow">Procurement</span>
-      <h2>Supplier due diligence, done before you sign.</h2>
-      <p class="lede">Simsim's agents chase the paperwork, check every certificate and match quotes to contracts, in English and Arabic.</p>
+      <h2>Tender evaluation, with an analyst on every bid.</h2>
+      <p class="lede">Simsim reads every bid in a tender, puts them on one price schedule and tells you what a fair price is, against your budget, past awards and inflation.</p>
     </div>
     <div class="board" data-board>
       <div class="bcol">
         <span class="flow-h">Documents in</span>
         <div class="minidocs">
-          <figure class="md" style="--i:0"><span class="md-page md-lines md-rtl md-stamp"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Registration <span lang="ar">سجل</span></figcaption></figure>
-          <figure class="md" style="--i:1"><span class="md-page md-lines md-stamp"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Tax certificate</figcaption></figure>
-          <figure class="md" style="--i:2"><span class="md-page md-chart"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Financials</figcaption></figure>
-          <figure class="md" style="--i:3"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>3 quotes</figcaption></figure>
-          <figure class="md" style="--i:4"><span class="md-page md-lines"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Contract</figcaption></figure>
+          <figure class="md" style="--i:0"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>214 bids</figcaption></figure>
+          <figure class="md" style="--i:1"><span class="md-page md-lines md-rtl md-stamp"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Arabic bids <span lang="ar">عروض</span></figcaption></figure>
+          <figure class="md" style="--i:2"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Budget</figcaption></figure>
+          <figure class="md" style="--i:3"><span class="md-page md-chart"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Past awards, 3 yrs</figcaption></figure>
+          <figure class="md" style="--i:4"><span class="md-page md-lines"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Inflation index</figcaption></figure>
         </div>
       </div>
       <div class="bcol">
         <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
         <span class="flow-h">Agents at work</span>
         <figure class="chart">
-          <figcaption>Certificate validity</figcaption>
-          <svg viewBox="0 0 300 132" role="img" aria-label="Registration valid to August 2027, insurance to January 2027, tax certificate expired in June 2026">
-            <text class="lab" x="0" y="28">Registration</text><text class="lab" x="0" y="58">Insurance</text><text class="lab" x="0" y="88">Tax certificate</text>
-            <rect class="tl" style="--d:0ms" x="96" y="18" width="176" height="14"/>
-            <rect class="tl" style="--d:120ms" x="96" y="48" width="137" height="14"/>
-            <rect class="tl bad" style="--d:240ms" x="96" y="78" width="98" height="14"/>
-            <line class="ax" x1="96" y1="104.5" x2="296" y2="104.5"/>
-            <text class="yr" x="96" y="118">2025</text><text class="yr" x="163" y="118">2026</text><text class="yr" x="229" y="118">2027</text>
-            <line class="today" x1="216" y1="8" x2="216" y2="104"/>
-            <text class="today-t" x="219" y="12">today</text>
-            <circle class="ping" cx="194" cy="85" r="7"/>
+          <figcaption>Unit price vs inflation, 2022 = 100</figcaption>
+          <svg viewBox="0 0 300 132" role="img" aria-label="Unit prices paid rose 34% from 2022 to 2025 while inflation rose 8%, a gap of 26 points">
+            <line class="ax" x1="10" y1="100.5" x2="290" y2="100.5"/>
+            <path class="area" d="M30,90 L100,72 L170,48 L240,22 L240,100 L30,100 Z"/>
+            <path class="thr" d="M30,90 L100,84 L170,78 L240,74"/>
+            <path class="ln" pathLength="1" d="M30,90 L100,72 L170,48 L240,22"/>
+            <circle class="pt" style="--d:0ms" cx="30" cy="90" r="3.5"/><circle class="pt" style="--d:180ms" cx="100" cy="72" r="3.5"/><circle class="pt" style="--d:360ms" cx="170" cy="48" r="3.5"/><circle class="pt bad" style="--d:540ms" cx="240" cy="22" r="4.5"/>
+            <text class="val" x="30" y="82">100</text><text class="val" x="100" y="64">109</text><text class="val" x="170" y="40">121</text><text class="val bad-t" x="240" y="13">134</text>
+            <text class="thr-t" x="240" y="88" text-anchor="middle">CPI 108</text>
+            <path class="brk" d="M256,22 H262 V74 H256"/>
+            <text class="thr-t" x="266" y="51">+26 pts</text>
+            <text class="yr" x="30" y="116">2022</text><text class="yr" x="100" y="116">2023</text><text class="yr" x="170" y="116">2024</text><text class="yr" x="240" y="116">2025</text>
+            <circle class="ping" cx="240" cy="22" r="7"/>
           </svg>
         </figure>
         <ol class="flow-tasks">
-          <li data-st="ok"><span class="t">Registration valid to Aug 2027</span><span class="s"></span></li>
-          <li data-st="flag"><span class="t">Tax certificate expired in June</span><span class="s"></span></li>
-          <li data-st="ok"><span class="t">Financially sound, current ratio 1.6</span><span class="s"></span></li>
-          <li data-st="flag"><span class="t">Lowest quote misses 2 line items</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">214 bids put on one price schedule</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Fair price OMR 1.84m, budget 2.10m</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Unit prices up 34%, inflation 8%</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">3 bids priced below cost</span><span class="s"></span></li>
         </ol>
       </div>
       <div class="bcol">
         <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
         <span class="flow-h">Finished work</span>
         <div class="memo">
-          <div class="memo-h"><i class="ph ph-file-text" aria-hidden="true"></i><span class="memo-t">Supplier approval pack</span></div>
-          <div class="memo-co">Al Noor Trading LLC</div>
-          <div class="memo-grade"><span class="memo-big">Medium</span><span class="memo-cap">Supplier risk</span></div>
+          <div class="memo-h"><i class="ph ph-file-text" aria-hidden="true"></i><span class="memo-t">Tender evaluation</span></div>
+          <div class="memo-co">Tender 118, road maintenance, 3 years</div>
+          <div class="memo-grade"><span class="memo-big">1.84<small>m</small></span><span class="memo-cap">Fair price, OMR</span></div>
           <dl class="memo-kv">
-            <div><dt>Best value</dt><dd>Quote A</dd></div>
-            <div><dt>Action</dt><dd>New tax certificate</dd></div>
-            <div class="wide"><dt>Status</dt><dd>Approve once certificate arrives</dd></div>
+            <div><dt>Budget</dt><dd>OMR 2.10m</dd></div>
+            <div><dt>Saving</dt><dd>OMR 260k, 12%</dd></div>
+            <div class="wide"><dt>Recommendation</dt><dd>Shortlist 4, renegotiate incumbent rates</dd></div>
           </dl>
-          <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for approval</div>
+          <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for award committee</div>
+        </div>
+        <button class="replay" type="button"><i class="ph-bold ph-arrow-counter-clockwise" aria-hidden="true"></i>Replay</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== GOVERNMENT ============================== -->
+<section class="section uc" id="government">
+  <div class="wrap">
+    <div class="uc-head">
+      <span class="eyebrow">Government</span>
+      <h2>Official statistics, from filed accounts to national figures.</h2>
+      <p class="lede">Simsim reads thousands of company filings and survey returns in Arabic and English, maps every line to its sector and explains the outliers before they reach the bulletin.</p>
+    </div>
+    <div class="board" data-board>
+      <div class="bcol">
+        <span class="flow-h">Documents in</span>
+        <div class="minidocs">
+          <figure class="md" style="--i:0"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>2,412 filings</figcaption></figure>
+          <figure class="md" style="--i:1"><span class="md-page md-lines md-rtl"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Survey returns <span lang="ar">استبيان</span></figcaption></figure>
+          <figure class="md" style="--i:2"><span class="md-page md-lines md-stamp"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Scanned forms</figcaption></figure>
+          <figure class="md" style="--i:3"><span class="md-page md-table"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Last year's tables</figcaption></figure>
+          <figure class="md" style="--i:4"><span class="md-page md-lines"><i class="md-scan"></i><i class="md-ok ph-bold ph-check"></i></span><figcaption>Sector codes</figcaption></figure>
+        </div>
+      </div>
+      <div class="bcol">
+        <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
+        <span class="flow-h">Agents at work</span>
+        <figure class="chart">
+          <figcaption>Revenue growth by sector, %</figcaption>
+          <svg viewBox="0 0 300 132" role="img" aria-label="Revenue growth by sector: oil and gas 3%, industry 5%, construction 41% before correction, trade 4%, services 6%">
+            <line class="ax" x1="6" y1="100.5" x2="296" y2="100.5"/>
+            <rect class="cbar" style="--d:0ms" x="16" y="94" width="36" height="6"/>
+            <rect class="cbar" style="--d:90ms" x="74" y="90" width="36" height="10"/>
+            <rect class="cbar bad" style="--d:180ms" x="132" y="18" width="36" height="82"/>
+            <rect class="cbar" style="--d:270ms" x="190" y="92" width="36" height="8"/>
+            <rect class="cbar" style="--d:360ms" x="248" y="88" width="36" height="12"/>
+            <text class="val" x="34" y="89">+3</text><text class="val" x="92" y="85">+5</text><text class="val bad-t" x="150" y="12">+41</text><text class="val" x="208" y="87">+4</text><text class="val" x="266" y="83">+6</text>
+            <text class="thr-t" x="174" y="40">counted twice?</text>
+            <text class="yr" x="34" y="116">Oil &amp; gas</text><text class="yr" x="92" y="116">Industry</text><text class="yr" x="150" y="116">Construct.</text><text class="yr" x="208" y="116">Trade</text><text class="yr" x="266" y="116">Services</text>
+            <circle class="ping" cx="150" cy="18" r="7"/>
+          </svg>
+        </figure>
+        <ol class="flow-tasks">
+          <li data-st="ok"><span class="t">2,412 filings read, Arabic and English</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">Every line mapped to its ISIC sector</span><span class="s"></span></li>
+          <li data-st="flag"><span class="t">Construction +41% is a double count</span><span class="s"></span></li>
+          <li data-st="ok"><span class="t">38 missing returns estimated from last year</span><span class="s"></span></li>
+        </ol>
+      </div>
+      <div class="bcol">
+        <span class="bconn" aria-hidden="true"><i class="ph-bold ph-arrow-right"></i></span>
+        <span class="flow-h">Finished work</span>
+        <div class="memo">
+          <div class="memo-h"><i class="ph ph-file-text" aria-hidden="true"></i><span class="memo-t">Statistics release, draft</span></div>
+          <div class="memo-co">Annual economic survey 2025</div>
+          <div class="memo-grade"><span class="memo-big">96<small>%</small></span><span class="memo-cap">Coverage</span></div>
+          <dl class="memo-kv">
+            <div><dt>Sectors</dt><dd>21 tables</dd></div>
+            <div><dt>Outliers</dt><dd>7, all explained</dd></div>
+            <div class="wide"><dt>Construction</dt><dd>+6% once the double count is removed</dd></div>
+          </dl>
+          <div class="memo-f"><i class="ph-bold ph-check-circle" aria-hidden="true"></i>Ready for analyst review</div>
         </div>
         <button class="replay" type="button"><i class="ph-bold ph-arrow-counter-clockwise" aria-hidden="true"></i>Replay</button>
       </div>
@@ -292,7 +373,7 @@
       <div><span class="mbox"><i class="ph ph-gauge" aria-hidden="true"></i></span><h3>Credit monitoring</h3><p>Covenants retested on every new set of accounts.</p></div>
       <div><span class="mbox"><i class="ph ph-first-aid-kit" aria-hidden="true"></i></span><h3>Medical claims</h3><p>Claims coded and checked against the policy.</p></div>
       <div><span class="mbox"><i class="ph ph-chart-pie-slice" aria-hidden="true"></i></span><h3>Spend analysis</h3><p>Every invoice classified, off-contract spend surfaced.</p></div>
-      <div><span class="mbox"><i class="ph ph-buildings" aria-hidden="true"></i></span><h3>Public sector statistics</h3><p>Filed accounts turned into sector statistics.</p></div>
+      <div><span class="mbox"><i class="ph ph-umbrella" aria-hidden="true"></i></span><h3>Reinsurance</h3><p>Bordereaux read, exposure rolled up by peril.</p></div>
       <div><span class="mbox"><i class="ph ph-magnifying-glass" aria-hidden="true"></i></span><h3>Investment due diligence</h3><p>Data rooms read, first-draft findings out.</p></div>
     </div>
   </div>
@@ -304,7 +385,7 @@
     <div class="cta-grid">
       <div>
         <h2>Bring us your hardest workflow.</h2>
-        <p class="lede">We're onboarding a small group of banks, insurers and procurement teams first. Tell us the work you want off your team's plate.</p>
+        <p class="lede">We're onboarding a small group of banks, insurers, procurement and government teams first. Tell us the work you want off your team's plate.</p>
       </div>
       <div class="form-card" id="form-card">
         <form id="wl-main" novalidate>
@@ -368,7 +449,7 @@ var $ = function (s, r) { return (r || document).querySelector(s); };
 var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 var MOTION = document.documentElement.classList.contains('motion');
 var CONFIG = window.SIMSIM_CONFIG || { waitlistEndpoint: '' };
-var WORK_OPTIONS = ['Loan origination', 'Trade finance', 'Underwriting', 'Claims', 'Supplier onboarding', 'Spend analysis', 'Something else'];
+var WORK_OPTIONS = ['Loan origination', 'Trade finance', 'Underwriting', 'Claims', 'Tender evaluation', 'Spend analysis', 'Official statistics', 'Something else'];
 
 function onVisible(el, cb, threshold) {
   var io = new IntersectionObserver(function (es) { es.forEach(function (e) { cb(e.isIntersecting, io); }); }, { threshold: threshold || 0.3 });
@@ -379,11 +460,14 @@ function onVisible(el, cb, threshold) {
 var navEl = $('.nav');
 onVisible($('#nav-sentinel'), function (vis) { navEl.classList.toggle('scrolled', !vis); }, 0);
 
-/* $1 vs $16 bars */
-var ratio = $('#ratio');
+/* Hero outbox: each finished file arrives, works for a beat, then turns Ready */
+var outbox = $('#outbox');
 if (MOTION) {
-  ratio.classList.add('anim');
-  onVisible(ratio, function (vis, io) { if (vis) { ratio.classList.add('in'); io.disconnect(); } }, 0.4);
+  outbox.classList.add('anim');
+  $$('.ob-row', outbox).forEach(function (row, i) {
+    setTimeout(function () { row.classList.add('run'); }, 300 + i * 380);
+    setTimeout(function () { row.classList.remove('run'); row.classList.add('done'); }, 1100 + i * 380);
+  });
 }
 
 /* Use-case boards. Stages: s1 documents arrive, s2 each one is read, s3 the chart builds,

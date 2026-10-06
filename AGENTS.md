@@ -2,7 +2,7 @@
 
 This folder is the Simsim marketing site: plain static pages, no build step.
 - `index.html` home page (hero demo, hard cases, benchmarks, pinned pipeline, security, waitlist)
-- `use-cases.html` banking, insurance and procurement workflows
+- `use-cases.html` banking, insurance, procurement and government workflows
 - `site.css` shared styles for every page, `config.js` shared settings (waitlist endpoint)
 - `vercel.json` turns on clean URLs (`/use-cases`)
 
@@ -21,9 +21,12 @@ Plain HTML/CSS/JS, GSAP + ScrollTrigger from jsDelivr, Phosphor icons, Google Fo
 
 ## Positioning
 - "Any document, read like an expert." Simsim sells the work getting done, not OCR: extraction is the beachhead,
-  agents then do expert work downstream (credit memos, underwriting files, supplier checks).
+  agents then do expert work downstream (credit memos, underwriting files, tender evaluations, statistics releases).
 - Niche: high-stakes financial services and related work: banking (loan origination, trade finance),
-  insurance (underwriting, claims) and procurement (supplier due diligence, spend).
+  insurance (underwriting, claims), procurement (tender evaluation, spend) and government (official statistics).
+- Pick use cases that need judgment and scarce expertise (analyst work). Avoid ones that if-then rules can do,
+  such as certificate or compliance checks: the founder rejected supplier due diligence for that reason.
+- The $1 software : $16 labour framing is for investors, not this site.
 - Arabic is the proof point, not the headline: "We built Simsim on Arabic, one of the hardest scripts to read."
 - No invoices in the hero (seen as a solved trope). The demo cycles an income statement with notes and a chart,
   then an Arabic bank statement; agent findings are rows with `flag: true` in `CONTENT.demo`.

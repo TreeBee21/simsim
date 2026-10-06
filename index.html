@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Simsim · Any document, read like an expert</title>
-<meta name="description" content="Simsim reads complex financial documents, understands what the numbers mean, and gets the expert work done. For banks, insurers and procurement teams.">
+<meta name="description" content="Simsim reads complex financial documents, understands what the numbers mean, and gets the expert work done. For banks, insurers, procurement and government teams.">
 <meta name="theme-color" content="#ffffff">
 <meta property="og:title" content="Simsim · Any document, read like an expert">
-<meta property="og:description" content="Not just extraction. Simsim reads financial documents like an analyst, then its agents do the work: credit memos, underwriting files, supplier checks.">
+<meta property="og:description" content="Not just extraction. Simsim reads financial documents like an analyst, then its agents do the work: credit memos, underwriting files, tender evaluations.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath transform='translate(3 6) rotate(-16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%230a0a0a'/%3E%3Cpath transform='translate(13 6) rotate(16 10 10)' d='M10 1C12.6 4.6 15.5 8.6 15.5 12.8A5.5 5.5 0 0 1 4.5 12.8C4.5 8.6 7.4 4.6 10 1Z' fill='%23737373'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,7 +60,7 @@
 <section class="section section--band hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <span class="eyebrow">For banks, insurers and procurement teams</span>
+      <span class="eyebrow">For banks, insurers, procurement and government</span>
       <h1 aria-label="Any document, read like an expert.">
         <span class="w"><span>Any</span></span>
         <span class="w"><span>document,</span></span>
@@ -223,9 +223,16 @@
       </a>
       <a class="uc-row" href="use-cases.html#procurement">
         <span class="uc-ind">Procurement</span>
-        <span class="uc-name">Supplier due diligence</span>
-        <span class="uc-io"><span class="uc-k">Reads</span>Registrations, certificates, supplier financials, quotes and contracts</span>
-        <span class="uc-io"><span class="uc-k">Delivers</span>A supplier risk score and an approval pack</span>
+        <span class="uc-name">Tender evaluation</span>
+        <span class="uc-io"><span class="uc-k">Reads</span>Hundreds of bids and price schedules, budgets, past awards</span>
+        <span class="uc-io"><span class="uc-k">Delivers</span>A fair price, savings against budget, and price rises checked against inflation</span>
+        <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
+      </a>
+      <a class="uc-row" href="use-cases.html#government">
+        <span class="uc-ind">Government</span>
+        <span class="uc-name">Official statistics</span>
+        <span class="uc-io"><span class="uc-k">Reads</span>Thousands of company filings and survey returns, in Arabic and English</span>
+        <span class="uc-io"><span class="uc-k">Delivers</span>Sector tables with every outlier explained, ready for the bulletin</span>
         <i class="ph ph-arrow-up-right" aria-hidden="true"></i>
       </a>
     </div>
@@ -298,7 +305,7 @@
           <button class="step" type="button" data-i="1"><span class="st-t">Read</span><span class="st-b"><span>Finds printed text, handwriting, tables, stamps and signatures, and reads each one in the right order.</span></span></button>
           <button class="step" type="button" data-i="2"><span class="st-t">Understand</span><span class="st-b"><span>Turns marks into named fields. Dates become ISO, digits in any script become numbers, names get consistent spellings.</span></span></button>
           <button class="step" type="button" data-i="3"><span class="st-t">Verify</span><span class="st-b"><span>Checks the math and the formats. Anything uncertain goes to a reviewer instead of into your system.</span></span></button>
-          <button class="step" type="button" data-i="4"><span class="st-t">Act</span><span class="st-b"><span>Agents take it from there: a credit memo, an underwriting file, a supplier check. Or clean JSON into your own systems.</span></span></button>
+          <button class="step" type="button" data-i="4"><span class="st-t">Act</span><span class="st-b"><span>Agents take it from there: a credit memo, an underwriting file, a tender evaluation. Or clean JSON into your own systems.</span></span></button>
         </div>
       </div>
       <div class="p-wrap" aria-hidden="true">
@@ -414,7 +421,7 @@
     <div class="cta-grid">
       <div>
         <h2 class="rv">Get early access.</h2>
-        <p class="lede rv">We're onboarding a small group of banks, insurers and procurement teams first. Tell us the work you want off your team's plate.</p>
+        <p class="lede rv">We're onboarding a small group of banks, insurers, procurement and government teams first. Tell us the work you want off your team's plate.</p>
       </div>
       <div class="form-card rv" id="form-card">
         <form id="wl-main" novalidate>
@@ -498,7 +505,8 @@ var CONTENT = {
     ['ph-shield-check', 'Insurance submissions'],
     ['ph-warning-diamond', 'Loss runs'],
     ['ph-first-aid-kit', 'Claims forms'],
-    ['ph-file-text', 'Supplier contracts'],
+    ['ph-scales', 'Tender bids'],
+    ['ph-clipboard-text', 'Survey returns'],
     ['ph-shopping-cart', 'Purchase orders'],
     ['ph-receipt', 'Invoices'],
     ['ph-identification-card', 'KYC documents'],
@@ -642,7 +650,7 @@ var CONTENT = {
     { k: 'rent',     v: '350.000 OMR / month' }
   ],
 
-  docOptions: ['Loan origination', 'Trade finance', 'Underwriting', 'Claims', 'Supplier onboarding', 'Spend analysis', 'Something else']
+  docOptions: ['Loan origination', 'Trade finance', 'Underwriting', 'Claims', 'Tender evaluation', 'Spend analysis', 'Official statistics', 'Something else']
 };
 
 /* ============================================================
